@@ -47,6 +47,12 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/pwa'
   ],
+  /**
+   * Перменные окружения
+   */
+  env: {
+    baseUrl: process.env.BASE_URL || 'http://localhost:3000'
+  },
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
@@ -80,6 +86,6 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) { }
+    extend(config, ctx) {}
   }
 }

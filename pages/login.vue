@@ -6,18 +6,19 @@
           <v-card class="elevation-12">
             <v-card-text>
               <v-form>
-                <v-text-field v-model="login" label="Login" type="text" />
+                <v-text-field v-model="user.login" label="Login" type="text" />
 
                 <v-text-field
-                  v-model="password"
+                  v-model="user.password"
                   label="Password"
+                  data-test="some-data-test"
                   type="password"
                 />
               </v-form>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary">Login</v-btn>
+              <v-btn color="primary" @click="login">Login</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -27,11 +28,43 @@
 </template>
 
 <script>
+import axios from 'axios'
+import {
+  setRefreshToken,
+  setToken,
+  setUser as setUserToLocalStorage
+} from '../plugins/token'
+
 export default {
   data: () => ({
-    drawer: null,
-    login: '',
-    password: ''
-  })
+    user: {
+      login: '',
+      password: ''
+    }
+  }),
+  methods: {
+    async login() {
+      try {
+        const data = { ...this.user, grant_type: 'password' }
+
+        const response = await axios.post(
+          `${process.env.baseUrl}/oauth/token`,
+          data
+        )
+        const { access_token, refresh_token } = response.data.data
+
+        // Доделать информацию о юзере
+        const mockUserInfo = {
+          username: this.user.login,
+          login: this.user.login
+        }
+        setUserToLocalStorage(mockUserInfo)
+        setToken(access_token)
+        setRefreshToken(refresh_token)
+      } catch (error) {
+        console.error('AHTUNG', error.message)
+      }
+    }
+  }
 }
 </script>
