@@ -30,7 +30,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: ['~/plugins/axios'],
   /*
    ** Nuxt.js dev-modules
    */
@@ -42,22 +42,14 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: [
-    // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios',
-    '@nuxtjs/pwa'
-  ],
+  modules: [],
   /**
    * Перменные окружения
    */
   env: {
-    baseUrl: process.env.BASE_URL || 'http://localhost:3000'
+    baseUrl: process.env.BASE_URL
   },
-  /*
-   ** Axios module configuration
-   ** See https://axios.nuxtjs.org/options
-   */
-  axios: {},
+
   /*
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module

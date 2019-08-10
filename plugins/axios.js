@@ -1,19 +1,20 @@
+import Vue from 'vue'
 import axios from 'axios'
-import { getToken, getRefreshToken, setRefreshToken, setToken } from './token'
-
-const baseURL = process.env.BASE_URL
 
 const axiosInstance = axios.create({
-  baseURL: `${baseURL}/api/v1`,
+  baseURL: `${process.env.baseUrl}/api/v1`,
   data: {},
   headers: {
     'Content-Type': 'application/vnd.api+json'
   }
 })
 
-// Добавляем токены к каждому запросу
-const addJWT = (config) => {
-  const token = getToken()
+/**
+ * Добавляем токены к каждому запросу
+ * @param {import('axios').AxiosRequestConfig} config
+ */
+const addToken = (config) => {
+  const token = window.$nuxt.$store.state.user.access_token
 
   if (token) {
     config.headers.common.Authorization = `Bearer ${token}`
@@ -22,8 +23,12 @@ const addJWT = (config) => {
   return config
 }
 
-// Обновляем токен при 401 статусе
+/**
+ * Обновляем токен при 401 статусе
+ * @param {import('axios').AxiosError} error
+ */
 const updateToken = (error) => {
+  console.log('updateToken', error)
   const originalRequest = error.config
 
   if (error.response.status !== 401) {
@@ -36,17 +41,17 @@ const updateToken = (error) => {
 
     const data = {
       grant_type: 'refresh_token',
-      refresh_token: getRefreshToken()
+      refresh_token: window.$nuxt.$store.state.user.refresh_token
     }
 
     return axios
-      .post(`${baseURL}/oauth/token`, data)
+      .post(`${process.env.baseUrl}/oauth/token`, data)
       .then((response) => response.data)
       .then((data) => {
         const { access_token, refresh_token } = data
 
-        setToken(access_token)
-        setRefreshToken(refresh_token)
+        window.$nuxt.$store.commit('user/setAccessToken', access_token)
+        window.$nuxt.$store.commit('user/setRefreshToken', refresh_token)
 
         // Обновляем заголовки для повторного запроса
         axios.defaults.headers.commonAuthorization = `Bearer ${access_token}`
@@ -55,13 +60,16 @@ const updateToken = (error) => {
         return axios(originalRequest)
       })
       .catch((error) => {
-        window.$nuxt.$router.push('/auth/log-off')
+        window.$nuxt.$router.push('/log-off')
         console.error(`Не получилось получить token: ${error}`)
       })
   }
 }
 
-// Обработка ошибок
+/**
+ * Обработка ошибок
+ * @param {AxiosError} error
+ */
 const handlingErrors = (error) => {
   console.log('axios errorHandker', error)
   // Обрабатываем ошибки сети
@@ -88,8 +96,8 @@ const handlingErrors = (error) => {
   return Promise.reject(error)
 }
 
-axiosInstance.interceptors.request.use(addJWT)
+axiosInstance.interceptors.request.use(addToken)
 axiosInstance.interceptors.response.use((response) => response, updateToken)
 axiosInstance.interceptors.response.use((response) => response, handlingErrors)
 
-export default axiosInstance
+Vue.prototype.$axios = axiosInstance
