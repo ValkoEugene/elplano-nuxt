@@ -1,11 +1,11 @@
 <template>
-  <div>
-    indexpage
-  </div>
+  <div>indexpage</div>
 </template>
 
 <script>
 export default {
-  name: 'IndexPage'
+  name: 'IndexPage',
+  middleware: ['auth'],
+  methods: {}
 }
 </script>
