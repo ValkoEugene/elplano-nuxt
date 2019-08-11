@@ -10,6 +10,14 @@ export function setTokensInCookie({ access_token, refresh_token }) {
 }
 
 /**
+ * Удалить токены в Cookie
+ */
+export function resetTokensInCookie() {
+  Cookie.remove('access_token')
+  Cookie.remove('refresh_token')
+}
+
+/**
  * Получить данные из Cookie
  * @param {Request} req
  * @param {String} name
@@ -43,4 +51,26 @@ export const getAccessTokenFromCookie = (req) => {
  */
 export const getRefreshTokenFromCookie = (req) => {
   return getFromCookieByName(req, 'refresh_token')
+}
+
+/**
+ * Установить информацию о регистрации в localStorage
+ * @param {{ login: String, password: String }}
+ */
+export function setRegistrationInfo({ login, password }) {
+  window.localStorage.setItem('registration-login', login)
+  window.localStorage.setItem('registration-password', password)
+}
+
+/**
+ * Получить инфорамцию о регистрации
+ * @returns {{ login: String, password: String }}
+ */
+export function getRegistrationInfo() {
+  const login = window.localStorage.getItem('registration-login')
+  const password = window.localStorage.getItem('registration-password')
+
+  if (!login || !password) return null
+
+  return { login, password }
 }

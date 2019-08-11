@@ -1,5 +1,14 @@
 // Сообщения для snakbars
 
+export const namespace = 'snackbars'
+
+export const Types = {
+  mutations: {
+    SET_SNACKBARS: 'SET_SNACKBARS',
+    ADD_SNACKBARS: 'ADD_SNACKBARS'
+  }
+}
+
 export const state = () => ({
   /**
    * Список сообщений
@@ -19,7 +28,7 @@ export const mutations = {
    * @param {Object} state
    * @param {Array} snackbars
    */
-  setSnackbars(state, snackbars) {
+  [Types.mutations.SET_SNACKBARS](state, snackbars) {
     state.snackbars = [...snackbars]
   },
 
@@ -28,7 +37,7 @@ export const mutations = {
    * @param {Object} state
    * @param {Array} snackbars
    */
-  addSnackbars(state, snackbars) {
+  [Types.mutations.ADD_SNACKBARS](state, snackbars) {
     state.snackbars = [...state.snackbars, ...snackbars]
   }
 }
