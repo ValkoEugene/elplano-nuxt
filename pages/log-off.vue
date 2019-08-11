@@ -10,7 +10,6 @@ export default {
   layout: 'empty',
   created() {
     this.$store.dispatch(`${namespace}/${Types.actions.RESET_USER}`)
-    // TODO сброс данных о пользователе
     this.$router.push('/login')
   }
 }
