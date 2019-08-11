@@ -30,6 +30,7 @@
       <v-container fluid>
         <!-- If using vue-router -->
         <nuxt></nuxt>
+        <Snackbars />
       </v-container>
     </v-content>
   </v-app>
@@ -39,7 +40,8 @@
 export default {
   name: 'DefaultLayout',
   components: {
-    Sidebar: () => import('./sidebar.vue')
+    Sidebar: () => import('./sidebar.vue'),
+    Snackbars: () => import('../components/UI-core/snackbars.vue')
   },
   data: () => ({
     test: ''

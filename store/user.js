@@ -1,3 +1,5 @@
+// Информация о пользователе
+
 import { setTokensInCookie } from '../utils/auth'
 
 export const state = () => ({
