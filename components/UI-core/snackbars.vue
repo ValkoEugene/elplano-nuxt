@@ -21,6 +21,10 @@
 
 <script>
 import { mapMutations } from 'vuex'
+import {
+  Types as snackbarsTypes,
+  namespace as snackbarsNamespace
+} from '../../store/snackbars'
 
 export default {
   name: 'Snackbars',
@@ -99,7 +103,7 @@ export default {
       /**
        * Установить сообщения
        */
-      setSnackbars: 'snackbars/setSnackbars'
+      setSnackbars: `${snackbarsNamespace}/${snackbarsTypes.mutations.SET_SNACKBARS}`
     }),
 
     /**

@@ -2,6 +2,7 @@ import {
   getAccessTokenFromCookie,
   getRefreshTokenFromCookie
 } from '../utils/auth'
+import { namespace, Types } from '../store/user'
 
 // Middleware для проверки авторизован ли пользователь
 export default ({ store, redirect, req, route }) => {
@@ -14,14 +15,20 @@ export default ({ store, redirect, req, route }) => {
     const refresh_token = getRefreshTokenFromCookie(req)
 
     if (access_token && refresh_token) {
-      store.commit('user/setAccessToken', access_token)
-      store.commit('user/setRefreshToken', refresh_token)
+      store.commit(
+        `${namespace}/${Types.mutations.SET_ACCESS_TOKEN}`,
+        access_token
+      )
+      store.commit(
+        `${namespace}/${Types.mutations.SET_REFRESH_TOKEN}`,
+        refresh_token
+      )
     }
   }
 
   // Проверяем авторизован ли пользователь
   // если пользователя не было, то выше ничего и не сохранилось
-  if (!store.getters['user/isAuth']) {
+  if (!store.getters[`${namespace}/${Types.getters.IS_AUTH}`]) {
     return redirect('/login')
   }
 }
