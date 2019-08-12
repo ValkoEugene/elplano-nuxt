@@ -1,5 +1,5 @@
-import Vue from 'vue'
 import axios from 'axios'
+import { namespace, Types } from '../store/user'
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.baseUrl}/api/v1`,
@@ -50,8 +50,14 @@ const updateToken = (error) => {
       .then((data) => {
         const { access_token, refresh_token } = data
 
-        window.$nuxt.$store.commit('user/setAccessToken', access_token)
-        window.$nuxt.$store.commit('user/setRefreshToken', refresh_token)
+        window.$nuxt.$store.commit(
+          `${namespace}/${Types.mutations.SET_ACCESS_TOKEN}`,
+          access_token
+        )
+        window.$nuxt.$store.commit(
+          `${namespace}/${Types.mutations.SET_REFRESH_TOKEN}`,
+          refresh_token
+        )
 
         // Обновляем заголовки для повторного запроса
         axios.defaults.headers.commonAuthorization = `Bearer ${access_token}`
@@ -85,14 +91,14 @@ const handlingErrors = (error) => {
   if (status === 401) {
     return // Отдельно обрабатываем в updateToken
   } else if (status === 404) {
-    error.message = 'Запись не найдена'
+    error.messages = ['Запись не найдена']
   } else if (status >= 400 && status < 500 && data.errors) {
-    error.message = data.errors.map(({ detail }) => detail).join(', ')
+    error.messages = data.errors.map(({ detail }) => detail)
   } else if (status >= 500) {
-    error.message = 'Извините, возникла ошибка на сервере'
+    error.messages = ['Извините, возникла ошибка на сервере']
   }
 
-  console.log('before axios reject', error.message)
+  console.log('before axios reject', error.messages)
   return Promise.reject(error)
 }
 
@@ -100,4 +106,4 @@ axiosInstance.interceptors.request.use(addToken)
 axiosInstance.interceptors.response.use((response) => response, updateToken)
 axiosInstance.interceptors.response.use((response) => response, handlingErrors)
 
-Vue.prototype.$axios = axiosInstance
+export default axiosInstance
