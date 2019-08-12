@@ -42,12 +42,19 @@ export default {
     }
   }),
   computed: {
+    /**
+     * Флаг процесса логина
+     * @type {Boolean}
+     */
     loginFetching() {
       return this.$store.state.user.loginFetching
     }
   },
   methods: {
     ...mapActions({
+      /**
+       * Вход
+       */
       login: `${namespace}/${Types.actions.LOGIN}`
     })
   }

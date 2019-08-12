@@ -31,6 +31,7 @@ export default {
   data: () => ({
     /**
      * Флаг активности
+     * @type {Boolean}
      */
     active: false,
 
@@ -81,8 +82,8 @@ export default {
 
       this.setSnackbars(snackbars)
 
-      // Если еще есть сообщения проставляем флаг активности для пока следующего
-      // И устанавливаем закрытие по таймеру
+      // Если еще есть сообщения - проставляем флаг активности для следующего сообщения
+      // И устанавливаем для него закрытие по таймеру
       if (snackbars.length) {
         this.active = true
         this.closeSnackbarByTimeout()

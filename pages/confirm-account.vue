@@ -72,9 +72,8 @@ export default {
         // Берем информацию из localStorage и если она была сразу логиним
         const registrationInfo = getRegistrationInfo()
 
-        if (registrationInfo) this.login(registrationInfo)
-
         // Проверить наличие в localStorage пароль-логин если есть то логиним
+        if (registrationInfo) this.login(registrationInfo)
       } catch (error) {
         this.addSnackbars(
           error.response.data.errors.map(({ detail }) => ({
