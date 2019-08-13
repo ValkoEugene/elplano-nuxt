@@ -2,24 +2,24 @@
   <v-content>
     <v-container fluid fill-height>
       <v-layout align-center justify-center>
-        <v-flex xs12 sm8 md4>
-          <v-card class="elevation-12">
-            <v-card-text>
-              <v-form>
-                <v-text-field v-model="login" label="Login" type="text" />
+        <v-flex xs12 sm8 md4 class="elevation-12">
+          <v-tabs v-model="tab" right grow show-arrows>
+            <v-tab>Вход</v-tab>
+            <v-tab>Регистрация</v-tab>
+            <v-tab>Сброс пароля</v-tab>
 
-                <v-text-field
-                  v-model="password"
-                  label="Password"
-                  type="password"
-                />
-              </v-form>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary">Login</v-btn>
-            </v-card-actions>
-          </v-card>
+            <v-tab-item>
+              <Login />
+            </v-tab-item>
+
+            <v-tab-item>
+              <Registration />
+            </v-tab-item>
+
+            <v-tab-item>
+              <ResetPassword />
+            </v-tab-item>
+          </v-tabs>
         </v-flex>
       </v-layout>
     </v-container>
@@ -28,10 +28,24 @@
 
 <script>
 export default {
+  name: 'AuthPage',
+  layout: 'empty',
+  components: {
+    Login: () =>
+      import(
+        '../components/auth/login.vue' /* webpackChunkName: 'components/auth' */
+      ),
+    Registration: () =>
+      import(
+        '../components/auth/registration.vue' /* webpackChunkName: 'components/auth/login' */
+      ),
+    ResetPassword: () =>
+      import(
+        '../components/auth/reset-password.vue' /* webpackChunkName: 'components/auth/login' */
+      )
+  },
   data: () => ({
-    drawer: null,
-    login: '',
-    password: ''
+    tab: null
   })
 }
 </script>
