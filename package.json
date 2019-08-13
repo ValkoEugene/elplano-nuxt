@@ -6,11 +6,17 @@
   "private": true,
   "scripts": {
     "dev": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com nuxt",
-    "build": "nuxt build",
+    "build": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "test": "jest"
+  },
+  "config": {
+    "nuxt": {
+      "host": "0.0.0.0",
+      "port": "80"
+    }
   },
   "dependencies": {
     "axios": "0.18.0",
@@ -24,6 +30,7 @@
     "@vue/test-utils": "^1.0.0-beta.27",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.1.0",
+    "cross-env": "^5.2.0",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^4.3.0",
     "eslint-plugin-nuxt": ">=0.4.2",

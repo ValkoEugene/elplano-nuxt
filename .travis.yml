@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - 12.7.0
+cache:
+  yarn: true
+branches:
+  only:
+    - master
+    - develop
+after_success:
+  - sh .travis/deploy_dockerhub.sh
+  - test “$TRAVIS_BRANCH” = “master” && sh .travis/deploy_heroku.sh
