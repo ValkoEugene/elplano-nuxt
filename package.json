@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com nuxt",
     "build": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com nuxt build",
+    "deploy-manual": "./deploy_manual.sh",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
