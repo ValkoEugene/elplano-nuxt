@@ -4,15 +4,26 @@
       <!-- eslint-disable -->
       <v-alert v-if="successMessage" type="success">{{ successMessage }}</v-alert>
 
-      <v-form v-else>
+      <v-form v-else ref="form" :lazy-validation="true">
         <!-- eslint-disable -->
-        <v-text-field v-model="login" label="Email" placeholder="Email" type="text" outlined />
+        <v-text-field
+          v-model="login"
+          label="Email"
+          placeholder="Email"
+          type="text"
+          :rules="[$rules.required, $rules.email]"
+          outlined
+        />
       </v-form>
     </v-card-text>
     <v-card-actions v-if="!successMessage">
       <v-spacer></v-spacer>
       <!-- eslint-disable -->
-      <v-btn color="primary" :disabled="unactive" @click="resetPassword">Сбросить</v-btn>
+      <v-btn
+        color="primary"
+        :disabled="unactive"
+        @click="$refs.form.validate() && resetPassword()"
+      >Сбросить</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -47,11 +58,11 @@ export default {
     unactive: false
   }),
   methods: {
-    ...mapMutations({
+    ...mapMutations(snackbarsNamespace, {
       /**
        * Показать сообщение
        */
-      addSnackbars: `${snackbarsNamespace}/${snackbarsTypes.mutations.ADD_SNACKBARS}`
+      addSnackbars: snackbarsTypes.mutations.ADD_SNACKBARS
     }),
 
     /**
@@ -78,7 +89,10 @@ export default {
         this.successMessage = meta.message
       } catch (error) {
         this.addSnackbars(
-          error.messages.map((text) => ({ text, color: 'error' }))
+          error.response.data.errors.map(({ detail }) => ({
+            text: detail,
+            color: 'error'
+          }))
         )
       } finally {
         this.unactive = false

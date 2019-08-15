@@ -33,18 +33,18 @@ export default {
     if (this.token) this.confirm()
   },
   methods: {
-    ...mapMutations({
+    ...mapMutations(snackbarsNamespace, {
       /**
        * Показать сообщение
        */
-      addSnackbars: `${snackbarsNamespace}/${snackbarsTypes.mutations.ADD_SNACKBARS}`
+      addSnackbars: snackbarsTypes.mutations.ADD_SNACKBARS
     }),
 
-    ...mapActions({
+    ...mapActions(userNamespace, {
       /**
        * Войти
        */
-      login: `${userNamespace}/${userTypes.actions.LOGIN}`
+      login: userTypes.actions.LOGIN
     }),
 
     /**
@@ -73,7 +73,9 @@ export default {
         const registrationInfo = getRegistrationInfo()
 
         // Проверить наличие в localStorage пароль-логин если есть то логиним
-        if (registrationInfo) this.login(registrationInfo)
+        registrationInfo
+          ? this.login(registrationInfo)
+          : this.$router.push('/login')
       } catch (error) {
         this.addSnackbars(
           error.response.data.errors.map(({ detail }) => ({
