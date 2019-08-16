@@ -1,15 +1,22 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-form>
-        <!-- eslint-disable -->
-        <v-text-field v-model="user.login" label="Логин" placeholder="Логин" type="text" outlined />
+      <v-form ref="form" :lazy-validation="true">
+        <v-text-field
+          v-model="user.login"
+          :label="$t('auth.loginField')"
+          :placeholder="$t('auth.loginField')"
+          type="text"
+          :rules="[$rules.required]"
+          outlined
+        />
 
         <v-text-field
           v-model="user.password"
-          label="Пароль"
-          placeholder="Пароль"
+          :label="$t('auth.passwordField')"
+          :placeholder="$t('auth.passwordField')"
           type="password"
+          :rules="[$rules.required, $rules.getMinLength(6)]"
           outlined
         />
       </v-form>
@@ -17,7 +24,11 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <!-- eslint-disable -->
-      <v-btn color="primary" :disabled="loginFetching" @click="login(user)">Войти</v-btn>
+      <v-btn
+        color="primary"
+        :disabled="loginFetching"
+        @click="$refs.form.validate() && login(user)"
+      >{{ $t("auth.loginBtn") }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -51,11 +62,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
+    ...mapActions(namespace, {
       /**
        * Вход
        */
-      login: `${namespace}/${Types.actions.LOGIN}`
+      login: Types.actions.LOGIN
     })
   }
 }

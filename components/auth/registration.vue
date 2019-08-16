@@ -4,31 +4,41 @@
       <!-- eslint-disable -->
       <v-alert v-if="successMessage" type="success">{{ successMessage }}</v-alert>
 
-      <v-form v-else>
+      <v-form v-else ref="form" :lazy-validation="true">
         <v-text-field
           v-model="user.username"
-          label="Логин"
-          placeholder="Логин"
+          :label="$t('auth.loginField')"
+          :placeholder="$t('auth.loginField')"
           type="text"
+          :rules="[$rules.required]"
           outlined
         />
 
         <!-- eslint-disable -->
-        <v-text-field v-model="user.email" label="Email" placeholder="Email" type="text" outlined />
+        <v-text-field
+          v-model="user.email"
+          label="Email"
+          placeholder="Email"
+          type="text"
+          :rules="[$rules.required, $rules.email]"
+          outlined
+        />
 
         <v-text-field
           v-model="user.password"
-          label="Пароль"
-          placeholder="Пароль"
+          :label="$t('auth.passwordField')"
+          :placeholder="$t('auth.passwordField')"
           type="password"
+          :rules="[$rules.required, $rules.getMinLength(6)]"
           outlined
         />
 
         <v-text-field
           v-model="user.password_confirmation"
-          label="Подтверждение пароля"
-          placeholder="Подтверждение пароля"
+          :label="$t('auth.confirmPasswordField')"
+          :placeholder="$t('auth.confirmPasswordField')"
           type="password"
+          :rules="[$rules.required, $rules.equal(user.password, $t('auth.confirmPasswordValidate'))]"
           outlined
         />
       </v-form>
@@ -36,7 +46,11 @@
     <v-card-actions v-if="!successMessage">
       <v-spacer></v-spacer>
       <!-- eslint-disable -->
-      <v-btn color="primary" :disabled="unactive" @click="createUser">Зарегистироваться</v-btn>
+      <v-btn
+        color="primary"
+        :disabled="unactive"
+        @click="$refs.form.validate() && createUser()"
+      >{{ $t('auth.sigunBtn') }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -81,16 +95,18 @@ export default {
     unactive: false
   }),
   methods: {
-    ...mapMutations({
+    ...mapMutations(userNamespace, {
       /**
        * Сохранить пользователя
        */
-      setUser: `${userNamespace}/${userTypes.mutations.SET_USER}`,
+      setUser: userTypes.mutations.SET_USER
+    }),
 
+    ...mapMutations(snackbarsNamespace, {
       /**
        * Показать сообщение
        */
-      addSnackbars: `${snackbarsNamespace}/${snackbarsTypes.mutations.ADD_SNACKBARS}`
+      addSnackbars: snackbarsTypes.mutations.ADD_SNACKBARS
     }),
 
     /**
@@ -103,14 +119,12 @@ export default {
       this.unactive = true
 
       const registrationInfo = {
-        login: this.user,
+        login: this.user.username,
         password: this.user.password
       }
 
       try {
-        const {
-          data: { attributes, meta }
-        } = await axios({
+        const { data } = await axios({
           method: 'post',
           url: `${process.env.baseUrl}/api/v1/users`,
           data: { user: this.user },
@@ -118,15 +132,20 @@ export default {
             'Content-Type': 'application/vnd.api+json'
           }
         })
+        const attributes = data.data.attributes
+        const meta = data.meta
+
         setRegistrationInfo(registrationInfo)
 
-        const user = attributes
-        this.setUser(user)
+        this.setUser(attributes)
 
-        this.message = meta.message
+        this.successMessage = meta.message
       } catch (error) {
         this.addSnackbars(
-          error.messages.map((text) => ({ text, color: 'error' }))
+          error.response.data.errors.map(({ detail }) => ({
+            text: detail,
+            color: 'error'
+          }))
         )
       } finally {
         this.unactive = false

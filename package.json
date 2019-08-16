@@ -5,8 +5,9 @@
   "author": "Valko Eugene",
   "private": true,
   "scripts": {
-    "dev": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com nuxt",
+    "dev": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com PORT=3000 nuxt",
     "build": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com nuxt build",
+    "deploy-manual": "./deploy_manual.sh",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
@@ -21,7 +22,8 @@
   "dependencies": {
     "axios": "0.18.0",
     "js-cookie": "^2.2.1",
-    "nuxt": "^2.0.0"
+    "nuxt": "^2.0.0",
+    "vue-i18n": "^8.14.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^1.0.1",
