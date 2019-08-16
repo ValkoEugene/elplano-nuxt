@@ -7,8 +7,8 @@
       <v-form v-else ref="form" :lazy-validation="true">
         <v-text-field
           v-model="user.username"
-          label="Логин"
-          placeholder="Логин"
+          :label="$t('auth.loginField')"
+          :placeholder="$t('auth.loginField')"
           type="text"
           :rules="[$rules.required]"
           outlined
@@ -26,8 +26,8 @@
 
         <v-text-field
           v-model="user.password"
-          label="Пароль"
-          placeholder="Пароль"
+          :label="$t('auth.passwordField')"
+          :placeholder="$t('auth.passwordField')"
           type="password"
           :rules="[$rules.required, $rules.getMinLength(6)]"
           outlined
@@ -35,10 +35,10 @@
 
         <v-text-field
           v-model="user.password_confirmation"
-          label="Подтверждение пароля"
-          placeholder="Подтверждение пароля"
+          :label="$t('auth.confirmPasswordField')"
+          :placeholder="$t('auth.confirmPasswordField')"
           type="password"
-          :rules="[$rules.required, $rules.equal(user.password, 'Пароли не совпадают')]"
+          :rules="[$rules.required, $rules.equal(user.password, $t('auth.confirmPasswordValidate'))]"
           outlined
         />
       </v-form>
@@ -50,7 +50,7 @@
         color="primary"
         :disabled="unactive"
         @click="$refs.form.validate() && createUser()"
-      >Зарегистироваться</v-btn>
+      >{{ $t('auth.sigunBtn') }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>
