@@ -4,8 +4,8 @@
       <v-form ref="form" :lazy-validation="true">
         <v-text-field
           v-model="user.login"
-          :label="$t('auth.loginField')"
-          :placeholder="$t('auth.loginField')"
+          :label="$t('field.loginField')"
+          :placeholder="$t('field.loginField')"
           type="text"
           :rules="[$rules.required]"
           outlined
@@ -13,8 +13,8 @@
 
         <v-text-field
           v-model="user.password"
-          :label="$t('auth.passwordField')"
-          :placeholder="$t('auth.passwordField')"
+          :label="$t('field.passwordField')"
+          :placeholder="$t('field.passwordField')"
           type="password"
           :rules="[$rules.required, $rules.getMinLength(6)]"
           outlined

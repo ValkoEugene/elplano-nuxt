@@ -5,10 +5,6 @@
     "email": "Email must contain @"
   },
   "auth": {
-    "loginField": "Login",
-    "passwordField": "Password",
-    "confirmPasswordField": "Confirm password",
-    "confirmPasswordValidate": "Passwords do not match",
     "loginBtn": "Login",
     "sigunBtn": "Signup",
     "resetPasswordBtn": "Reset",
@@ -25,5 +21,26 @@
     "measure": "Measure",
     "ratings": "Ratings",
     "attachments": "Attachmets"
+  },
+  "header": {
+    "logout": "Logout",
+    "profile": "Profile",
+    "settings": "Settings",
+    "groupSettings": "Group settings"
+  },
+  "actions": {
+    "save": "Save"
+  },
+  "field": {
+    "loginField": "Login",
+    "passwordField": "Password",
+    "confirmPasswordField": "Confirm password",
+    "confirmPasswordValidate": "Passwords do not match",
+    "fullName": "Full name",
+    "about": "About",
+    "phone": "Phone"
+  },
+  "student": {
+    "title": "Profile settings"
   }
 }

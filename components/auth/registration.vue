@@ -7,8 +7,8 @@
       <v-form v-else ref="form" :lazy-validation="true">
         <v-text-field
           v-model="user.username"
-          :label="$t('auth.loginField')"
-          :placeholder="$t('auth.loginField')"
+          :label="$t('field.loginField')"
+          :placeholder="$t('field.loginField')"
           type="text"
           :rules="[$rules.required]"
           outlined
@@ -26,8 +26,8 @@
 
         <v-text-field
           v-model="user.password"
-          :label="$t('auth.passwordField')"
-          :placeholder="$t('auth.passwordField')"
+          :label="$t('field.passwordField')"
+          :placeholder="$t('field.passwordField')"
           type="password"
           :rules="[$rules.required, $rules.getMinLength(6)]"
           outlined
@@ -35,10 +35,10 @@
 
         <v-text-field
           v-model="user.password_confirmation"
-          :label="$t('auth.confirmPasswordField')"
-          :placeholder="$t('auth.confirmPasswordField')"
+          :label="$t('field.confirmPasswordField')"
+          :placeholder="$t('field.confirmPasswordField')"
           type="password"
-          :rules="[$rules.required, $rules.equal(user.password, $t('auth.confirmPasswordValidate'))]"
+          :rules="[$rules.required, $rules.equal(user.password, $t('field.confirmPasswordValidate'))]"
           outlined
         />
       </v-form>
