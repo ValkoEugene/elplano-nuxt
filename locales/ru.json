@@ -15,8 +15,8 @@
   "sidebar": {
     "schedule": "Расписание",
     "lessons": "Предметы",
-    "tasks": "tasks",
-    "teachers": "Задания",
+    "tasks": "Задания",
+    "teachers": "Преподаватели",
     "group": "Группа",
     "measure": "Мероприятия",
     "ratings": "Оценки",
@@ -29,7 +29,11 @@
     "groupSettings": "Настройки группы"
   },
   "actions": {
-    "save": "Сохранить"
+    "save": "Сохранить",
+    "create": "Добавить",
+    "addTask": "Добавить задание",
+    "addRaiting": "Добавить оценку",
+    "edit": "Редактировать"
   },
   "field": {
     "loginField": "Login",
@@ -38,9 +42,15 @@
     "confirmPasswordValidate": "Passwords do not match",
     "fullName": "ФИО",
     "about": "Описание",
-    "phone": "Телефон"
+    "phone": "Телефон",
+    "search": "Поиск",
+    "title": "Наименование"
   },
   "student": {
     "title": "Настройка профиля"
+  },
+  "lesson": {
+    "edit": "Редактрование предмета",
+    "create": "Создание предмета"
   }
 }

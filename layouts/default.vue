@@ -1,5 +1,5 @@
 <template>
-  <v-app light>
+  <v-app light :style="cssVariblesFromTheme">
     <Sidebar />
 
     <Header />
@@ -26,6 +26,28 @@ export default {
   },
   data: () => ({
     test: ''
-  })
+  }),
+  computed: {
+    /**
+     * Стили с css переменными из темы
+     * @type {Object}
+     */
+    cssVariblesFromTheme() {
+      return {
+        '--secondary-color': this.$vuetify.theme.currentTheme.secondary,
+        '--primary-color': this.$vuetify.theme.currentTheme.primary
+      }
+    }
+  }
 }
 </script>
+
+<style>
+.text-secondary {
+  color: var(--secondary-color) !important;
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
+}
+</style>

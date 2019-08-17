@@ -48,7 +48,7 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: [],
+  modules: ['nuxt-material-design-icons'],
   /**
    * Перменные окружения
    */
