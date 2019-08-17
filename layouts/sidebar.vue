@@ -26,26 +26,17 @@
 <script>
 export default {
   name: 'Sidebar',
-  computed: {
-    /**
-     * Пункты меню
-     * @type {Array}
-     */
-    items() {
-      return [
-        { title: this.$t('sidebar.schedule'), icon: 'mdi-view-dashboard' },
-        { title: this.$t('sidebar.lessons'), icon: 'mdi-library-books' },
-        { title: this.$t('sidebar.tasks'), icon: 'mdi-briefcase' },
-        { title: this.$t('sidebar.teachers'), icon: 'mdi-account-supervisor' },
-        { title: this.$t('sidebar.group'), icon: 'mdi-account-group' },
-        { title: this.$t('sidebar.measure'), icon: 'mdi-help-box' },
-        { title: this.$t('sidebar.ratings'), icon: 'mdi-star-half' },
-        {
-          title: this.$t('sidebar.attachments'),
-          icon: 'mdi-briefcase-download'
-        }
-      ]
-    }
-  }
+  data: () => ({
+    items: [
+      { title: 'Расписание', icon: 'mdi-view-dashboard' },
+      { title: 'Предметы', icon: 'mdi-library-books' },
+      { title: 'Задания', icon: 'mdi-briefcase' },
+      { title: 'Преподаватели', icon: 'mdi-account-supervisor' },
+      { title: 'Группа', icon: 'mdi-account-group' },
+      { title: 'Мероприятия', icon: 'mdi-help-box' },
+      { title: 'Оценки', icon: 'mdi-star-half' },
+      { title: 'Вложения', icon: 'mdi-briefcase-download' }
+    ]
+  })
 }
 </script>
