@@ -1,6 +1,6 @@
 <template>
   <v-app-bar color="deep-purple accent-4" app dark>
-    <v-app-bar-nav-icon></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
 
     <v-toolbar-title>Elplano</v-toolbar-title>
 
@@ -26,6 +26,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import { namespace, Types } from '../store/i18n'
+import { TOGGLE_SIDEBAR_ROOT_LISTENER } from './sidebar.vue'
 
 export default {
   name: 'Header',
@@ -79,6 +80,13 @@ export default {
     switchLocale() {
       const newLocale = this.locale === 'en' ? 'ru' : 'en'
       this.setLang(newLocale)
+    },
+
+    /**
+     * Открыть/закрыть боковую панель
+     */
+    toggleSidebar() {
+      this.$root.$emit(TOGGLE_SIDEBAR_ROOT_LISTENER)
     }
   }
 }
