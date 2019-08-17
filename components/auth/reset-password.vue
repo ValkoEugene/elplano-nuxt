@@ -23,7 +23,7 @@
         color="primary"
         :disabled="unactive"
         @click="$refs.form.validate() && resetPassword()"
-      >Сбросить</v-btn>
+      >{{ $t('auth.resetPasswordBtn') }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>

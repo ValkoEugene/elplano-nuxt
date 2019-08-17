@@ -1,0 +1,29 @@
+{
+  "rules": {
+    "required": "Required field",
+    "minLength": "Minimum characters - ",
+    "email": "Email must contain @"
+  },
+  "auth": {
+    "loginField": "Login",
+    "passwordField": "Password",
+    "confirmPasswordField": "Confirm password",
+    "confirmPasswordValidate": "Passwords do not match",
+    "loginBtn": "Login",
+    "sigunBtn": "Signup",
+    "resetPasswordBtn": "Reset",
+    "loginTab": "Login",
+    "sigunpTab": "Signup",
+    "resetPasswordTab": "Reset password"
+  },
+  "sidebar": {
+    "schedule": "Schedule",
+    "lessons": "Lessons",
+    "tasks": "Tasks",
+    "teachers": "Teachers",
+    "group": "Group",
+    "measure": "Measure",
+    "ratings": "Ratings",
+    "attachments": "Attachmets"
+  }
+}

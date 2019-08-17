@@ -4,9 +4,9 @@
       <v-layout align-center justify-center>
         <v-flex xs12 sm8 md4 class="elevation-12">
           <v-tabs v-model="tab" right grow show-arrows>
-            <v-tab>Вход</v-tab>
-            <v-tab>Регистрация</v-tab>
-            <v-tab>Сброс пароля</v-tab>
+            <v-tab>{{ $t('auth.loginTab') }}</v-tab>
+            <v-tab>{{ $t('auth.sigunpTab') }}</v-tab>
+            <v-tab>{{ $t('auth.resetPasswordTab') }}</v-tab>
 
             <v-tab-item>
               <Login />
