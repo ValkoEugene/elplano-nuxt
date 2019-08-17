@@ -99,6 +99,10 @@ const handlingErrors = (error) => {
   }
 
   console.log('before axios reject', error.messages)
+  error.snackbarErrors = error.messages.map((text) => ({
+    text,
+    color: 'error'
+  }))
   return Promise.reject(error)
 }
 

@@ -5,10 +5,6 @@
     "email": "Email должен содержать @"
   },
   "auth": {
-    "loginField": "Логин",
-    "passwordField": "Пароль",
-    "confirmPasswordField": "Подтверждение пароля",
-    "confirmPasswordValidate": "Пароли не совпадают",
     "loginBtn": "Вход",
     "sigunBtn": "Зарегистироваться",
     "resetPasswordBtn": "Сбросить",
@@ -31,5 +27,20 @@
     "profile": "Профиль",
     "settings": "Настройки",
     "groupSettings": "Настройки группы"
+  },
+  "actions": {
+    "save": "Сохранить"
+  },
+  "field": {
+    "loginField": "Login",
+    "passwordField": "Password",
+    "confirmPasswordField": "Confirm password",
+    "confirmPasswordValidate": "Passwords do not match",
+    "fullName": "ФИО",
+    "about": "Описание",
+    "phone": "Телефон"
+  },
+  "student": {
+    "title": "Настройка профиля"
   }
 }
