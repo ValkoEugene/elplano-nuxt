@@ -25,5 +25,11 @@
     "measure": "Measure",
     "ratings": "Ratings",
     "attachments": "Attachmets"
+  },
+  "header": {
+    "logout": "Logout",
+    "profile": "Profile",
+    "settings": "Settings",
+    "groupSettings": "Group settings"
   }
 }

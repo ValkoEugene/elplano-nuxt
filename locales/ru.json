@@ -25,5 +25,11 @@
     "measure": "Мероприятия",
     "ratings": "Оценки",
     "attachments": "Вложения"
+  },
+  "header": {
+    "logout": "Выход",
+    "profile": "Профиль",
+    "settings": "Настройки",
+    "groupSettings": "Настройки группы"
   }
 }
