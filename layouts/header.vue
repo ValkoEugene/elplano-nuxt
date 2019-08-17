@@ -6,6 +6,8 @@
 
     <v-spacer></v-spacer>
 
+    <v-btn text small @click="switchLocale">{{ locale }}</v-btn>
+
     <v-menu left bottom>
       <template v-slot:activator="{ on }">
         <v-btn icon v-on="on">
@@ -22,9 +24,18 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex'
+import { namespace, Types } from '../store/i18n'
+
 export default {
   name: 'Header',
   computed: {
+    /**
+     * Текущая локаль
+     * @type {String}
+     */
+    ...mapState(namespace, ['locale']),
+
     /**
      * Флаг что пользователь админ
      * @type {Boolean}
@@ -52,6 +63,22 @@ export default {
       links.push({ url: '/log-off', text: this.$t('header.logout') })
 
       return links
+    }
+  },
+  methods: {
+    ...mapMutations(namespace, {
+      /**
+       * Установить локаль
+       */
+      setLang: Types.mutations.SET_LANG
+    }),
+
+    /**
+     * Сменить локаль
+     */
+    switchLocale() {
+      const newLocale = this.locale === 'en' ? 'ru' : 'en'
+      this.setLang(newLocale)
     }
   }
 }

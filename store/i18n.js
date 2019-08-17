@@ -31,6 +31,8 @@ export const mutations = {
   [Types.mutations.SET_LANG](state, locale) {
     if (state.locales.includes(locale)) {
       state.locale = locale
+
+      if (process.browser) window.$nuxt.$i18n.locale = locale
     }
   }
 }
