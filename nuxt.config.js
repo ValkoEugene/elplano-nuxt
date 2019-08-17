@@ -30,7 +30,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/rules', '~/plugins/i18n'],
+  plugins: [],
   /*
    ** Nuxt.js dev-modules
    */
@@ -39,12 +39,6 @@ export default {
     '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify'
   ],
-  /**
-   *
-   */
-  router: {
-    middleware: ['i18n']
-  },
   /*
    ** Nuxt.js modules
    */
