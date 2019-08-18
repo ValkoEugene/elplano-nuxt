@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title>{{ $t('student.title') }}</v-card-title>
 
-    <v-card-text v-if="!loading">
+    <v-card-text>
       <v-text-field
         v-model="localStudent.full_name"
         :label="$t('field.fullName')"
@@ -67,24 +67,19 @@
 <script>
 import clonedeep from 'lodash.clonedeep'
 import { mapActions, mapState } from 'vuex'
-import { namespace, Types } from '../../store/student'
+import { namespace, Types } from '../../store/user'
 
 export default {
   name: 'StudentPage',
-  middleware: ['auth'],
   data: () => ({
     /**
      * Локальнкая копия информации о студенте
      * @type {Object}
      */
-    localStudent: {}
+    localStudent: { social_networks: {} }
   }),
   computed: {
     ...mapState(namespace, [
-      /**
-       * Флаг загрузки
-       */
-      'loading',
       /**
        * Флаг обновления
        */
@@ -92,25 +87,22 @@ export default {
       /**
        * Информация о студенте
        */
-      'student'
+      'studentInfo'
     ])
   },
   watch: {
-    student() {
-      this.localStudent = clonedeep(this.student)
+    studentInfo() {
+      this.localStudent = clonedeep(this.studentInfo)
     }
   },
   mounted() {
-    this.getStudent()
+    this.localStudent = clonedeep(this.studentInfo)
   },
   methods: {
     ...mapActions(namespace, {
       /**
-       * Получить информацию о студенте
-       */
-      getStudent: Types.actions.GET_STUDENT,
-      /**
        * Обновить информацию о студенте
+       * @type {Funciton}
        */
       updateStudent: Types.actions.UPDATE_STUDENT
     })

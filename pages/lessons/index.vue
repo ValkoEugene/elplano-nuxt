@@ -104,7 +104,6 @@ import {
 
 export default {
   name: 'LessonsPage',
-  middleware: ['auth'],
   components: {
     Loader: () => import('../../components/UI-core/loader.vue'),
     Search: () => import('../../components/UI-core/search.vue'),

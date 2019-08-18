@@ -4,7 +4,6 @@
 
 <script>
 export default {
-  name: 'TasksPage',
-  middleware: ['auth']
+  name: 'TasksPage'
 }
 </script>

@@ -104,7 +104,6 @@ import {
 
 export default {
   name: 'LecturersPage',
-  middleware: ['auth'],
   components: {
     Loader: () => import('../../components/UI-core/loader.vue'),
     Search: () => import('../../components/UI-core/search.vue'),

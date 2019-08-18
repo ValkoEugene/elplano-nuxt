@@ -6,6 +6,7 @@ import { namespace, Types } from '../store/user'
 
 // Middleware для проверки авторизован ли пользователь
 export default ({ store, redirect, req, route }) => {
+  console.log('auth')
   // Флаг что выполняется серверная генерация
   const isServer = process.server
 
