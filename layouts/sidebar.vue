@@ -1,5 +1,11 @@
 <template>
-  <v-navigation-drawer v-model="sidebarStatus" app>
+  <v-navigation-drawer
+    v-model="sidebarStatus"
+    app
+    dark
+    src="https://develop.d2ykf6mixoqcwa.amplifyapp.com/images/sidebar_bg.jpg"
+    class="drawer-background"
+  >
     <v-list-item>
       <v-list-item-content>
         <v-list-item-title class="title">Elplano</v-list-item-title>
@@ -37,7 +43,7 @@ export default {
      * Статус боковой панели
      * @type {Boolean}
      */
-    sidebarStatus: true
+    sidebarStatus: false
   }),
   computed: {
     /**
@@ -64,7 +70,7 @@ export default {
         {
           title: this.$t('sidebar.teachers'),
           icon: 'mdi-account-supervisor',
-          url: '/teachers'
+          url: '/lecturers'
         },
         {
           title: this.$t('sidebar.group'),
@@ -94,6 +100,8 @@ export default {
      * Слушаем событие через root для открытия/закрытия боковой панели
      */
     this.$root.$on(TOGGLE_SIDEBAR_ROOT_LISTENER, this.toggleSidebar)
+
+    this.sidebarStatus = !this.$vuetify.breakpoint.smAndDown
   },
   methods: {
     /**
@@ -105,3 +113,17 @@ export default {
   }
 }
 </script>
+
+<style>
+.drawer-background {
+  background-image: linear-gradient(45deg, #c2185b, #ba68c8);
+}
+
+.v-navigation-drawer__image {
+  opacity: 0.1;
+}
+
+.v-application .v-navigation-drawer__content a {
+  color: #ffffff;
+}
+</style>

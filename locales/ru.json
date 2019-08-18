@@ -15,8 +15,8 @@
   "sidebar": {
     "schedule": "Расписание",
     "lessons": "Предметы",
-    "tasks": "tasks",
-    "teachers": "Задания",
+    "tasks": "Задания",
+    "teachers": "Преподаватели",
     "group": "Группа",
     "measure": "Мероприятия",
     "ratings": "Оценки",
@@ -29,18 +29,42 @@
     "groupSettings": "Настройки группы"
   },
   "actions": {
-    "save": "Сохранить"
+    "save": "Сохранить",
+    "create": "Добавить",
+    "addTask": "Добавить задание",
+    "addRaiting": "Добавить оценку",
+    "edit": "Редактировать"
   },
   "field": {
-    "loginField": "Login",
-    "passwordField": "Password",
-    "confirmPasswordField": "Confirm password",
-    "confirmPasswordValidate": "Passwords do not match",
+    "loginField": "Логин",
+    "passwordField": "Пароль",
+    "confirmPasswordField": "Подтверждение пароля",
+    "confirmPasswordValidate": "Пароли не совпадают",
     "fullName": "ФИО",
     "about": "Описание",
-    "phone": "Телефон"
+    "phone": "Телефон",
+    "search": "Поиск",
+    "title": "Наименование",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "patronymic": "Отчество"
+  },
+  "ui": {
+    "loading": "Загрузка...",
+    "cancel": "Отмена",
+    "confirm": "Да"
   },
   "student": {
     "title": "Настройка профиля"
+  },
+  "lesson": {
+    "lessons": "Предметы",
+    "edit": "Редактрование предмета",
+    "create": "Создание предмета",
+    "confirm": "Удалить предмет?"
+  },
+  "lecturers": {
+    "lecturers": "Преподаватели",
+    "confirm": "Удалить преподавателя?"
   }
 }

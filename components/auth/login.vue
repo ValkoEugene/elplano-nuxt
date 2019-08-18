@@ -3,7 +3,7 @@
     <v-card-text>
       <v-form ref="form" :lazy-validation="true">
         <v-text-field
-          v-model="user.login"
+          v-model.trim="user.login"
           :label="$t('field.loginField')"
           :placeholder="$t('field.loginField')"
           type="text"
@@ -12,7 +12,7 @@
         />
 
         <v-text-field
-          v-model="user.password"
+          v-model.trim="user.password"
           :label="$t('field.passwordField')"
           :placeholder="$t('field.passwordField')"
           type="password"

@@ -29,7 +29,11 @@
     "groupSettings": "Group settings"
   },
   "actions": {
-    "save": "Save"
+    "save": "Save",
+    "create": "Create",
+    "addTask": "Add task",
+    "addRaiting": "Add rating",
+    "edit": "edit"
   },
   "field": {
     "loginField": "Login",
@@ -38,9 +42,29 @@
     "confirmPasswordValidate": "Passwords do not match",
     "fullName": "Full name",
     "about": "About",
-    "phone": "Phone"
+    "phone": "Phone",
+    "search": "Search",
+    "title": "Title",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "patronymic": "Patronymic"
+  },
+  "ui": {
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "confirm": "Ok"
   },
   "student": {
     "title": "Profile settings"
+  },
+  "lesson": {
+    "lessons": "Lessons",
+    "edit": "Edit lesson",
+    "create": "Create lesson",
+    "confirm": "Delete lesson?"
+  },
+  "lecturers": {
+    "lecturers": "Lecturers",
+    "confirm": "Delete lecturer?"
   }
 }

@@ -8,28 +8,28 @@
       <Search v-model="search" />
 
       <v-layout row wrap>
-        <template v-for="(course) in courses">
+        <template v-for="(lecturer) in lecturers">
           <v-flex
-            v-if="!search || $customHelpers.search(course.title, search)"
-            :key="course.id"
+            v-if="!search || $customHelpers.search(lecturer.view, search)"
+            :key="lecturer.id"
             xs12
             sm12
             md4
             class="pa-4"
           >
             <v-card min-height="100" elevation="5">
-              <CardTitle>{{ course.title }}</CardTitle>
+              <CardTitle>{{ lecturer.view }}</CardTitle>
 
               <v-card-text class="pb-0">
-                <div v-if="!loadingLecturers">
-                  <span class="font-weight-bold">{{ $t('lecturers.lecturers') }}:</span>
-                  <span v-if="!course.lecturer_ids.length">-</span>
+                <div v-if="!loadingCources">
+                  <span class="font-weight-bold">{{ $t('lesson.lessons') }}:</span>
+                  <span v-if="!lecturer.course_ids.length">-</span>
 
-                  <div v-else v-for="id in course.lecturer_ids" :key="id" class="pa-2">
+                  <div v-else v-for="id in lecturer.course_ids" :key="id" class="pa-2">
                     <v-avatar class="bg-primary-lighten2" size="32">
-                      <v-icon dark>account_circle</v-icon>
+                      <v-icon dark>book</v-icon>
                     </v-avatar>
-                    {{ getLecturerView(id) }}
+                    {{ getCourseView(id) }}
                   </div>
                 </div>
               </v-card-text>
@@ -47,14 +47,14 @@
                   icon
                   class="text-primary-darken1"
                   :disabled="updating"
-                  @click="edit(course.id)"
+                  @click="edit(lecturer.id)"
                 >
                   <v-icon>edit</v-icon>
                 </v-btn>
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon color="error" :disabled="updating" @click="initDelete(course.id)">
+                <v-btn icon color="error" :disabled="updating" @click="initDelete(lecturer.id)">
                   <v-icon>delete</v-icon>
                 </v-btn>
               </v-card-actions>
@@ -103,13 +103,13 @@ import {
 } from '../../store/lecturers'
 
 export default {
-  name: 'LessonsPage',
+  name: 'LecturersPage',
   middleware: ['auth'],
   components: {
     Loader: () => import('../../components/UI-core/loader.vue'),
     Search: () => import('../../components/UI-core/search.vue'),
     CardTitle: () => import('../../components/cards/card-title.vue'),
-    Edit: () => import('../../components/lessons/edit.vue'),
+    Edit: () => import('../../components/lecturers/edit.vue'),
     Confirm: () => import('../../components/UI-core/confirm.vue')
   },
   data: () => ({
@@ -132,7 +132,7 @@ export default {
     deletConfirming: false,
 
     /**
-     * Id удаляемого предмета
+     * Id удаляемого преподавателя
      * @type {String}
      */
     deletId: ''
@@ -145,19 +145,10 @@ export default {
        */
       courses: 'courses',
       /**
-       * Id редактируемого предмета
-       */
-      editingId: 'editingId',
-      /**
        * Флаг загрузки предметов
        * @type {Boolean}
        */
-      loadingCources: 'loading',
-      /**
-       * Флаг обновления данных
-       * @type {Boolean}
-       */
-      updating: 'updating'
+      loadingCources: 'loading'
     }),
 
     ...mapState(lecturersNamespace, {
@@ -167,10 +158,19 @@ export default {
        */
       lecturers: 'lecturers',
       /**
+       * Id редактируемого преподавателя
+       */
+      editingId: 'editingId',
+      /**
        * Флаг загрузки преподавателей
        * @type {Boolean}
        */
-      loadingLecturers: 'loading'
+      loadingLecturers: 'loading',
+      /**
+       * Флаг обновления данных
+       * @type {Boolean}
+       */
+      updating: 'updating'
     }),
 
     /**
@@ -186,30 +186,30 @@ export default {
     this.loadLecturers()
   },
   methods: {
-    ...mapMutations(coursesNamespace, {
+    ...mapMutations(lecturersNamespace, {
       /**
-       * Установить id редактируемого предмета
+       * Установить id редактируемого преподавателя
        * @type {Function}
        */
-      setEditingId: coursesTypes.mutations.SET_EDITING_ID
+      setEditingId: lecturersTypes.mutations.SET_EDITING_ID
     }),
 
     /**
-     * Получить отображение преподавателя
+     * Получить отображение предмета
      * @type {Function}
      * @param {String} id
      * @returns {String}
      */
-    getLecturerView(id) {
-      const lecturer = this.lecturers.find((item) => item.id === id)
+    getCourseView(id) {
+      const course = this.courses.find((item) => item.id === id)
 
-      return lecturer ? lecturer.view : '-'
+      return course ? course.title : '-'
     },
 
     /**
-     * Редактировать предмет
+     * Редактировать прпреподавателяе
      * @type {Function}
-     * @param {String} id - id предмета
+     * @param {String} id - id преподавателя
      */
     edit(id) {
       this.setEditingId(id)
@@ -221,12 +221,20 @@ export default {
        * Загрузить предметы
        * @type {Function}
        */
-      loadCourses: coursesTypes.actions.LOAD_COURSES,
+      loadCourses: coursesTypes.actions.LOAD_COURSES
+    }),
+
+    ...mapActions(lecturersNamespace, {
       /**
-       * Удалить предмет
+       * Загрузить преподавателей
        * @type {Function}
        */
-      deleteCourse: coursesTypes.actions.DELETE_COURSE
+      loadLecturers: lecturersTypes.actions.LOAD_LECTURERS,
+      /**
+       * Удалить препадователя
+       * @type {Function}
+       */
+      deleteLecturer: lecturersTypes.actions.DELETE_LECTURER
     }),
 
     /**
@@ -245,16 +253,8 @@ export default {
      */
     onDeleteConfirmed() {
       this.deletConfirming = false
-      this.deleteCourse(this.deletId)
-    },
-
-    ...mapActions(lecturersNamespace, {
-      /**
-       * Загрузить преподавателей
-       * @type {Function}
-       */
-      loadLecturers: lecturersTypes.actions.LOAD_LECTURERS
-    })
+      this.deleteLecturer(this.deletId)
+    }
   }
 }
 </script>

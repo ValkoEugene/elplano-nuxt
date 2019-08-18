@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com PORT=3000 nuxt",
     "build": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com nuxt build",
+    "analyze": "yarn && nuxt build --analyze",
     "deploy-manual": "./deploy_manual.sh",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -24,6 +25,7 @@
     "js-cookie": "^2.2.1",
     "lodash.clonedeep": "^4.5.0",
     "nuxt": "^2.0.0",
+    "nuxt-material-design-icons": "^1.0.4",
     "vue-i18n": "^8.14.0"
   },
   "devDependencies": {

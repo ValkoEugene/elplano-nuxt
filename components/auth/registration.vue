@@ -6,7 +6,7 @@
 
       <v-form v-else ref="form" :lazy-validation="true">
         <v-text-field
-          v-model="user.username"
+          v-model.trim="user.username"
           :label="$t('field.loginField')"
           :placeholder="$t('field.loginField')"
           type="text"
@@ -16,7 +16,7 @@
 
         <!-- eslint-disable -->
         <v-text-field
-          v-model="user.email"
+          v-model.trim="user.email"
           label="Email"
           placeholder="Email"
           type="text"
@@ -25,7 +25,7 @@
         />
 
         <v-text-field
-          v-model="user.password"
+          v-model.trim="user.password"
           :label="$t('field.passwordField')"
           :placeholder="$t('field.passwordField')"
           type="password"
@@ -34,7 +34,7 @@
         />
 
         <v-text-field
-          v-model="user.password_confirmation"
+          v-model.trim="user.password_confirmation"
           :label="$t('field.confirmPasswordField')"
           :placeholder="$t('field.confirmPasswordField')"
           type="password"
