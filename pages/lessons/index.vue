@@ -13,45 +13,40 @@
             :key="id"
             xs12
             sm12
-            md6
+            md4
             class="pa-4"
           >
             <v-card min-height="100" elevation="5">
-              <v-card-text>
-                <v-row>
-                  <v-col cols="10">
-                    <div class="title text-primary">{{ course.title }}</div>
+              <v-card-title class="text-primary-darken3 title">{{ course.title }}</v-card-title>
+              <v-card-text class="pb-0">
+                <div v-if="!loadingLecturers">
+                  <span class="font-weight-bold">Преподаватели:</span>
+                  <span v-if="!course.lecturer_ids.length">-</span>
 
-                    <div v-if="!loadingLecturers">
-                      Преподаватели:
-                      <span v-if="!course.lecturer_ids.length">-</span>
-
-                      <div
-                        v-else
-                        v-for="id in course.lecturer_ids"
-                        :key="id"
-                      >{{ lecturers[id].view }}</div>
-                    </div>
-                  </v-col>
-
-                  <v-col cols="2" align-self="center">
-                    <v-menu left bottom>
-                      <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
-                          <v-icon>mdi-dots-vertical</v-icon>
-                        </v-btn>
-                      </template>
-
-                      <v-list>
-                        <!-- eslint-disable -->
-                        <v-list-item @click="() => {}">{{ $t('actions.addTask') }}</v-list-item>
-                        <v-list-item @click="() => {}">{{ $t('actions.addRaiting') }}</v-list-item>
-                        <v-list-item @click="edit(id)">{{ $t('actions.edit') }}</v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </v-col>
-                </v-row>
+                  <div v-else v-for="id in course.lecturer_ids" :key="id" class="pa-2">
+                    <v-avatar class="bg-primary-lighten2" size="32">
+                      <v-icon dark>account_circle</v-icon>
+                    </v-avatar>
+                    {{ lecturers[id].view }}
+                  </div>
+                </div>
               </v-card-text>
+
+              <v-card-actions class="pt-0">
+                <v-spacer></v-spacer>
+
+                <v-btn icon class="text-primary-darken1">
+                  <v-icon>star_half</v-icon>
+                </v-btn>
+
+                <v-btn icon class="text-primary-darken1">
+                  <v-icon>work</v-icon>
+                </v-btn>
+
+                <v-btn icon class="text-primary-darken1" @click="edit(id)">
+                  <v-icon>edit</v-icon>
+                </v-btn>
+              </v-card-actions>
             </v-card>
           </v-flex>
         </template>
@@ -70,11 +65,15 @@
         />
       </v-dialog>
     </v-row>
+
+    <v-btn fixed dark fab bottom right class="bg-primary-darken1" @click="edit('')">
+      <v-icon>add</v-icon>
+    </v-btn>
   </v-container>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import {
   namespace as coursesNamespace,
   Types as coursesTypes
@@ -102,13 +101,7 @@ export default {
      * Флаг редактирования
      * @type {Boolean}
      */
-    editing: false,
-
-    /**
-     * ID редактируемого урока
-     * @type {String}
-     */
-    editingId: ''
+    editing: false
   }),
   computed: {
     ...mapState(coursesNamespace, {
@@ -117,6 +110,10 @@ export default {
        * @type {Object}
        */
       courses: 'courses',
+      /**
+       * Id редактируемого предмета
+       */
+      editingId: 'editingId',
       /**
        * Флаг загрузки предметов
        * @type {Boolean}
@@ -150,14 +147,22 @@ export default {
     this.loadLecturers()
   },
   methods: {
+    ...mapMutations(coursesNamespace, {
+      /**
+       * Установить id редактируемого предмета
+       * @type {Function}
+       */
+      setEditingId: coursesTypes.mutations.SET_EDITING_ID
+    }),
+
     /**
      * Редактировать предмет
      * @type {Function}
      * @param {String} id - id предмета
      */
     edit(id) {
+      this.setEditingId(id)
       this.editing = true
-      this.editingId = id
     },
 
     ...mapActions(coursesNamespace, {

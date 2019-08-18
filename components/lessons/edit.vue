@@ -11,7 +11,7 @@
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-card-text>
+    <v-card-text class="pa-6">
       <v-text-field
         v-model="localCourse.title"
         :label="$t('field.title')"
@@ -77,14 +77,28 @@ export default {
       'updating'
     ])
   },
-  mounted() {
-    if (this.coursesId && this.courses[this.coursesId]) {
-      this.localCourse = clonedeep(this.courses[this.coursesId])
+  watch: {
+    coursesId() {
+      this.createLocalCopy()
     }
+  },
+  mounted() {
+    this.createLocalCopy()
   },
   methods: {
     /**
+     * Создать локальную копию предмета
+     * @type {Function}
+     */
+    createLocalCopy() {
+      if (this.coursesId && this.courses[this.coursesId]) {
+        this.localCourse = clonedeep(this.courses[this.coursesId])
+      }
+    },
+
+    /**
      * Закрыть редактрование
+     * @type {Function}
      */
     close() {
       this.$emit('close')
