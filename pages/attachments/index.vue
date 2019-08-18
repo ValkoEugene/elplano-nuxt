@@ -4,7 +4,6 @@
 
 <script>
 export default {
-  name: 'AttachmentsPage',
-  middleware: ['auth']
+  name: 'AttachmentsPage'
 }
 </script>

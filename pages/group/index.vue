@@ -4,7 +4,6 @@
 
 <script>
 export default {
-  name: 'GroupPage',
-  middleware: ['auth']
+  name: 'GroupPage'
 }
 </script>
