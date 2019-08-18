@@ -10,7 +10,9 @@
       <!-- <v-container fluid> -->
       <!-- If using vue-router -->
       <div :class="[$vuetify.breakpoint.smAndDown ? '' : 'pa-6']">
-        <nuxt></nuxt>
+        <Loader v-if="loading" />
+
+        <nuxt v-else />
       </div>
       <Snackbars />
       <!-- </v-container> -->
@@ -19,17 +21,34 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+import { namespace, Types } from '../store/user'
+
 export default {
   name: 'DefaultLayout',
+  // Проверяем что пользователь авторизован
+  middleware: ['auth'],
   components: {
+    Loader: () => import('../components/UI-core/loader.vue'),
     Sidebar: () => import('./sidebar.vue'),
     Header: () => import('./header.vue'),
     Snackbars: () => import('../components/UI-core/snackbars.vue')
   },
-  data: () => ({
-    test: ''
-  }),
   computed: {
+    ...mapState(namespace, [
+      /**
+       * Флаг загрузки
+       * @type {Boolean}
+       */
+      'loading',
+
+      /**
+       * Пользователь
+       * @type {Object | null}
+       */
+      'userInfo'
+    ]),
+
     /**
      * Стили с css переменными из темы
      * @type {Object}
@@ -54,6 +73,18 @@ export default {
         '--primary-accent4': this.$vuetify.theme.currentTheme.primary.accent4
       }
     }
+  },
+  mounted() {
+    this.getUserInfo()
+  },
+  methods: {
+    ...mapActions(namespace, {
+      /**
+       * Загрузить информацию о пользователе
+       * @type {Function}
+       */
+      getUserInfo: Types.actions.GET_USER_INFO
+    })
   }
 }
 </script>

@@ -8,8 +8,9 @@
   >
     <v-list-item>
       <v-list-item-content>
-        <v-list-item-title class="title">Elplano</v-list-item-title>
-        <v-list-item-subtitle>ValkoEugene</v-list-item-subtitle>
+        <!-- eslint-disable -->
+        <v-list-item-title class="title">{{ user && user.username }}</v-list-item-title>
+        <v-list-item-subtitle>{{ student && student.full_name }}</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
 
@@ -30,6 +31,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { namespace } from '../store/user'
+
 /**
  * Слушатель для открытие/закрытия боковой панели
  * @type {String}
@@ -46,6 +50,19 @@ export default {
     sidebarStatus: false
   }),
   computed: {
+    ...mapState(namespace, {
+      /**
+       * Информация о пользователе
+       * @type {Object}
+       */
+      user: 'userInfo',
+      /**
+       * Информация о студенте
+       * @type {Object}
+       */
+      student: 'studentInfo'
+    }),
+
     /**
      * Пункты меню
      * @type {Array}

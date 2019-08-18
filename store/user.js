@@ -1,6 +1,7 @@
 // Информация о пользователе
 
 import axios from 'axios'
+import userApi from '../api/user'
 import getRouter from '../plugins/getRouter'
 import { setTokensInCookie, resetTokensInCookie } from '../utils/auth'
 import {
@@ -14,12 +15,17 @@ export const Types = {
   mutations: {
     SET_LOGIN_FETCHING: 'SET_LOGIN_FETCHING',
     SET_USER: 'SET_USER',
+    SET_STUDENT: 'SET_STUDENT',
+    SET_LOADING: 'SET_LOADING',
+    SET_UPDATING: 'SET_UPDATING',
     SET_ACCESS_TOKEN: 'SET_ACCESS_TOKEN',
     SET_REFRESH_TOKEN: 'SET_REFRESH_TOKEN'
   },
   actions: {
     SET_TOKENS: 'SET_TOKENS',
     RESET_USER: 'RESET_USER',
+    GET_USER_INFO: 'GET_USER_INFO',
+    UPDATE_STUDENT: 'UPDATE_STUDENT',
     LOGIN: 'LOGIN'
   },
   getters: {
@@ -47,10 +53,28 @@ export const state = () => ({
   loginFetching: false,
 
   /**
+   * Флаг загрузки
+   * @type {Boolean}
+   */
+  loading: true,
+
+  /**
+   * Флаг обновления
+   * @type {Boolean}
+   */
+  updating: false,
+
+  /**
    * Информация о пользователе
+   * @type {Object | null}
+   */
+  userInfo: {},
+
+  /**
+   * Информация о студенте
    * @type {Object}
    */
-  userInfo: { ...userTemplate },
+  studentInfo: {},
 
   /**
    * Токен
@@ -85,6 +109,15 @@ export const mutations = {
   },
 
   /**
+   * Установить инцформацию о студенте
+   * @param {Object} state
+   * @param {Object} student
+   */
+  [Types.mutations.SET_STUDENT](state, student) {
+    state.studentInfo = { ...state.studentInfo, ...student }
+  },
+
+  /**
    * Установить access_token
    * @param {Object} state
    * @param {String} access_token
@@ -100,6 +133,24 @@ export const mutations = {
    */
   [Types.mutations.SET_REFRESH_TOKEN](state, refresh_token) {
     state.refresh_token = refresh_token
+  },
+
+  /**
+   * Установить флаг загрузки
+   * @param {Object} state
+   * @param {String} loading
+   */
+  [Types.mutations.SET_LOADING](state, loading) {
+    state.loading = loading
+  },
+
+  /**
+   * Установить флаг обновления
+   * @param {Object} state
+   * @param {String} updating
+   */
+  [Types.mutations.SET_UPDATING](state, updating) {
+    state.updating = updating
   }
 }
 
@@ -145,14 +196,6 @@ export const actions = {
       )
       const { access_token, refresh_token } = response.data
 
-      // TODO Доделать информацию о юзере
-      const mockUserInfo = {
-        username: login,
-        email: login
-      }
-
-      context.commit(Types.mutations.SET_USER, mockUserInfo)
-
       context.dispatch(Types.actions.SET_TOKENS, {
         access_token,
         refresh_token
@@ -170,6 +213,55 @@ export const actions = {
       )
     } finally {
       context.commit(Types.mutations.SET_LOGIN_FETCHING, false)
+    }
+  },
+
+  /**
+   * Загрузить информацию о пользователе
+   * @param {*} context
+   */
+  async [Types.actions.GET_USER_INFO](context) {
+    try {
+      context.commit(Types.mutations.SET_LOADING, true)
+
+      const { user, student } = await userApi.getUserInfo()
+
+      context.commit(Types.mutations.SET_USER, user)
+      context.commit(Types.mutations.SET_STUDENT, student)
+      context.commit(Types.mutations.SET_LOADING, false)
+    } catch (error) {
+      context.commit(
+        `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
+        error.snackbarErrors,
+        { root: true }
+      )
+
+      getRouter().push('/log-off')
+    }
+  },
+
+  /**
+   * Обновить информацию о студенте
+   * @param {Object} context
+   * @param {Object} student_attributes
+   */
+  async [Types.actions.UPDATE_STUDENT](context, student_attributes) {
+    try {
+      context.commit(Types.mutations.SET_UPDATING, true)
+
+      const { user, student } = await userApi.updateStudentInfo(
+        student_attributes
+      )
+
+      context.commit(Types.mutations.SET_USER, user)
+      context.commit(Types.mutations.SET_STUDENT, student)
+      context.commit(Types.mutations.SET_UPDATING, false)
+    } catch (error) {
+      context.commit(
+        `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
+        error.snackbarErrors,
+        { root: true }
+      )
     }
   }
 }
