@@ -14,6 +14,7 @@ export const Types = {
     SET_UPDATING: 'SET_UPDATING',
     SET_LECTURERS: 'SET_LECTURERS',
     SET_LECTURER: 'SET_LECTURER',
+    SET_EDITING_ID: 'SET_EDITING_ID',
     DELETE_LECTURER: 'DELETE_LECTURER'
   },
   actions: {
@@ -41,7 +42,13 @@ export const state = () => ({
    * Преподаватели
    * @type {Array}
    */
-  lecturers: []
+  lecturers: [],
+
+  /**
+   * Id редактируемого преподавателя
+   * @type {String}
+   */
+  editingId: ''
 })
 
 export const mutations = {
@@ -86,6 +93,15 @@ export const mutations = {
     }
 
     state.lecturers = [lecturer, ...state.lecturers]
+  },
+
+  /**
+   * Установить id редактируемого преподавателя
+   * @param {Object} state
+   * @param {String} id
+   */
+  [Types.mutations.SET_EDITING_ID](state, id) {
+    state.editingId = id
   },
 
   /**
@@ -134,6 +150,7 @@ export const actions = {
       const lecturer = await lecturersApi.create(data)
 
       context.commit(Types.mutations.SET_LECTURER, lecturer)
+      context.commit(Types.mutations.SET_EDITING_ID, lecturer.id)
     } catch (error) {
       context.commit(
         `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,

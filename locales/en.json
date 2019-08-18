@@ -44,7 +44,10 @@
     "about": "About",
     "phone": "Phone",
     "search": "Search",
-    "title": "Title"
+    "title": "Title",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "patronymic": "Patronymic"
   },
   "ui": {
     "loading": "Loading..."
@@ -53,6 +56,7 @@
     "title": "Profile settings"
   },
   "lesson": {
+    "lessons": "Lessons",
     "edit": "Edit lesson",
     "create": "Create lesson"
   },

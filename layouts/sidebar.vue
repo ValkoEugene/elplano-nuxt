@@ -70,7 +70,7 @@ export default {
         {
           title: this.$t('sidebar.teachers'),
           icon: 'mdi-account-supervisor',
-          url: '/teachers'
+          url: '/lecturers'
         },
         {
           title: this.$t('sidebar.group'),

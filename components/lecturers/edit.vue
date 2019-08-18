@@ -19,20 +19,38 @@
     <v-card-text class="pa-6">
       <v-form ref="form" :lazy-validation="true">
         <v-text-field
-          v-model="localCourse.title"
-          :label="$t('field.title')"
-          :placeholder="$t('field.title')"
+          v-model="localLecturer.last_name"
+          :label="$t('field.lastName')"
+          :placeholder="$t('field.lastName')"
+          :rules="[$rules.required]"
+          type="text"
+          outlined
+        />
+
+        <v-text-field
+          v-model="localLecturer.first_name"
+          :label="$t('field.firstName')"
+          :placeholder="$t('field.firstName')"
+          :rules="[$rules.required]"
+          type="text"
+          outlined
+        />
+
+        <v-text-field
+          v-model="localLecturer.patronymic"
+          :label="$t('field.patronymic')"
+          :placeholder="$t('field.patronymic')"
           :rules="[$rules.required]"
           type="text"
           outlined
         />
 
         <v-select
-          v-model="localCourse.lecturer_ids"
-          :items="lecturers"
+          v-model="localLecturer.course_ids"
+          :items="courses"
           item-value="id"
-          item-text="view"
-          :label="$t('lecturers.lecturers')"
+          item-text="title"
+          :label="$t('lesson.lessons')"
           outlined
           attach
           chips
@@ -47,9 +65,9 @@
 import clonedeep from 'lodash.clonedeep'
 import { mapState, mapActions } from 'vuex'
 import {
-  namespace as coursesNamespace,
-  Types as coursesTypes
-} from '../../store/courses'
+  namespace as lecturersNamespace,
+  Types as lecturersTypes
+} from '../../store/lecturers'
 
 export default {
   name: 'EditLesson',
@@ -73,7 +91,7 @@ export default {
     },
 
     /**
-     * Id редактируемого предмета
+     * Id редактируемого преподавателя
      * @type {Boolean}
      */
     editingId: {
@@ -83,17 +101,20 @@ export default {
   },
   data: () => ({
     /**
-     * Локальная копия предмета
+     * Локальная копия преподавателя
      * @type {Object}
      */
-    localCourse: {
+    localLecturer: {
       id: '',
-      title: '',
-      lecturer_ids: []
+      first_name: '',
+      last_name: '',
+      patronymic: '',
+      avatar: '',
+      course_ids: []
     }
   }),
   computed: {
-    ...mapState(coursesNamespace, [
+    ...mapState(lecturersNamespace, [
       /**
        * Флаг обновления
        * @type {Boolean}
@@ -117,8 +138,8 @@ export default {
     createLocalCopy() {
       if (!this.editingId) return
 
-      this.localCourse = clonedeep(
-        this.courses.find((item) => item.id === this.editingId)
+      this.localLecturer = clonedeep(
+        this.lecturers.find((item) => item.id === this.editingId)
       )
     },
 
@@ -130,17 +151,17 @@ export default {
       this.$emit('close')
     },
 
-    ...mapActions(coursesNamespace, {
+    ...mapActions(lecturersNamespace, {
       /**
-       * Обновить курс
+       * Обновить преподавателя
        * @type {Function}
        */
-      update: coursesTypes.actions.EDIT_COURSE,
+      update: lecturersTypes.actions.EDIT_LECTURER,
       /**
-       * Создать курс
+       * Создать преподавателя
        * @type {Function}
        */
-      create: coursesTypes.actions.CREATE_COURSE
+      create: lecturersTypes.actions.CREATE_LECTURER
     }),
 
     /**
@@ -149,8 +170,8 @@ export default {
      */
     save() {
       this.editingId
-        ? this.update(this.localCourse)
-        : this.create(this.localCourse)
+        ? this.update(this.localLecturer)
+        : this.create(this.localLecturer)
     }
   }
 }
