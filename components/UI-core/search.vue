@@ -1,6 +1,7 @@
 <template>
   <v-text-field
     v-model="localValue"
+    class="search"
     :label="$t('field.search')"
     :placeholder="$t('field.search')"
     type="text"
@@ -64,3 +65,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.search {
+  margin-bottom: -16px;
+}
+</style>

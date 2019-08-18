@@ -43,7 +43,7 @@ export default {
      * Статус боковой панели
      * @type {Boolean}
      */
-    sidebarStatus: true
+    sidebarStatus: false
   }),
   computed: {
     /**
@@ -100,6 +100,8 @@ export default {
      * Слушаем событие через root для открытия/закрытия боковой панели
      */
     this.$root.$on(TOGGLE_SIDEBAR_ROOT_LISTENER, this.toggleSidebar)
+
+    this.sidebarStatus = !this.$vuetify.breakpoint.smAndDown
   },
   methods: {
     /**

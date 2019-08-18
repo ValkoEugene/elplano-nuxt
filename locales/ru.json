@@ -36,10 +36,10 @@
     "edit": "Редактировать"
   },
   "field": {
-    "loginField": "Login",
-    "passwordField": "Password",
-    "confirmPasswordField": "Confirm password",
-    "confirmPasswordValidate": "Passwords do not match",
+    "loginField": "Логин",
+    "passwordField": "Пароль",
+    "confirmPasswordField": "Подтверждение пароля",
+    "confirmPasswordValidate": "Пароли не совпадают",
     "fullName": "ФИО",
     "about": "Описание",
     "phone": "Телефон",
@@ -55,5 +55,8 @@
   "lesson": {
     "edit": "Редактрование предмета",
     "create": "Создание предмета"
+  },
+  "lecturers": {
+    "lecturers": "Преподаватели"
   }
 }

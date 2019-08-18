@@ -55,5 +55,8 @@
   "lesson": {
     "edit": "Edit lesson",
     "create": "Create lesson"
+  },
+  "lecturers": {
+    "lecturers": "Lecturers"
   }
 }

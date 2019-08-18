@@ -18,10 +18,10 @@
             class="pa-4"
           >
             <v-card min-height="100" elevation="5">
-              <v-card-title class="text-primary-darken3 title">{{ course.title }}</v-card-title>
+              <CardTitle>{{ course.title }}</CardTitle>
               <v-card-text class="pb-0">
                 <div v-if="!loadingLecturers">
-                  <span class="font-weight-bold">Преподаватели:</span>
+                  <span class="font-weight-bold">{{ $t('lecturers.lecturers') }}:</span>
                   <span v-if="!course.lecturer_ids.length">-</span>
 
                   <div v-else v-for="id in course.lecturer_ids" :key="id" class="pa-2">
@@ -90,6 +90,7 @@ export default {
   components: {
     Loader: () => import('../../components/UI-core/loader.vue'),
     Search: () => import('../../components/UI-core/search.vue'),
+    CardTitle: () => import('../../components/cards/card-title.vue'),
     Edit: () => import('../../components/lessons/edit.vue')
   },
   data: () => ({

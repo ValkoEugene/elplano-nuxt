@@ -25,7 +25,7 @@
         :items="lecturers"
         item-value="id"
         item-text="view"
-        label="Chips"
+        :label="$t('lecturers.lecturers')"
         outlined
         attach
         chips

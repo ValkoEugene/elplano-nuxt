@@ -9,7 +9,9 @@
       <!-- Provides the application the proper gutter -->
       <!-- <v-container fluid> -->
       <!-- If using vue-router -->
-      <nuxt></nuxt>
+      <div :class="[$vuetify.breakpoint.smAndDown ? '' : 'pa-6']">
+        <nuxt></nuxt>
+      </div>
       <Snackbars />
       <!-- </v-container> -->
     </v-content>
