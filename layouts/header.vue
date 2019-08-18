@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar color="deep-purple accent-4" app dark>
+  <v-app-bar class="bg-primary-darken4" app dark>
     <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
 
     <v-toolbar-title>Elplano</v-toolbar-title>

@@ -65,14 +65,22 @@ export default {
     theme: {
       dark: false,
       themes: {
-        dark: {
-          primary: colors.blue.darken2,
-          accent: colors.grey.darken3,
-          secondary: colors.amber.darken3,
-          info: colors.teal.lighten1,
-          warning: colors.amber.base,
-          error: colors.deepOrange.accent4,
-          success: colors.green.accent3
+        light: {
+          primary: {
+            base: colors.purple.base,
+            lighten1: colors.purple.lighten1,
+            lighten2: colors.purple.lighten2,
+            lighten3: colors.purple.lighten3,
+            lighten4: colors.purple.lighten4,
+            darken1: colors.purple.darken1,
+            darken2: colors.purple.darken2,
+            darken3: colors.purple.darken3,
+            darken4: colors.purple.darken4,
+            accent1: colors.purple.accent1,
+            accent2: colors.purple.accent2,
+            accent3: colors.purple.accent3,
+            accent4: colors.purple.accent4
+          }
         }
       }
     }
