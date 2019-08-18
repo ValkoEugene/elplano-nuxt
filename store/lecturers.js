@@ -39,9 +39,9 @@ export const state = () => ({
 
   /**
    * Преподаватели
-   * @type {Object}
+   * @type {Array}
    */
-  lecturers: {}
+  lecturers: []
 })
 
 export const mutations = {
@@ -78,7 +78,14 @@ export const mutations = {
    * @param {Object} lecturer
    */
   [Types.mutations.SET_LECTURER](state, lecturer) {
-    state.lecturers[lecturer.id] = lecturer
+    if (state.lecturers.some((item) => item.id === lecturer.id)) {
+      state.lecturers = state.lecturers.map((item) =>
+        item.id === lecturer.id ? lecturer : item
+      )
+      return
+    }
+
+    state.lecturers = [lecturer, ...state.lecturers]
   },
 
   /**
@@ -87,8 +94,8 @@ export const mutations = {
    * @param {Object} lecturer
    */
   [Types.mutations.DELETE_LECTURER](state, id) {
-    if (state.lecturers[id]) {
-      delete state.lecturers[id]
+    if (state.lecturers.some((item) => item.id === id)) {
+      state.lecturers = state.lecturers.filter((item) => item.id !== id)
     }
   }
 }
@@ -104,12 +111,7 @@ export const actions = {
     try {
       const lecturers = await lecturersApi.loadData()
 
-      const formatedLecturers = {}
-      lecturers.forEach((item) => {
-        formatedLecturers[item.id] = item
-      })
-
-      context.commit(Types.mutations.SET_LECTURERS, formatedLecturers)
+      context.commit(Types.mutations.SET_LECTURERS, lecturers)
       context.commit(Types.mutations.SET_LOADING, false)
     } catch (error) {
       context.commit(

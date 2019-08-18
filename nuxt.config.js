@@ -30,7 +30,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/rules', '~/plugins/i18n'],
+  plugins: ['~/plugins/rules', '~/plugins/i18n', '~/plugins/helpers'],
   /*
    ** Nuxt.js dev-modules
    */

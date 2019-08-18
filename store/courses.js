@@ -40,9 +40,9 @@ export const state = () => ({
 
   /**
    * Предметы
-   * @type {Object}
+   * @type {Array}
    */
-  courses: {},
+  courses: [],
 
   /**
    * Id редактируемого предмета
@@ -85,7 +85,14 @@ export const mutations = {
    * @param {Object} course
    */
   [Types.mutations.SET_COURSE](state, course) {
-    state.courses[course.id] = course
+    if (state.courses.some((item) => item.id === course.id)) {
+      state.courses = state.courses.map((item) =>
+        item.id === course.id ? course : item
+      )
+      return
+    }
+
+    state.courses = [course, ...state.courses]
   },
 
   /**
@@ -103,8 +110,8 @@ export const mutations = {
    * @param {Object} course
    */
   [Types.mutations.DELETE_COURSE](state, id) {
-    if (state.courses[id]) {
-      delete state.courses[id]
+    if (state.courses.some((item) => item.id === id)) {
+      state.courses = state.courses.filter((item) => item.id !== id)
     }
   }
 }
@@ -120,12 +127,7 @@ export const actions = {
     try {
       const courses = await coursesApi.loadData()
 
-      const formatedCourses = {}
-      courses.forEach((item) => {
-        formatedCourses[item.id] = item
-      })
-
-      context.commit(Types.mutations.SET_COURSES, formatedCourses)
+      context.commit(Types.mutations.SET_COURSES, courses)
       context.commit(Types.mutations.SET_LOADING, false)
     } catch (error) {
       context.commit(

@@ -19,6 +19,18 @@
         type="text"
         outlined
       />
+
+      <v-select
+        v-model="localCourse.lecturer_ids"
+        :items="lecturers"
+        item-value="id"
+        item-text="view"
+        label="Chips"
+        outlined
+        attach
+        chips
+        multiple
+      />
     </v-card-text>
   </v-card>
 </template>
@@ -36,20 +48,20 @@ export default {
   props: {
     /**
      * Преподаватели
-     * @type {Object}
+     * @type {Array}
      */
     lecturers: {
-      type: Object,
-      default: () => ({})
+      type: Array,
+      default: () => []
     },
 
     /**
      * Предметы
-     * @type {Object}
+     * @type {Array}
      */
     courses: {
-      type: Object,
-      default: () => ({})
+      type: Array,
+      default: () => []
     },
 
     /**
@@ -66,7 +78,11 @@ export default {
      * Локальная копия предмета
      * @type {Object}
      */
-    localCourse: {}
+    localCourse: {
+      id: '',
+      title: '',
+      lecturer_ids: []
+    }
   }),
   computed: {
     ...mapState(coursesNamespace, [
@@ -91,9 +107,11 @@ export default {
      * @type {Function}
      */
     createLocalCopy() {
-      if (this.coursesId && this.courses[this.coursesId]) {
-        this.localCourse = clonedeep(this.courses[this.coursesId])
-      }
+      if (!this.coursesId) return
+
+      this.localCourse = clonedeep(
+        this.courses.find((item) => item.id === this.coursesId)
+      )
     },
 
     /**

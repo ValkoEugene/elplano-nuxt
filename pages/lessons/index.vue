@@ -1,16 +1,17 @@
 <template>
-  <v-container fluid>
+  <v-container :fluid="!loading">
     <!-- eslint-disable -->
-    <v-progress-circular v-if="loading" :size="100" color="primary" indeterminate />
+
+    <Loader v-if="loading" />
 
     <template v-else>
       <Search v-model="search" />
 
       <v-layout row wrap>
-        <template v-for="(course, id) in courses">
+        <template v-for="(course) in courses">
           <v-flex
-            v-if="!search || course.title.includes(search)"
-            :key="id"
+            v-if="!search || $customHelpers.search(course.title, search)"
+            :key="course.id"
             xs12
             sm12
             md4
@@ -27,7 +28,7 @@
                     <v-avatar class="bg-primary-lighten2" size="32">
                       <v-icon dark>account_circle</v-icon>
                     </v-avatar>
-                    {{ lecturers[id].view }}
+                    {{ getLecturerView(id) }}
                   </div>
                 </div>
               </v-card-text>
@@ -43,7 +44,7 @@
                   <v-icon>work</v-icon>
                 </v-btn>
 
-                <v-btn icon class="text-primary-darken1" @click="edit(id)">
+                <v-btn icon class="text-primary-darken1" @click="edit(course.id)">
                   <v-icon>edit</v-icon>
                 </v-btn>
               </v-card-actions>
@@ -87,6 +88,7 @@ export default {
   name: 'LessonsPage',
   middleware: ['auth'],
   components: {
+    Loader: () => import('../../components/UI-core/loader.vue'),
     Search: () => import('../../components/UI-core/search.vue'),
     Edit: () => import('../../components/lessons/edit.vue')
   },
@@ -107,7 +109,7 @@ export default {
     ...mapState(coursesNamespace, {
       /**
        * Предметы
-       * @type {Object}
+       * @type {Array}
        */
       courses: 'courses',
       /**
@@ -156,6 +158,18 @@ export default {
     }),
 
     /**
+     * Получить отображение преподавателя
+     * @type {Function}
+     * @param {String} id
+     * @returns {String}
+     */
+    getLecturerView(id) {
+      const lecturer = this.lecturers.find((item) => item.id === id)
+
+      return lecturer ? lecturer.view : '-'
+    },
+
+    /**
      * Редактировать предмет
      * @type {Function}
      * @param {String} id - id предмета
@@ -183,3 +197,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.full-height {
+  height: calc(100vh - 56px);
+}
+</style>

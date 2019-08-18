@@ -46,6 +46,9 @@
     "search": "Search",
     "title": "Title"
   },
+  "ui": {
+    "loading": "Loading..."
+  },
   "student": {
     "title": "Profile settings"
   },
