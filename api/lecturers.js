@@ -15,7 +15,7 @@ const formatDataFromApi = (data) => {
     last_name,
     patronymic,
     avatar,
-    view: [last_name, first_name, patronymic].filter(Boolean).join(''),
+    view: [last_name, first_name, patronymic].filter(Boolean).join(' '),
     course_ids: courses.data.map(({ id }) => id)
   }
 }

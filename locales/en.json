@@ -50,7 +50,9 @@
     "patronymic": "Patronymic"
   },
   "ui": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "confirm": "Ok"
   },
   "student": {
     "title": "Profile settings"
@@ -58,9 +60,11 @@
   "lesson": {
     "lessons": "Lessons",
     "edit": "Edit lesson",
-    "create": "Create lesson"
+    "create": "Create lesson",
+    "confirm": "Delete lesson?"
   },
   "lecturers": {
-    "lecturers": "Lecturers"
+    "lecturers": "Lecturers",
+    "confirm": "Delete lecturer?"
   }
 }

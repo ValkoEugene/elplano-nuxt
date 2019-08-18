@@ -19,7 +19,7 @@
     <v-card-text class="pa-6">
       <v-form ref="form" :lazy-validation="true">
         <v-text-field
-          v-model="localCourse.title"
+          v-model.trim="localCourse.title"
           :label="$t('field.title')"
           :placeholder="$t('field.title')"
           :rules="[$rules.required]"

@@ -7,7 +7,7 @@
       <v-form v-else ref="form" :lazy-validation="true">
         <!-- eslint-disable -->
         <v-text-field
-          v-model="login"
+          v-model.trim="login"
           label="Email"
           placeholder="Email"
           type="text"

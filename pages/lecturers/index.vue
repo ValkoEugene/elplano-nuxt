@@ -35,18 +35,27 @@
               </v-card-text>
 
               <v-card-actions class="pt-0">
-                <v-spacer></v-spacer>
-
-                <v-btn icon class="text-primary-darken1">
+                <v-btn icon class="text-primary-darken1" :disabled="updating">
                   <v-icon>star_half</v-icon>
                 </v-btn>
 
-                <v-btn icon class="text-primary-darken1">
+                <v-btn icon class="text-primary-darken1" :disabled="updating">
                   <v-icon>work</v-icon>
                 </v-btn>
 
-                <v-btn icon class="text-primary-darken1" @click="edit(lecturer.id)">
+                <v-btn
+                  icon
+                  class="text-primary-darken1"
+                  :disabled="updating"
+                  @click="edit(lecturer.id)"
+                >
                   <v-icon>edit</v-icon>
+                </v-btn>
+
+                <v-spacer></v-spacer>
+
+                <v-btn icon color="error" :disabled="updating" @click="initDelete(lecturer.id)">
+                  <v-icon>delete</v-icon>
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -54,6 +63,14 @@
         </template>
       </v-layout>
     </template>
+
+    <Confirm
+      :active="deletConfirming"
+      @cancel="deletConfirming = false"
+      @confirm="onDeleteConfirmed"
+    >
+      <template v-slot:title>{{ $t('lecturers.confirm') }}</template>
+    </Confirm>
 
     <v-row justify="center">
       <!-- eslint-disable -->
@@ -92,7 +109,8 @@ export default {
     Loader: () => import('../../components/UI-core/loader.vue'),
     Search: () => import('../../components/UI-core/search.vue'),
     CardTitle: () => import('../../components/cards/card-title.vue'),
-    Edit: () => import('../../components/lecturers/edit.vue')
+    Edit: () => import('../../components/lecturers/edit.vue'),
+    Confirm: () => import('../../components/UI-core/confirm.vue')
   },
   data: () => ({
     /**
@@ -105,7 +123,19 @@ export default {
      * Флаг редактирования
      * @type {Boolean}
      */
-    editing: false
+    editing: false,
+
+    /**
+     * Флаг показа подтверждения на удаление
+     * @type {Boolean}
+     */
+    deletConfirming: false,
+
+    /**
+     * Id удаляемого преподавателя
+     * @type {String}
+     */
+    deletId: ''
   }),
   computed: {
     ...mapState(coursesNamespace, {
@@ -135,7 +165,12 @@ export default {
        * Флаг загрузки преподавателей
        * @type {Boolean}
        */
-      loadingLecturers: 'loading'
+      loadingLecturers: 'loading',
+      /**
+       * Флаг обновления данных
+       * @type {Boolean}
+       */
+      updating: 'updating'
     }),
 
     /**
@@ -194,8 +229,32 @@ export default {
        * Загрузить преподавателей
        * @type {Function}
        */
-      loadLecturers: lecturersTypes.actions.LOAD_LECTURERS
-    })
+      loadLecturers: lecturersTypes.actions.LOAD_LECTURERS,
+      /**
+       * Удалить препадователя
+       * @type {Function}
+       */
+      deleteLecturer: lecturersTypes.actions.DELETE_LECTURER
+    }),
+
+    /**
+     * Открыть подтверждение на удаление
+     * @type {Function}
+     * @param {String} id
+     */
+    initDelete(id) {
+      this.deletId = id
+      this.deletConfirming = true
+    },
+
+    /**
+     * Обработчик подтверждения удаления
+     * @type {Function}
+     */
+    onDeleteConfirmed() {
+      this.deletConfirming = false
+      this.deleteLecturer(this.deletId)
+    }
   }
 }
 </script>

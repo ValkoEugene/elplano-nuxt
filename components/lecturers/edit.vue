@@ -19,7 +19,7 @@
     <v-card-text class="pa-6">
       <v-form ref="form" :lazy-validation="true">
         <v-text-field
-          v-model="localLecturer.last_name"
+          v-model.trim="localLecturer.last_name"
           :label="$t('field.lastName')"
           :placeholder="$t('field.lastName')"
           :rules="[$rules.required]"
@@ -28,7 +28,7 @@
         />
 
         <v-text-field
-          v-model="localLecturer.first_name"
+          v-model.trim="localLecturer.first_name"
           :label="$t('field.firstName')"
           :placeholder="$t('field.firstName')"
           :rules="[$rules.required]"
@@ -37,7 +37,7 @@
         />
 
         <v-text-field
-          v-model="localLecturer.patronymic"
+          v-model.trim="localLecturer.patronymic"
           :label="$t('field.patronymic')"
           :placeholder="$t('field.patronymic')"
           :rules="[$rules.required]"
