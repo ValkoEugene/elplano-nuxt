@@ -15,6 +15,7 @@
         <nuxt v-else />
       </div>
       <Snackbars />
+      <ModalEdit />
       <!-- </v-container> -->
     </v-content>
   </v-app>
@@ -40,6 +41,10 @@ export default {
     Snackbars: () =>
       import(
         '../components/UI-core/snackbars.vue' /* webpackChunkName: 'components/UI-core/snackbars' */
+      ),
+    ModalEdit: () =>
+      import(
+        '../components/UI-core/modal-edit.vue' /* webpackChunkName: 'components/UI-core/modal-edit' */
       )
   },
   computed: {

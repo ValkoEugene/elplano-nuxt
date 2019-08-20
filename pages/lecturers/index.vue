@@ -43,7 +43,12 @@
                   <v-icon>work</v-icon>
                 </v-btn>
 
-                <v-btn icon class="text-primary" :disabled="updating" @click="edit(lecturer.id)">
+                <v-btn
+                  icon
+                  class="text-primary"
+                  :disabled="updating"
+                  @click="edit(lecturer.id, lecturer)"
+                >
                   <v-icon>edit</v-icon>
                 </v-btn>
 
@@ -67,27 +72,22 @@
       <template v-slot:title>{{ $t('lecturers.confirm') }}</template>
     </Confirm>
 
-    <v-row justify="center">
-      <!-- eslint-disable -->
-      <v-dialog v-model="editing" fullscreen hide-overlay transition="dialog-bottom-transition">
-        <Edit
-          v-if="editing"
-          :editing-id="editingId"
-          :courses="courses"
-          :lecturers="lecturers"
-          @close="editing = false"
-        />
-      </v-dialog>
-    </v-row>
-
-    <v-btn fixed dark fab bottom right class="bg-primary-darken1" @click="edit('')">
+    <v-btn
+      fixed
+      dark
+      fab
+      bottom
+      right
+      class="bg-primary-darken1"
+      @click="edit('', lectureEmptyModel)"
+    >
       <v-icon>add</v-icon>
     </v-btn>
   </v-container>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import {
   namespace as coursesNamespace,
   Types as coursesTypes
@@ -96,6 +96,10 @@ import {
   namespace as lecturersNamespace,
   Types as lecturersTypes
 } from '../../store/lecturers'
+import {
+  namespace as modalNamespace,
+  Types as modalTypes
+} from '../../store/modal'
 
 export default {
   name: 'LecturersPage',
@@ -112,10 +116,6 @@ export default {
       import(
         '../../components/cards/card-title.vue' /* webpackChunkName: 'components/cards/card-title' */
       ),
-    Edit: () =>
-      import(
-        '../../components/lecturers/edit.vue' /* webpackChunkName: 'components/lecturers/edit' */
-      ),
     Confirm: () =>
       import(
         '../../components/UI-core/confirm.vue' /* webpackChunkName: 'components/UI-core/confirm' */
@@ -129,12 +129,6 @@ export default {
     search: '',
 
     /**
-     * Флаг редактирования
-     * @type {Boolean}
-     */
-    editing: false,
-
-    /**
      * Флаг показа подтверждения на удаление
      * @type {Boolean}
      */
@@ -144,7 +138,20 @@ export default {
      * Id удаляемого преподавателя
      * @type {String}
      */
-    deletId: ''
+    deletId: '',
+
+    /**
+     * Локальная копия преподавателя
+     * @type {Object}
+     */
+    lectureEmptyModel: {
+      id: '',
+      first_name: '',
+      last_name: '',
+      patronymic: '',
+      avatar: '',
+      course_ids: []
+    }
   }),
   computed: {
     ...mapState(coursesNamespace, {
@@ -167,10 +174,6 @@ export default {
        */
       lecturers: 'lecturers',
       /**
-       * Id редактируемого преподавателя
-       */
-      editingId: 'editingId',
-      /**
        * Флаг загрузки преподавателей
        * @type {Boolean}
        */
@@ -188,6 +191,49 @@ export default {
      */
     loading() {
       return this.loadingCources || this.loadingLecturers
+    },
+
+    /**
+     * Схема для редактирования
+     * @type {{ fields: Array }}
+     */
+    editSchema() {
+      return {
+        fields: [
+          {
+            model: 'last_name',
+            type: 'v-text-field',
+            label: this.$t('field.lastName'),
+            placeholder: this.$t('field.lastName'),
+            rules: [this.$rules.required],
+            inputType: 'text'
+          },
+          {
+            model: 'first_name',
+            type: 'v-text-field',
+            label: this.$t('field.firstName'),
+            placeholder: this.$t('field.firstName'),
+            rules: [this.$rules.required],
+            inputType: 'text'
+          },
+          {
+            model: 'patronymic',
+            type: 'v-text-field',
+            label: this.$t('field.patronymic'),
+            placeholder: this.$t('field.patronymic'),
+            rules: [this.$rules.required],
+            inputType: 'text'
+          },
+          {
+            model: 'course_ids',
+            type: 'v-select',
+            items: this.courses,
+            itemValue: 'id',
+            itemText: 'title',
+            label: this.$t('lesson.lessons')
+          }
+        ]
+      }
     }
   },
   mounted() {
@@ -195,12 +241,12 @@ export default {
     this.loadLecturers()
   },
   methods: {
-    ...mapMutations(lecturersNamespace, {
+    ...mapActions(modalNamespace, {
       /**
-       * Установить id редактируемого преподавателя
+       * Инициализация редактирования (открывает модальное окно)
        * @type {Function}
        */
-      setEditingId: lecturersTypes.mutations.SET_EDITING_ID
+      initEdit: modalTypes.actions.INIT_EDIT
     }),
 
     /**
@@ -220,9 +266,15 @@ export default {
      * @type {Function}
      * @param {String} id - id преподавателя
      */
-    edit(id) {
-      this.setEditingId(id)
-      this.editing = true
+    edit(id, model) {
+      this.initEdit({
+        id,
+        namespace: lecturersNamespace,
+        editModel: model || this.lectureEmptyModel,
+        editSchema: this.editSchema,
+        updateAction: lecturersTypes.actions.EDIT_LECTURER,
+        createAction: lecturersTypes.actions.CREATE_LECTURER
+      })
     },
 
     ...mapActions(coursesNamespace, {
