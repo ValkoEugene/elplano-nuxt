@@ -72,22 +72,12 @@
       <template v-slot:title>{{ $t('lecturers.confirm') }}</template>
     </Confirm>
 
-    <v-btn
-      fixed
-      dark
-      fab
-      bottom
-      right
-      class="bg-primary-darken1"
-      @click="edit('', courseEmptyModel)"
-    >
-      <v-icon>add</v-icon>
-    </v-btn>
+    <AddNew @click="edit('', courseEmptyModel)" />
   </v-container>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import {
   namespace as coursesNamespace,
   Types as coursesTypes
@@ -119,6 +109,10 @@ export default {
     Confirm: () =>
       import(
         '../../components/UI-core/confirm.vue' /* webpackChunkName: 'components/UI-core/confirm' */
+      ),
+    AddNew: () =>
+      import(
+        '../../components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
       )
   },
   data: () => ({

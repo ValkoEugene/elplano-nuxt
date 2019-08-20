@@ -47,7 +47,7 @@
 
               <Datepicker
                 v-if="field.type === 'datepicker'"
-                v-model="local[field.model]"
+                v-model="localModel[field.model]"
                 :label="field.label"
                 :rules="Array.isArray(field.rules) ? field.rules : undefined"
               />

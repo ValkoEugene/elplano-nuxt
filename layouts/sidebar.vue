@@ -77,7 +77,7 @@ export default {
         {
           title: this.$t('sidebar.lessons'),
           icon: 'mdi-library-books',
-          url: '/lessons'
+          url: '/courses'
         },
         {
           title: this.$t('sidebar.tasks'),

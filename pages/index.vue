@@ -17,18 +17,18 @@
             <Event-card
               :id="event.id"
               :key="event.id"
-              :event-id="event.id"
-              :title="event.title"
-              :decription="event.description"
-              :status="event.status"
+              :event="event"
               :course-id="event.course_id"
               :courses="courses"
               class="ma-6"
+              @edit="edit"
             />
           </template>
         </v-timeline-item>
       </template>
     </v-timeline>
+
+    <AddNew @click="edit({ id: '' })" />
   </div>
 </template>
 
@@ -45,20 +45,10 @@ import {
   Types as coursesTypes
 } from '../store/courses'
 import { namespace as i18nNamespace } from '../store/i18n'
-
-/**
- * Получить дни недели из формата rfc5545
- * @param {String} rfc5545 - дата в формате rfc5545
- * @return {[String]}
- */
-export function parseDaysOfWeek(recurrence) {
-  return recurrence
-    .find((item) => item.includes('RRULE'))
-    .split(';')
-    .find((item) => item.includes('BYDAY'))
-    .split('=')[1]
-    .split(',')
-}
+import {
+  namespace as modalNamespace,
+  Types as modalTypes
+} from '../store/modal'
 
 export default {
   name: 'IndexPage',
@@ -66,6 +56,10 @@ export default {
     EventCard: () =>
       import(
         '../components/events/event-card.vue' /* webpackChunkName: 'components/events/event-card' */
+      ),
+    AddNew: () =>
+      import(
+        '../components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
       )
   },
   data: () => ({
@@ -119,7 +113,21 @@ export default {
      * Дата завершения недели
      * @type {import('moment').Moment}
      */
-    endWeekDate: moment().endOf('week')
+    endWeekDate: moment().endOf('week'),
+
+    /**
+     * Модель элемента расписания
+     * @type {Object}
+     */
+    eventEmptyTemplate: {
+      id: '',
+      title: '',
+      description: '',
+      start_at: '',
+      end_at: ''
+    },
+
+    weekDayItems: []
   }),
   computed: {
     ...mapState(i18nNamespace, [
@@ -162,6 +170,51 @@ export default {
      */
     loading() {
       return this.loadingCources || this.loadingEvents
+    },
+
+    /**
+     *
+     */
+    editSchema() {
+      return {
+        fields: [
+          {
+            type: 'v-text-field',
+            model: 'title',
+            label: this.$t('field.title'),
+            placeholder: this.$t('field.title'),
+            rules: [this.$rules.required],
+            inputType: 'text'
+          },
+          {
+            type: 'v-text-field',
+            model: 'description',
+            label: this.$t('field.description'),
+            placeholder: this.$t('field.description'),
+            inputType: 'text'
+          },
+          {
+            type: 'datepicker',
+            model: 'start_at',
+            label: this.$t('field.startAt'),
+            rules: [this.$rules.required]
+          },
+          {
+            type: 'datepicker',
+            model: 'end_at',
+            label: this.$t('field.endAt'),
+            rules: [this.$rules.required]
+          },
+          {
+            model: 'by_day',
+            type: 'v-select',
+            items: this.weekDayItems,
+            itemValue: 'value',
+            itemText: 'view',
+            label: this.$t('field.daysOfWeek')
+          }
+        ]
+      }
     }
   },
   watch: {
@@ -180,14 +233,44 @@ export default {
      */
     locale() {
       setLocale(this.locale)
+      this.initWeekDayItems()
       this.$forceUpdate()
     }
   },
   mounted() {
+    this.initWeekDayItems()
     this.loadEvents()
     this.loadCourses()
   },
   methods: {
+    moment,
+    /**
+     * Инициализация элментов выбора для дней недели
+     * @type {Function}
+     */
+    initWeekDayItems() {
+      const weekDayItems = []
+
+      for (let i = 1; i < 8; i++) {
+        weekDayItems.push({
+          view: moment()
+            .isoWeekday(i)
+            .format('dddd'),
+          value: this.daysOfWeekList[i]
+        })
+      }
+
+      this.weekDayItems = weekDayItems
+    },
+
+    ...mapActions(modalNamespace, {
+      /**
+       * Инициализация редактирования (открывает модальное окно)
+       * @type {Function}
+       */
+      initEdit: modalTypes.actions.INIT_EDIT
+    }),
+
     ...mapActions(eventsNamespace, {
       /**
        * Загрузить расписание
@@ -203,6 +286,22 @@ export default {
        */
       loadCourses: coursesTypes.actions.LOAD_COURSES
     }),
+
+    /**
+     * Редактировать расписание
+     * @type {Function}
+     * @param {String} id
+     */
+    edit({ id, model }) {
+      this.initEdit({
+        id,
+        namespace: eventsNamespace,
+        editModel: model || this.eventEmptyTemplate,
+        editSchema: this.editSchema,
+        updateAction: eventsTypes.actions.EDIT_EVENT,
+        createAction: eventsTypes.actions.CREATE_EVENT
+      })
+    },
 
     /**
      * Получить список дат для недели
@@ -233,7 +332,7 @@ export default {
 
       // Пробегаем по событиям и ищем актуальные
       this.events.forEach((event) => {
-        const { start_at, end_at, recurrence } = event
+        const { start_at, end_at, by_day } = event
 
         // Проверяем актуальность событий
         if (
@@ -243,10 +342,7 @@ export default {
           return
         }
 
-        // Парсим дни недели события
-        const daysOfWeek = parseDaysOfWeek(recurrence)
-
-        daysOfWeek.forEach((day) => {
+        by_day.forEach((day) => {
           weekEvents[day].push(event)
         })
       })

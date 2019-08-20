@@ -103,10 +103,11 @@ export default {
   }),
   computed: {
     /**
-     *
+     * Дата на отображение
+     * @type {String}
      */
     formatedDate() {
-      return this.value ? moment(this.value).format('YYYY-MM-DD HH:mm') : '-'
+      return this.value ? moment(this.value).format('YYYY-MM-DD HH:mm') : ''
     }
   },
   methods: {

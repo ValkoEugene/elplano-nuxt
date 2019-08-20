@@ -40,7 +40,22 @@ export const state = () => ({
 
   /**
    * Предметы
-   * @type {Array}
+   * @type {[
+   *  {
+   *    course_id: String,
+   *    created_at: Date,
+   *    description: String,
+   *    end_at: Date,
+   *    id: String,
+   *    recurrence: Array,
+   *    by_day: Array,
+   *    start_at: Date,
+   *    status: ('confirmed' | 'tentative' | 'cancelled'),
+   *    timezone: String,
+   *    title: String,
+   *    updated_at: String
+   *  }
+   * ]}
    */
   events: [],
 

@@ -1,15 +1,15 @@
 <template>
   <v-card min-height="100" elevation="5">
-    <CardTitle>{{ title }}</CardTitle>
+    <CardTitle>{{ event.title }}</CardTitle>
 
     <v-card-text class="pb-0">
       <div>
-        <template v-if="description">
+        <template v-if="event.description">
           <span class="font-weight-bold">{{ $t('field.description') }}:</span>
-          <p>{{ description }}</p>
+          <p>{{ event.description }}</p>
         </template>
 
-        <div>{{ getCourseView(id) }}</div>
+        <div>{{ getCourseView(courseId) }}</div>
       </div>
     </v-card-text>
 
@@ -22,7 +22,7 @@
         <v-icon>work</v-icon>
       </v-btn>
 
-      <v-btn icon class="text-primary">
+      <v-btn icon class="text-primary" @click="edit">
         <v-icon>edit</v-icon>
       </v-btn>
 
@@ -55,11 +55,11 @@ export default {
     },
 
     /**
-     * Заголовок
-     * @type {String}
+     * Элмент расписания
+     * @type {Object}
      */
-    title: {
-      type: String,
+    event: {
+      type: Object,
       required: true
     },
 
@@ -68,24 +68,6 @@ export default {
      * @type {String}
      */
     courseId: {
-      type: String,
-      required: true
-    },
-
-    /**
-     * Описание
-     * @type {String}
-     */
-    description: {
-      type: String,
-      default: ''
-    },
-
-    /**
-     * Статус
-     * @type {('confirmed' | 'tentative' | 'cancelled')}
-     */
-    status: {
       type: String,
       required: true
     },
@@ -110,6 +92,10 @@ export default {
       const course = this.courses.find((item) => item.id === id)
 
       return course ? course.title : '-'
+    },
+
+    edit() {
+      this.$emit('edit', { id: this.id, model: this.event })
     }
   }
 }

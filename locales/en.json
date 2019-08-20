@@ -48,7 +48,10 @@
     "title": "Title",
     "firstName": "First name",
     "lastName": "Last name",
-    "patronymic": "Patronymic"
+    "patronymic": "Patronymic",
+    "startAt": "Start date",
+    "endAt": "End Date",
+    "daysOfWeek": "Days"
   },
   "ui": {
     "loading": "Loading...",
