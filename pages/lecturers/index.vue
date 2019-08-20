@@ -26,28 +26,28 @@
                   <span v-if="!lecturer.course_ids.length">-</span>
 
                   <div v-else v-for="id in lecturer.course_ids" :key="id" class="pa-2">
-                    <v-avatar class="bg-primary-lighten2" size="32">
+                    <!-- <v-avatar class="bg-primary-lighten2" size="32">
                       <v-icon dark>book</v-icon>
-                    </v-avatar>
+                    </v-avatar>-->
                     {{ getCourseView(id) }}
                   </div>
                 </div>
               </v-card-text>
 
               <v-card-actions class="pt-0">
-                <v-btn icon class="text-primary-darken1" :disabled="updating">
+                <v-btn icon class="text-primary" :disabled="updating">
                   <v-icon>star_half</v-icon>
                 </v-btn>
 
-                <v-btn icon class="text-primary-darken1" :disabled="updating">
+                <v-btn icon class="text-primary" :disabled="updating">
                   <v-icon>work</v-icon>
                 </v-btn>
 
                 <v-btn
                   icon
-                  class="text-primary-darken1"
+                  class="text-primary"
                   :disabled="updating"
-                  @click="edit(lecturer.id)"
+                  @click="edit(lecturer.id, lecturer)"
                 >
                   <v-icon>edit</v-icon>
                 </v-btn>
@@ -72,27 +72,22 @@
       <template v-slot:title>{{ $t('lecturers.confirm') }}</template>
     </Confirm>
 
-    <v-row justify="center">
-      <!-- eslint-disable -->
-      <v-dialog v-model="editing" fullscreen hide-overlay transition="dialog-bottom-transition">
-        <Edit
-          v-if="editing"
-          :editing-id="editingId"
-          :courses="courses"
-          :lecturers="lecturers"
-          @close="editing = false"
-        />
-      </v-dialog>
-    </v-row>
-
-    <v-btn fixed dark fab bottom right class="bg-primary-darken1" @click="edit('')">
+    <v-btn
+      fixed
+      dark
+      fab
+      bottom
+      right
+      class="bg-primary-darken1"
+      @click="edit('', lectureEmptyModel)"
+    >
       <v-icon>add</v-icon>
     </v-btn>
   </v-container>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import {
   namespace as coursesNamespace,
   Types as coursesTypes
@@ -101,15 +96,30 @@ import {
   namespace as lecturersNamespace,
   Types as lecturersTypes
 } from '../../store/lecturers'
+import {
+  namespace as modalNamespace,
+  Types as modalTypes
+} from '../../store/modal'
 
 export default {
   name: 'LecturersPage',
   components: {
-    Loader: () => import('../../components/UI-core/loader.vue'),
-    Search: () => import('../../components/UI-core/search.vue'),
-    CardTitle: () => import('../../components/cards/card-title.vue'),
-    Edit: () => import('../../components/lecturers/edit.vue'),
-    Confirm: () => import('../../components/UI-core/confirm.vue')
+    Loader: () =>
+      import(
+        '../../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+      ),
+    Search: () =>
+      import(
+        '../../components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
+      ),
+    CardTitle: () =>
+      import(
+        '../../components/cards/card-title.vue' /* webpackChunkName: 'components/cards/card-title' */
+      ),
+    Confirm: () =>
+      import(
+        '../../components/UI-core/confirm.vue' /* webpackChunkName: 'components/UI-core/confirm' */
+      )
   },
   data: () => ({
     /**
@@ -117,12 +127,6 @@ export default {
      * @type {String}
      */
     search: '',
-
-    /**
-     * Флаг редактирования
-     * @type {Boolean}
-     */
-    editing: false,
 
     /**
      * Флаг показа подтверждения на удаление
@@ -134,7 +138,20 @@ export default {
      * Id удаляемого преподавателя
      * @type {String}
      */
-    deletId: ''
+    deletId: '',
+
+    /**
+     * Локальная копия преподавателя
+     * @type {Object}
+     */
+    lectureEmptyModel: {
+      id: '',
+      first_name: '',
+      last_name: '',
+      patronymic: '',
+      avatar: '',
+      course_ids: []
+    }
   }),
   computed: {
     ...mapState(coursesNamespace, {
@@ -157,10 +174,6 @@ export default {
        */
       lecturers: 'lecturers',
       /**
-       * Id редактируемого преподавателя
-       */
-      editingId: 'editingId',
-      /**
        * Флаг загрузки преподавателей
        * @type {Boolean}
        */
@@ -177,7 +190,50 @@ export default {
      * @type {Boolean}
      */
     loading() {
-      return this.loadingCources && this.loadingLecturers
+      return this.loadingCources || this.loadingLecturers
+    },
+
+    /**
+     * Схема для редактирования
+     * @type {{ fields: Array }}
+     */
+    editSchema() {
+      return {
+        fields: [
+          {
+            model: 'last_name',
+            type: 'v-text-field',
+            label: this.$t('field.lastName'),
+            placeholder: this.$t('field.lastName'),
+            rules: [this.$rules.required],
+            inputType: 'text'
+          },
+          {
+            model: 'first_name',
+            type: 'v-text-field',
+            label: this.$t('field.firstName'),
+            placeholder: this.$t('field.firstName'),
+            rules: [this.$rules.required],
+            inputType: 'text'
+          },
+          {
+            model: 'patronymic',
+            type: 'v-text-field',
+            label: this.$t('field.patronymic'),
+            placeholder: this.$t('field.patronymic'),
+            rules: [this.$rules.required],
+            inputType: 'text'
+          },
+          {
+            model: 'course_ids',
+            type: 'v-select',
+            items: this.courses,
+            itemValue: 'id',
+            itemText: 'title',
+            label: this.$t('lesson.lessons')
+          }
+        ]
+      }
     }
   },
   mounted() {
@@ -185,12 +241,12 @@ export default {
     this.loadLecturers()
   },
   methods: {
-    ...mapMutations(lecturersNamespace, {
+    ...mapActions(modalNamespace, {
       /**
-       * Установить id редактируемого преподавателя
+       * Инициализация редактирования (открывает модальное окно)
        * @type {Function}
        */
-      setEditingId: lecturersTypes.mutations.SET_EDITING_ID
+      initEdit: modalTypes.actions.INIT_EDIT
     }),
 
     /**
@@ -210,9 +266,15 @@ export default {
      * @type {Function}
      * @param {String} id - id преподавателя
      */
-    edit(id) {
-      this.setEditingId(id)
-      this.editing = true
+    edit(id, model) {
+      this.initEdit({
+        id,
+        namespace: lecturersNamespace,
+        editModel: model || this.lectureEmptyModel,
+        editSchema: this.editSchema,
+        updateAction: lecturersTypes.actions.EDIT_LECTURER,
+        createAction: lecturersTypes.actions.CREATE_LECTURER
+      })
     },
 
     ...mapActions(coursesNamespace, {

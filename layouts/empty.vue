@@ -9,7 +9,10 @@
 export default {
   name: 'EmptyLayout',
   components: {
-    Snackbars: () => import('../components/UI-core/snackbars.vue')
+    Snackbars: () =>
+      import(
+        '../components/UI-core/snackbars.vue' /* webpackChunkName: 'components/UI-core/snackbars' */
+      )
   }
 }
 </script>

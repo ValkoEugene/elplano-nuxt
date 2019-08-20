@@ -24,6 +24,8 @@
     "axios": "0.18.0",
     "js-cookie": "^2.2.1",
     "lodash.clonedeep": "^4.5.0",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26",
     "nuxt": "^2.0.0",
     "nuxt-material-design-icons": "^1.0.4",
     "vue-i18n": "^8.14.0"
@@ -41,6 +43,7 @@
     "eslint-plugin-nuxt": ">=0.4.2",
     "eslint-plugin-prettier": "^3.1.0",
     "jest": "^24.1.0",
+    "moment-locales-webpack-plugin": "^1.1.0",
     "prettier": "^1.16.4",
     "vue-jest": "^4.0.0-0"
   }

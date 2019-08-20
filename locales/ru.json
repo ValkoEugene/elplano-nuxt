@@ -42,12 +42,16 @@
     "confirmPasswordValidate": "Пароли не совпадают",
     "fullName": "ФИО",
     "about": "Описание",
+    "description": "Описание",
     "phone": "Телефон",
     "search": "Поиск",
     "title": "Наименование",
     "firstName": "Имя",
     "lastName": "Фамилия",
-    "patronymic": "Отчество"
+    "patronymic": "Отчество",
+    "startAt": "Дата начала",
+    "endAt": "Дата завершения",
+    "daysOfWeek": "Дни недели"
   },
   "ui": {
     "loading": "Загрузка...",

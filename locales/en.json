@@ -42,12 +42,16 @@
     "confirmPasswordValidate": "Passwords do not match",
     "fullName": "Full name",
     "about": "About",
+    "description": "description",
     "phone": "Phone",
     "search": "Search",
     "title": "Title",
     "firstName": "First name",
     "lastName": "Last name",
-    "patronymic": "Patronymic"
+    "patronymic": "Patronymic",
+    "startAt": "Start date",
+    "endAt": "End Date",
+    "daysOfWeek": "Days"
   },
   "ui": {
     "loading": "Loading...",

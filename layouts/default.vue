@@ -15,6 +15,7 @@
         <nuxt v-else />
       </div>
       <Snackbars />
+      <ModalEdit />
       <!-- </v-container> -->
     </v-content>
   </v-app>
@@ -29,10 +30,22 @@ export default {
   // Проверяем что пользователь авторизован
   middleware: ['auth'],
   components: {
-    Loader: () => import('../components/UI-core/loader.vue'),
-    Sidebar: () => import('./sidebar.vue'),
-    Header: () => import('./header.vue'),
-    Snackbars: () => import('../components/UI-core/snackbars.vue')
+    Loader: () =>
+      import(
+        '../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+      ),
+    Sidebar: () =>
+      import('./sidebar.vue' /* webpackChunkName: 'layouts/sidebar' */),
+    Header: () =>
+      import('./header.vue' /* webpackChunkName: 'layouts/header' */),
+    Snackbars: () =>
+      import(
+        '../components/UI-core/snackbars.vue' /* webpackChunkName: 'components/UI-core/snackbars' */
+      ),
+    ModalEdit: () =>
+      import(
+        '../components/UI-core/modal-edit.vue' /* webpackChunkName: 'components/UI-core/modal-edit' */
+      )
   },
   computed: {
     ...mapState(namespace, [

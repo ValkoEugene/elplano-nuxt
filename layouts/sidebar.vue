@@ -4,7 +4,7 @@
     app
     dark
     src="https://develop.d2ykf6mixoqcwa.amplifyapp.com/images/sidebar_bg.jpg"
-    class="drawer-background"
+    class="bg-primary-darken3"
   >
     <v-list-item>
       <v-list-item-content>
@@ -77,7 +77,7 @@ export default {
         {
           title: this.$t('sidebar.lessons'),
           icon: 'mdi-library-books',
-          url: '/lessons'
+          url: '/courses'
         },
         {
           title: this.$t('sidebar.tasks'),
