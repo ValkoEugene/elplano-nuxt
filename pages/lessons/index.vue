@@ -105,11 +105,26 @@ import {
 export default {
   name: 'LessonsPage',
   components: {
-    Loader: () => import('../../components/UI-core/loader.vue'),
-    Search: () => import('../../components/UI-core/search.vue'),
-    CardTitle: () => import('../../components/cards/card-title.vue'),
-    Edit: () => import('../../components/lessons/edit.vue'),
-    Confirm: () => import('../../components/UI-core/confirm.vue')
+    Loader: () =>
+      import(
+        '../../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+      ),
+    Search: () =>
+      import(
+        '../../components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
+      ),
+    CardTitle: () =>
+      import(
+        '../../components/cards/card-title.vue' /* webpackChunkName: 'components/cards/card-title' */
+      ),
+    Edit: () =>
+      import(
+        '../../components/lessons/edit.vue' /* webpackChunkName: 'components/lessons/edit' */
+      ),
+    Confirm: () =>
+      import(
+        '../../components/UI-core/confirm.vue' /* webpackChunkName: 'components/UI-core/confirm' */
+      )
   },
   data: () => ({
     /**
@@ -177,7 +192,7 @@ export default {
      * @type {Boolean}
      */
     loading() {
-      return this.loadingCources && this.loadingLecturers
+      return this.loadingCources || this.loadingLecturers
     }
   },
   mounted() {

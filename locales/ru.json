@@ -42,6 +42,7 @@
     "confirmPasswordValidate": "Пароли не совпадают",
     "fullName": "ФИО",
     "about": "Описание",
+    "description": "Описание",
     "phone": "Телефон",
     "search": "Поиск",
     "title": "Наименование",

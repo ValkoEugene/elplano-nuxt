@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+import MomentLocalesPlugin from 'moment-locales-webpack-plugin'
 
 export default {
   mode: 'universal',
@@ -67,7 +68,7 @@ export default {
       themes: {
         light: {
           primary: {
-            base: colors.purple.base,
+            base: colors.purple.darken2,
             lighten1: colors.purple.lighten1,
             lighten2: colors.purple.lighten2,
             lighten3: colors.purple.lighten3,
@@ -92,6 +93,14 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) {
+      // Убираем неиспользуемые локали
+      config.plugins.push(new MomentLocalesPlugin())
+      config.plugins.push(
+        new MomentLocalesPlugin({
+          localesToKeep: ['ru', 'en-gb']
+        })
+      )
+    }
   }
 }

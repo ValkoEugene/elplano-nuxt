@@ -42,6 +42,7 @@
     "confirmPasswordValidate": "Passwords do not match",
     "fullName": "Full name",
     "about": "About",
+    "description": "description",
     "phone": "Phone",
     "search": "Search",
     "title": "Title",

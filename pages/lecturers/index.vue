@@ -26,29 +26,24 @@
                   <span v-if="!lecturer.course_ids.length">-</span>
 
                   <div v-else v-for="id in lecturer.course_ids" :key="id" class="pa-2">
-                    <v-avatar class="bg-primary-lighten2" size="32">
+                    <!-- <v-avatar class="bg-primary-lighten2" size="32">
                       <v-icon dark>book</v-icon>
-                    </v-avatar>
+                    </v-avatar>-->
                     {{ getCourseView(id) }}
                   </div>
                 </div>
               </v-card-text>
 
               <v-card-actions class="pt-0">
-                <v-btn icon class="text-primary-darken1" :disabled="updating">
+                <v-btn icon class="text-primary" :disabled="updating">
                   <v-icon>star_half</v-icon>
                 </v-btn>
 
-                <v-btn icon class="text-primary-darken1" :disabled="updating">
+                <v-btn icon class="text-primary" :disabled="updating">
                   <v-icon>work</v-icon>
                 </v-btn>
 
-                <v-btn
-                  icon
-                  class="text-primary-darken1"
-                  :disabled="updating"
-                  @click="edit(lecturer.id)"
-                >
+                <v-btn icon class="text-primary" :disabled="updating" @click="edit(lecturer.id)">
                   <v-icon>edit</v-icon>
                 </v-btn>
 
@@ -105,11 +100,26 @@ import {
 export default {
   name: 'LecturersPage',
   components: {
-    Loader: () => import('../../components/UI-core/loader.vue'),
-    Search: () => import('../../components/UI-core/search.vue'),
-    CardTitle: () => import('../../components/cards/card-title.vue'),
-    Edit: () => import('../../components/lecturers/edit.vue'),
-    Confirm: () => import('../../components/UI-core/confirm.vue')
+    Loader: () =>
+      import(
+        '../../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+      ),
+    Search: () =>
+      import(
+        '../../components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
+      ),
+    CardTitle: () =>
+      import(
+        '../../components/cards/card-title.vue' /* webpackChunkName: 'components/cards/card-title' */
+      ),
+    Edit: () =>
+      import(
+        '../../components/lecturers/edit.vue' /* webpackChunkName: 'components/lecturers/edit' */
+      ),
+    Confirm: () =>
+      import(
+        '../../components/UI-core/confirm.vue' /* webpackChunkName: 'components/UI-core/confirm' */
+      )
   },
   data: () => ({
     /**
@@ -177,7 +187,7 @@ export default {
      * @type {Boolean}
      */
     loading() {
-      return this.loadingCources && this.loadingLecturers
+      return this.loadingCources || this.loadingLecturers
     }
   },
   mounted() {
