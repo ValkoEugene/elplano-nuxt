@@ -44,6 +44,13 @@
                 chips
                 multiple
               />
+
+              <Datepicker
+                v-if="field.type === 'datepicker'"
+                v-model="local[field.model]"
+                :label="field.label"
+                :rules="Array.isArray(field.rules) ? field.rules : undefined"
+              />
             </template>
           </v-form>
         </v-card-text>
@@ -62,6 +69,12 @@ import {
 
 export default {
   name: 'ModalEdit',
+  components: {
+    Datepicker: () =>
+      import(
+        './datepicker.vue' /* webpackChunkName: 'components/UI-core/datepicker' */
+      )
+  },
   data: () => ({
     /**
      * Локальная копия модели на редактирование
