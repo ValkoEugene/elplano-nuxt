@@ -168,6 +168,10 @@ export const actions = {
 
     const action = editId ? editUpdateAction : editCreateAction
 
-    dispatch(`${editNamespace}/${action}`, model, { root: true })
+    dispatch(
+      `${editNamespace}/${action}`,
+      { ...model, id: editId },
+      { root: true }
+    )
   }
 }
