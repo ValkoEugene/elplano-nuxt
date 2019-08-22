@@ -54,23 +54,19 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon color="error" :disabled="updating" @click="initDelete(course.id)">
-                  <v-icon>delete</v-icon>
-                </v-btn>
+                <DeleteButton
+                  :id="course.id"
+                  :disabled="updating"
+                  :namespace="coursesNamespace"
+                  :action="deleteAction"
+                  :confirm-text="$t('lesson.confirm')"
+                />
               </v-card-actions>
             </v-card>
           </v-flex>
         </template>
       </v-layout>
     </template>
-
-    <Confirm
-      :active="deletConfirming"
-      @cancel="deletConfirming = false"
-      @confirm="onDeleteConfirmed"
-    >
-      <template v-slot:title>{{ $t('lecturers.confirm') }}</template>
-    </Confirm>
 
     <AddNew @click="edit('', courseEmptyModel)" />
   </v-container>
@@ -87,9 +83,9 @@ import {
   Types as lecturersTypes
 } from '../../store/lecturers'
 import {
-  namespace as modalNamespace,
-  Types as modalTypes
-} from '../../store/modal'
+  namespace as modalEditNamespace,
+  Types as modalEditTypes
+} from '../../store/modal/edit'
 
 export default {
   name: 'LessonsPage',
@@ -106,33 +102,23 @@ export default {
       import(
         '../../components/cards/card-title.vue' /* webpackChunkName: 'components/cards/card-title' */
       ),
-    Confirm: () =>
-      import(
-        '../../components/UI-core/confirm.vue' /* webpackChunkName: 'components/UI-core/confirm' */
-      ),
     AddNew: () =>
       import(
         '../../components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
+      ),
+    DeleteButton: () =>
+      import(
+        '../../components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
       )
   },
   data: () => ({
+    coursesNamespace,
+    deleteAction: coursesTypes.actions.DELETE_COURSE,
     /**
      * Строка поиска
      * @type {String}
      */
     search: '',
-
-    /**
-     * Флаг показа подтверждения на удаление
-     * @type {Boolean}
-     */
-    deletConfirming: false,
-
-    /**
-     * Id удаляемого предмета
-     * @type {String}
-     */
-    deletId: '',
 
     /**
      * Модель предмета
@@ -216,12 +202,12 @@ export default {
     this.loadLecturers()
   },
   methods: {
-    ...mapActions(modalNamespace, {
+    ...mapActions(modalEditNamespace, {
       /**
        * Инициализация редактирования (открывает модальное окно)
        * @type {Function}
        */
-      initEdit: modalTypes.actions.INIT_EDIT
+      initEdit: modalEditTypes.actions.INIT_EDIT
     }),
 
     /**
@@ -264,25 +250,6 @@ export default {
        */
       deleteCourse: coursesTypes.actions.DELETE_COURSE
     }),
-
-    /**
-     * Открыть подтверждение на удаление
-     * @type {Function}
-     * @param {String} id
-     */
-    initDelete(id) {
-      this.deletId = id
-      this.deletConfirming = true
-    },
-
-    /**
-     * Обработчик подтверждения удаления
-     * @type {Function}
-     */
-    onDeleteConfirmed() {
-      this.deletConfirming = false
-      this.deleteCourse(this.deletId)
-    },
 
     ...mapActions(lecturersNamespace, {
       /**

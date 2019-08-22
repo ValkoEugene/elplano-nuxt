@@ -63,16 +63,16 @@
 import clonedeep from 'lodash.clonedeep'
 import { mapState, mapMutations, mapActions } from 'vuex'
 import {
-  namespace as modalNamespace,
-  Types as modalTypes
-} from '../../store/modal'
+  namespace as modalEditNamespace,
+  Types as modalEditTypes
+} from '../../store/modal/edit'
 
 export default {
   name: 'ModalEdit',
   components: {
     Datepicker: () =>
       import(
-        './datepicker.vue' /* webpackChunkName: 'components/UI-core/datepicker' */
+        '../UI-core/datepicker.vue' /* webpackChunkName: 'components/UI-core/datepicker' */
       )
   },
   data: () => ({
@@ -83,7 +83,7 @@ export default {
     localModel: {}
   }),
   computed: {
-    ...mapState(modalNamespace, [
+    ...mapState(modalEditNamespace, [
       /**
        * Флаг показа модального окна
        * @type {Boolean}
@@ -124,20 +124,20 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(modalNamespace, {
+    ...mapMutations(modalEditNamespace, {
       /**
        * Установить флаг показа модального окна
        * @type {Function}
        */
-      setShowing: modalTypes.mutations.SET_SHOWING_EDIT
+      setShowing: modalEditTypes.mutations.SET_SHOWING_EDIT
     }),
 
-    ...mapActions(modalNamespace, {
+    ...mapActions(modalEditNamespace, {
       /**
        * Сохранение
        * @type {Function}
        */
-      save: modalTypes.actions.SAVE
+      save: modalEditTypes.actions.SAVE
     })
   }
 }

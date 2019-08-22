@@ -4,7 +4,7 @@
  * По передаваемым данным идёт сохранение в редактируемом модуле.
  */
 
-export const namespace = 'modal'
+export const namespace = 'modal/edit'
 
 export const Types = {
   mutations: {
@@ -148,7 +148,7 @@ export const actions = {
     } = config
 
     commit(Types.mutations.SET_EDITING_ID, id)
-    commit(Types.mutations.SET_EDIT_MODEL, editModel)
+    commit(Types.mutations.SET_EDIT_MODEL, { ...editModel })
     commit(Types.mutations.SET_EDIT_NAMESPACE, namespace)
     commit(Types.mutations.SET_EDIT_SCHEMA, editSchema)
     commit(Types.mutations.SET_UPDATE_ACTION, updateAction)

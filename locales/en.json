@@ -70,5 +70,8 @@
   "lecturers": {
     "lecturers": "Lecturers",
     "confirm": "Delete lecturer?"
+  },
+  "events": {
+    "confirm": "Delete from schedule?"
   }
 }
