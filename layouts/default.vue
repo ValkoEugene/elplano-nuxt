@@ -15,6 +15,8 @@
         <nuxt v-else />
       </div>
       <Snackbars />
+
+      <ModalDelete />
       <ModalEdit />
       <!-- </v-container> -->
     </v-content>
@@ -23,7 +25,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { namespace, Types } from '../store/user'
+import { namespace as userNamespace, Types as userTypes } from '../store/user'
 
 export default {
   name: 'DefaultLayout',
@@ -44,11 +46,15 @@ export default {
       ),
     ModalEdit: () =>
       import(
-        '../components/UI-core/modal-edit.vue' /* webpackChunkName: 'components/UI-core/modal-edit' */
+        '../components/modal/modal-edit.vue' /* webpackChunkName: 'components/modal/modal-edit' */
+      ),
+    ModalDelete: () =>
+      import(
+        '../components/modal/modal-delete.vue' /* webpackChunkName: 'components/modal/modal-delete' */
       )
   },
   computed: {
-    ...mapState(namespace, [
+    ...mapState(userNamespace, [
       /**
        * Флаг загрузки
        * @type {Boolean}
@@ -91,12 +97,12 @@ export default {
     this.getUserInfo()
   },
   methods: {
-    ...mapActions(namespace, {
+    ...mapActions(userNamespace, {
       /**
        * Загрузить информацию о пользователе
        * @type {Function}
        */
-      getUserInfo: Types.actions.GET_USER_INFO
+      getUserInfo: userTypes.actions.GET_USER_INFO
     })
   }
 }

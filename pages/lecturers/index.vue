@@ -54,9 +54,13 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon color="error" :disabled="updating" @click="initDelete(lecturer.id)">
-                  <v-icon>delete</v-icon>
-                </v-btn>
+                <DeleteButton
+                  :id="lecturer.id"
+                  :disabled="updating"
+                  :namespace="lecturersNamespace"
+                  :action="deleteAction"
+                  :confirm-text="$t('lecturers.confirm')"
+                />
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -64,25 +68,7 @@
       </v-layout>
     </template>
 
-    <Confirm
-      :active="deletConfirming"
-      @cancel="deletConfirming = false"
-      @confirm="onDeleteConfirmed"
-    >
-      <template v-slot:title>{{ $t('lecturers.confirm') }}</template>
-    </Confirm>
-
-    <v-btn
-      fixed
-      dark
-      fab
-      bottom
-      right
-      class="bg-primary-darken1"
-      @click="edit('', lectureEmptyModel)"
-    >
-      <v-icon>add</v-icon>
-    </v-btn>
+    <AddNew @click="edit('', lectureEmptyModel)" />
   </v-container>
 </template>
 
@@ -97,9 +83,9 @@ import {
   Types as lecturersTypes
 } from '../../store/lecturers'
 import {
-  namespace as modalNamespace,
-  Types as modalTypes
-} from '../../store/modal'
+  namespace as modalEditNamespace,
+  Types as modalEditTypes
+} from '../../store/modal/edit'
 
 export default {
   name: 'LecturersPage',
@@ -116,29 +102,23 @@ export default {
       import(
         '../../components/cards/card-title.vue' /* webpackChunkName: 'components/cards/card-title' */
       ),
-    Confirm: () =>
+    AddNew: () =>
       import(
-        '../../components/UI-core/confirm.vue' /* webpackChunkName: 'components/UI-core/confirm' */
+        '../../components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
+      ),
+    DeleteButton: () =>
+      import(
+        '../../components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
       )
   },
   data: () => ({
+    deleteAction: lecturersTypes.actions.DELETE_LECTURER,
+    lecturersNamespace,
     /**
      * Строка поиска
      * @type {String}
      */
     search: '',
-
-    /**
-     * Флаг показа подтверждения на удаление
-     * @type {Boolean}
-     */
-    deletConfirming: false,
-
-    /**
-     * Id удаляемого преподавателя
-     * @type {String}
-     */
-    deletId: '',
 
     /**
      * Локальная копия преподавателя
@@ -241,12 +221,12 @@ export default {
     this.loadLecturers()
   },
   methods: {
-    ...mapActions(modalNamespace, {
+    ...mapActions(modalEditNamespace, {
       /**
        * Инициализация редактирования (открывает модальное окно)
        * @type {Function}
        */
-      initEdit: modalTypes.actions.INIT_EDIT
+      initEdit: modalEditTypes.actions.INIT_EDIT
     }),
 
     /**
@@ -270,7 +250,7 @@ export default {
       this.initEdit({
         id,
         namespace: lecturersNamespace,
-        editModel: model || this.lectureEmptyModel,
+        editModel: model,
         editSchema: this.editSchema,
         updateAction: lecturersTypes.actions.EDIT_LECTURER,
         createAction: lecturersTypes.actions.CREATE_LECTURER
@@ -296,26 +276,7 @@ export default {
        * @type {Function}
        */
       deleteLecturer: lecturersTypes.actions.DELETE_LECTURER
-    }),
-
-    /**
-     * Открыть подтверждение на удаление
-     * @type {Function}
-     * @param {String} id
-     */
-    initDelete(id) {
-      this.deletId = id
-      this.deletConfirming = true
-    },
-
-    /**
-     * Обработчик подтверждения удаления
-     * @type {Function}
-     */
-    onDeleteConfirmed() {
-      this.deletConfirming = false
-      this.deleteLecturer(this.deletId)
-    }
+    })
   }
 }
 </script>

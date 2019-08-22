@@ -28,9 +28,13 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon color="error">
-        <v-icon>delete</v-icon>
-      </v-btn>
+      <DeleteButton
+        :id="id"
+        :disabled="updating"
+        :namespace="namespace"
+        :action="deleteAction"
+        :confirm-text="$t('events.confirm')"
+      />
     </v-card-actions>
   </v-card>
 </template>
@@ -42,6 +46,10 @@ export default {
     CardTitle: () =>
       import(
         '../../components/cards/card-title.vue' /* webpackChunkName: 'components/cards/card-title' */
+      ),
+    DeleteButton: () =>
+      import(
+        '../UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
       )
   },
   props: {
@@ -78,6 +86,33 @@ export default {
      */
     courses: {
       type: Array,
+      required: true
+    },
+
+    /**
+     * Флаг обновления
+     * @type {Boolean}
+     */
+    updating: {
+      type: Boolean,
+      required: true
+    },
+
+    /**
+     * Namespace модуля с расписанием
+     * @type {String}
+     */
+    namespace: {
+      type: String,
+      required: true
+    },
+
+    /**
+     * Action на удаление элемента расписания
+     * @type {Strings}
+     */
+    deleteAction: {
+      type: String,
       required: true
     }
   },

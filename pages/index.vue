@@ -20,6 +20,9 @@
               :event="event"
               :course-id="event.course_id"
               :courses="courses"
+              :updating="updating"
+              :namespace="eventsNamespace"
+              :delete-action="deleteAction"
               class="ma-6"
               @edit="edit"
             />
@@ -46,9 +49,9 @@ import {
 } from '../store/courses'
 import { namespace as i18nNamespace } from '../store/i18n'
 import {
-  namespace as modalNamespace,
-  Types as modalTypes
-} from '../store/modal'
+  namespace as modalEditNamespace,
+  Types as modalEditTypes
+} from '../store/modal/edit'
 
 export default {
   name: 'IndexPage',
@@ -63,6 +66,18 @@ export default {
       )
   },
   data: () => ({
+    /**
+     * namespace модуля с расписанием
+     * @type {String}
+     */
+    eventsNamespace,
+
+    /**
+     * Action на удаления элмента расписания
+     * @type {String}
+     */
+    deleteAction: eventsTypes.actions.DELETE_EVENT,
+
     /**
      * Шаблон для событий по дням недели
      * @type {Object}
@@ -144,6 +159,11 @@ export default {
        * @type {Boolean}
        */
       loadingEvents: 'loading',
+      /**
+       * Флаг обновления
+       * @type {Boolean}
+       */
+      updating: 'updating',
       /**
        * Список с расписанием
        * @type {Array}
@@ -235,6 +255,16 @@ export default {
       setLocale(this.locale)
       this.initWeekDayItems()
       this.$forceUpdate()
+    },
+
+    /**
+     * При изменениях переинициализируем расписание
+     */
+    updating() {
+      this.initWeekData({
+        startWeekDate: this.startWeekDate,
+        endWeekDate: this.endWeekDate
+      })
     }
   },
   mounted() {
@@ -263,12 +293,12 @@ export default {
       this.weekDayItems = weekDayItems
     },
 
-    ...mapActions(modalNamespace, {
+    ...mapActions(modalEditNamespace, {
       /**
        * Инициализация редактирования (открывает модальное окно)
        * @type {Function}
        */
-      initEdit: modalTypes.actions.INIT_EDIT
+      initEdit: modalEditTypes.actions.INIT_EDIT
     }),
 
     ...mapActions(eventsNamespace, {

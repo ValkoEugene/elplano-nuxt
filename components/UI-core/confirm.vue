@@ -55,6 +55,10 @@ export default {
       if (this.active === this.localActive) return
 
       this.localActive = this.active
+    },
+
+    localActive() {
+      if (!this.localActive) this.cancel()
     }
   },
   methods: {
