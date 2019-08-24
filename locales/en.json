@@ -33,7 +33,8 @@
     "create": "Create",
     "addTask": "Add task",
     "addRaiting": "Add rating",
-    "edit": "edit"
+    "edit": "Edit",
+    "send": "Send"
   },
   "field": {
     "loginField": "Login",
@@ -51,7 +52,8 @@
     "patronymic": "Patronymic",
     "startAt": "Start date",
     "endAt": "End Date",
-    "daysOfWeek": "Days"
+    "daysOfWeek": "Days",
+    "number": "Number"
   },
   "ui": {
     "loading": "Loading...",
@@ -73,5 +75,20 @@
   },
   "events": {
     "confirm": "Delete from schedule?"
+  },
+  "invites": {
+    "accept": "Accept",
+    "invites": "Invites",
+    "send": "Send invite",
+    "statuses": {
+      "pending": "pending",
+      "accepted": "accepted"
+    }
+  },
+  "group": {
+    "create": "Create group",
+    "update": "Update group",
+    "infoline1": "To use Elplano you must be a member of a group.",
+    "infoline2": "You can create your own group or join another by invite."
   }
 }

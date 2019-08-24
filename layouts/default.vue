@@ -121,6 +121,10 @@ export default {
 </script>
 
 <style>
+.v-content__wrap {
+  background: #000ef30a;
+}
+
 /* Создаем css классы на основе цветовой схемы указанной в nuxt-config */
 .text-secondary {
   color: var(--secondary-color) !important;

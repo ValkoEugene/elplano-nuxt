@@ -8,9 +8,11 @@ import { Types, namespace } from '../store/user'
 export default {
   name: 'LogOff',
   layout: 'empty',
-  created() {
+  mounted() {
     this.$store.dispatch(`${namespace}/${Types.actions.RESET_USER}`)
-    this.$router.push('/login')
+
+    // Используем location чтобы страница перезагрузилась и все состояние vuex сбросилось
+    window.location.replace('/login')
   }
 }
 </script>

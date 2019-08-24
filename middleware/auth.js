@@ -41,6 +41,7 @@ export default ({ store, redirect, req, route }) => {
   if (
     !isServer &&
     route.path !== '/group/ungrouped' &&
+    !store.state.user.loading &&
     !store.getters[`${groupNamespace}/${groupTypes.getters.HAVE_GROUP}`]
   ) {
     console.log('auth /group/ungrouped')

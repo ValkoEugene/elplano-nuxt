@@ -24,8 +24,9 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState, mapGetters } from 'vuex'
 import { namespace, Types } from '../store/i18n'
+import { namespace as userNamespace, Types as userTypes } from '../store/user'
 import { TOGGLE_SIDEBAR_ROOT_LISTENER } from './sidebar.vue'
 
 export default {
@@ -37,13 +38,13 @@ export default {
      */
     ...mapState(namespace, ['locale']),
 
-    /**
-     * Флаг что пользователь админ
-     * @type {Boolean}
-     */
-    isAdmin() {
-      return this.$store.state.user.admin
-    },
+    ...mapGetters(userNamespace, {
+      /**
+       * Флаг что пользователь староста
+       * @type {Boolean}
+       */
+      isPresident: userTypes.getters.IS_PRESIDENT
+    }),
 
     /**
      * Ссылки для меню
@@ -55,9 +56,9 @@ export default {
         { url: '/settings', text: this.$t('header.settings') }
       ]
 
-      if (this.isAdmin)
+      if (this.isPresident)
         links.push({
-          url: '/group-settings',
+          url: '/group/settings',
           text: this.$t('header.groupSettings')
         })
 
