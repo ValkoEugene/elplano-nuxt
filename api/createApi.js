@@ -39,10 +39,10 @@ export default ({ restUrl, formatDataFromApi, formatDataForApi }) => ({
    * @param {String|Number} id - id элемента
    * @returns {Object} форматированный элемент
    */
-  async loadById(id) {
+  async show(id) {
     try {
-      console.log('loadById')
-      const response = await axios.get(`${restUrl}/${id}`)
+      console.log('show')
+      const response = await axios.get(`${restUrl}${id ? '/' + id : ''}`)
 
       return formatDataFromApi(response.data.data)
     } catch (error) {
@@ -76,7 +76,7 @@ export default ({ restUrl, formatDataFromApi, formatDataForApi }) => ({
     try {
       console.log('update')
       const response = await axios.put(
-        `${restUrl}/${id}`,
+        `${restUrl}${id ? '/' + id : ''}`,
         formatDataForApi(data)
       )
 

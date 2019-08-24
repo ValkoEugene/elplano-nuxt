@@ -8,6 +8,7 @@ import {
   namespace as snackbarNamespace,
   Types as snackbarTypes
 } from './snackbars'
+import { namespace as groupNamespace, Types as groupTypes } from './group'
 
 export const namespace = 'user'
 
@@ -31,7 +32,8 @@ export const Types = {
   getters: {
     IS_AUTH: 'IS_AUTH',
     IS_ADMIN: 'IS_ADMIN',
-    IS_CONFIRMED: 'IS_CONFIRMED'
+    IS_CONFIRMED: 'IS_CONFIRMED',
+    IS_PRESIDENT: 'IS_PRESIDENT'
   }
 }
 
@@ -176,6 +178,7 @@ export const actions = {
     commit(Types.mutations.SET_ACCESS_TOKEN, '')
     commit(Types.mutations.SET_REFRESH_TOKEN, '')
     commit(Types.mutations.SET_USER, { ...userTemplate })
+    commit(Types.mutations.SET_LOADING, true)
     resetTokensInCookie()
   },
 
@@ -221,13 +224,20 @@ export const actions = {
    * @param {*} context
    */
   async [Types.actions.GET_USER_INFO](context) {
+    console.log('getUserInfo')
     try {
       context.commit(Types.mutations.SET_LOADING, true)
 
-      const { user, student } = await userApi.getUserInfo()
+      const { user, student, groupId } = await userApi.getUserInfo()
 
       context.commit(Types.mutations.SET_USER, user)
       context.commit(Types.mutations.SET_STUDENT, student)
+      context.dispatch(
+        `${groupNamespace}/${groupTypes.actions.SET_GROUP_ID}`,
+        groupId,
+        { root: true }
+      )
+
       context.commit(Types.mutations.SET_LOADING, false)
     } catch (error) {
       context.commit(
@@ -282,6 +292,14 @@ export const getters = {
    */
   [Types.getters.IS_ADMIN](state) {
     return state.userInfo.admin
+  },
+
+  /**
+   * Флаг что пользователь староста
+   * @type {Boolean}
+   */
+  [Types.getters.IS_PRESIDENT](state) {
+    return state.studentInfo.president
   },
 
   /**

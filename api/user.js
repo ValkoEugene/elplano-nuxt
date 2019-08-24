@@ -5,14 +5,18 @@ const REST_URL = '/user'
 /**
  * Форматирование данных от api
  * @param {Object} response
- * @returns {{User, Student}}
+ * @returns {{User, Student, groupId: String}}
  */
 function formatDataFromApi(response) {
   const user = response.data.data.attributes
   const student = response.data.included.find((item) => item.type === 'student')
-    .attributes
+  const group = student.relationships.group
 
-  return { user, student }
+  return {
+    user,
+    student: student.attributes,
+    groupId: group && group.data && group.data.id
+  }
 }
 
 /**

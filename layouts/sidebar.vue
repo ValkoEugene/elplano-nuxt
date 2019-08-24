@@ -16,7 +16,7 @@
 
     <v-divider></v-divider>
 
-    <v-list dense nav>
+    <v-list v-if="haveGroup" dense nav>
       <v-list-item v-for="item in items" :key="item.title" :to="item.url" nuxt>
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
@@ -42,6 +42,16 @@ export const TOGGLE_SIDEBAR_ROOT_LISTENER = 'TOGGLE_SIDEBAR_ROOT_LISTENER'
 
 export default {
   name: 'Sidebar',
+  props: {
+    /**
+     * Флаг наличия группы
+     * @type {Boolean}
+     */
+    haveGroup: {
+      type: Boolean,
+      required: true
+    }
+  },
   data: () => ({
     /**
      * Статус боковой панели
