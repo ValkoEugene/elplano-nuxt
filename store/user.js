@@ -8,6 +8,7 @@ import {
   namespace as snackbarNamespace,
   Types as snackbarTypes
 } from './snackbars'
+import { namespace as groupNamespace, Types as groupTypes } from './group'
 
 export const namespace = 'user'
 
@@ -228,6 +229,13 @@ export const actions = {
 
       context.commit(Types.mutations.SET_USER, user)
       context.commit(Types.mutations.SET_STUDENT, student)
+      context.dispatch(
+        `${groupNamespace}/${groupTypes.actions.SET_GROUP_ID}`,
+        '',
+        // groupId,
+        { root: true }
+      )
+
       context.commit(Types.mutations.SET_LOADING, false)
     } catch (error) {
       context.commit(

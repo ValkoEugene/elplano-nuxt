@@ -68,9 +68,11 @@
 import clonedeep from 'lodash.clonedeep'
 import { mapActions, mapState } from 'vuex'
 import { namespace, Types } from '../../store/user'
+import checkGroup from '../../mixins/checkgroup'
 
 export default {
   name: 'StudentPage',
+  mixins: [checkGroup],
   data: () => ({
     /**
      * Локальнкая копия информации о студенте

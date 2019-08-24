@@ -3,7 +3,10 @@
 </template>
 
 <script>
+import checkGroup from '../../mixins/checkgroup'
+
 export default {
-  name: 'AttachmentsPage'
+  name: 'AttachmentsPage',
+  mixins: [checkGroup]
 }
 </script>

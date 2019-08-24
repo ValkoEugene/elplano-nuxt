@@ -86,6 +86,7 @@ import {
   namespace as modalEditNamespace,
   Types as modalEditTypes
 } from '../../store/modal/edit'
+import checkGroup from '../../mixins/checkgroup'
 
 export default {
   name: 'LecturersPage',
@@ -111,6 +112,7 @@ export default {
         '../../components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
       )
   },
+  mixins: [checkGroup],
   data: () => ({
     deleteAction: lecturersTypes.actions.DELETE_LECTURER,
     lecturersNamespace,

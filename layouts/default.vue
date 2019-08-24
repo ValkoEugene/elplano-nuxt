@@ -1,6 +1,6 @@
 <template>
   <v-app light :style="cssVariblesFromTheme">
-    <Sidebar />
+    <Sidebar :have-group="haveGroup" />
 
     <Header />
 
@@ -24,8 +24,12 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import { namespace as userNamespace, Types as userTypes } from '../store/user'
+import {
+  namespace as groupNamespace,
+  Types as groupTypes
+} from '../store/group'
 
 export default {
   name: 'DefaultLayout',
@@ -67,6 +71,14 @@ export default {
        */
       'userInfo'
     ]),
+
+    ...mapGetters(groupNamespace, {
+      /**
+       * Флаг наличия группы
+       * @type {Boolean}
+       */
+      haveGroup: groupTypes.getters.HAVE_GROUP
+    }),
 
     /**
      * Стили с css переменными из темы

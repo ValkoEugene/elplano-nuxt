@@ -132,12 +132,9 @@ export default {
             'Content-Type': 'application/vnd.api+json'
           }
         })
-        const attributes = data.data.attributes
         const meta = data.meta
 
         setRegistrationInfo(registrationInfo)
-
-        this.setUser(attributes)
 
         this.successMessage = meta.message
       } catch (error) {

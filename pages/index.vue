@@ -52,6 +52,7 @@ import {
   namespace as modalEditNamespace,
   Types as modalEditTypes
 } from '../store/modal/edit'
+import checkGroup from '../mixins/checkgroup'
 
 export default {
   name: 'IndexPage',
@@ -65,6 +66,7 @@ export default {
         '../components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
       )
   },
+  mixins: [checkGroup],
   data: () => ({
     /**
      * namespace модуля с расписанием
@@ -268,6 +270,7 @@ export default {
     }
   },
   mounted() {
+    console.log('index mouneted')
     this.initWeekDayItems()
     this.loadEvents()
     this.loadCourses()

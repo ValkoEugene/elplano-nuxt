@@ -3,7 +3,10 @@
 </template>
 
 <script>
+import checkGroup from '../../mixins/checkgroup'
+
 export default {
-  name: 'TasksPage'
+  name: 'TasksPage',
+  mixins: [checkGroup]
 }
 </script>
