@@ -9,29 +9,35 @@
       <v-btn color="primary" @click="nextWeek">+</v-btn>
     </div>
 
-    <v-timeline v-if="!loading" dense>
-      <template v-for="(day, dayIndex) in daysOfWeekList">
-        <v-timeline-item v-if="weekEvents[day].length" :key="day" small>
-          <p>{{ getDayView(weekDates[dayIndex]) }}</p>
-          <p>{{ weekDates[dayIndex] }}</p>
+    <template v-if="!loading">
+      <v-alert v-if="!haveEvents" type="info" prominent>
+        <span>{{ $t('events.empty') }}</span>
+      </v-alert>
 
-          <template v-for="event in weekEvents[day]">
-            <Event-card
-              :id="event.id"
-              :key="event.id"
-              :event="event"
-              :course-id="event.course_id"
-              :courses="courses"
-              :updating="updating"
-              :namespace="eventsNamespace"
-              :delete-action="deleteAction"
-              class="ma-6"
-              @edit="edit"
-            />
-          </template>
-        </v-timeline-item>
-      </template>
-    </v-timeline>
+      <v-timeline v-else dense>
+        <template v-for="(day, dayIndex) in daysOfWeekList">
+          <v-timeline-item v-if="weekEvents[day].length" :key="day" small>
+            <p>{{ getDayView(weekDates[dayIndex]) }}</p>
+            <p>{{ weekDates[dayIndex] }}</p>
+
+            <template v-for="event in weekEvents[day]">
+              <Event-card
+                :id="event.id"
+                :key="event.id"
+                :event="event"
+                :course-id="event.course_id"
+                :courses="courses"
+                :updating="updating"
+                :namespace="eventsNamespace"
+                :delete-action="deleteAction"
+                class="ma-6"
+                @edit="edit"
+              />
+            </template>
+          </v-timeline-item>
+        </template>
+      </v-timeline>
+    </template>
 
     <AddNew :president-access="false" @click="edit({ id: '' })" />
   </div>
@@ -149,6 +155,17 @@ export default {
     weekDayItems: []
   }),
   computed: {
+    /**
+     *
+     */
+    haveEvents() {
+      for (const day in this.weekEvents) {
+        if (this.weekEvents[day].length > 0) return true
+      }
+
+      return false
+    },
+
     ...mapState(i18nNamespace, [
       /**
        * Текушая локаль

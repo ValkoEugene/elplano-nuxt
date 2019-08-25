@@ -3,7 +3,11 @@
     <Loader v-if="loading" />
 
     <template v-else>
-      <v-layout row wrap>
+      <v-alert v-if="!lecturers.length" type="info" prominent>
+        <span>{{ $t('lecturers.empty') }}</span>
+      </v-alert>
+
+      <v-layout v-else row wrap>
         <Search v-model="search" />
 
         <template v-for="lecturer in lecturers">

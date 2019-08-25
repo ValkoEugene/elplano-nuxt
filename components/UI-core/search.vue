@@ -71,6 +71,7 @@ export default {
 .custom-search {
   margin: -16px 0;
   width: 100%;
+  overflow: hidden;
 }
 
 .custom-search .v-input__control {

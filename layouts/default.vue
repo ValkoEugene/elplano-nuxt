@@ -2,10 +2,10 @@
   <v-app light :style="cssVariblesFromTheme">
     <Sidebar :have-group="haveGroup" />
 
-    <Header />
+    <Header :class="[$vuetify.breakpoint.smAndDown ? 'header-mobile' : '']" />
 
     <!-- Sizes your content based upon application components -->
-    <v-content>
+    <v-content :class="[$vuetify.breakpoint.smAndDown ? 'content-mobile' : '']">
       <!-- Provides the application the proper gutter -->
       <!-- <v-container fluid> -->
       <!-- If using vue-router -->
@@ -123,6 +123,14 @@ export default {
 <style>
 .v-content__wrap {
   background: #000ef30a;
+}
+
+.header-mobile {
+  max-width: 100vw;
+}
+
+.content-mobile {
+  overflow-x: hidden;
 }
 
 /* Создаем css классы на основе цветовой схемы указанной в nuxt-config */
