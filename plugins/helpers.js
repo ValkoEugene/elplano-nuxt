@@ -7,6 +7,8 @@ export default ({ app }, inject) => {
      * @returns {Boolean}
      */
     search(v, s) {
+      if (!v) v = ''
+
       return Boolean(v.search(new RegExp(s, 'i')) !== -1)
     }
   })

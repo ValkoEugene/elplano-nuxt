@@ -90,5 +90,8 @@
     "update": "Update group",
     "infoline1": "To use Elplano you must be a member of a group.",
     "infoline2": "You can create your own group or join another by invite."
+  },
+  "students": {
+    "president": "President"
   }
 }

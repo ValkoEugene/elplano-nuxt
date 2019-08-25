@@ -93,11 +93,6 @@ export default {
           url: '/courses'
         },
         {
-          title: this.$t('sidebar.tasks'),
-          icon: 'mdi-briefcase',
-          url: '/tasks'
-        },
-        {
           title: this.$t('sidebar.teachers'),
           icon: 'mdi-account-supervisor',
           url: '/lecturers'
@@ -106,6 +101,11 @@ export default {
           title: this.$t('sidebar.group'),
           icon: 'mdi-account-group',
           url: '/group'
+        },
+        {
+          title: this.$t('sidebar.tasks'),
+          icon: 'mdi-briefcase',
+          url: '/tasks'
         },
         {
           title: this.$t('sidebar.measure'),
