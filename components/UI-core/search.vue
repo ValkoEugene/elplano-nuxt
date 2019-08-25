@@ -1,8 +1,8 @@
 <template>
   <v-text-field
     v-model="localValue"
-    class="search"
-    :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
+    class="custom-search mb-2"
+    :class="[$vuetify.breakpoint.smAndDown ? 'px-3' : 'px-6']"
     :label="$t('field.search')"
     :placeholder="$t('field.search')"
     type="text"
@@ -67,9 +67,13 @@ export default {
 }
 </script>
 
-<style scoped>
-.search {
+<style>
+.custom-search {
   margin: -16px 0;
   width: 100%;
+}
+
+.custom-search .v-input__control {
+  height: 50px;
 }
 </style>

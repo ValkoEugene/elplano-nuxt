@@ -5,7 +5,7 @@ const restUrl = '/group/lecturers'
 const formatDataFromApi = (data) => {
   const {
     id,
-    attributes: { first_name, last_name, patronymic, avatar },
+    attributes: { first_name, last_name, patronymic, avatar, active },
     relationships: { courses }
   } = data
 
@@ -15,6 +15,7 @@ const formatDataFromApi = (data) => {
     last_name,
     patronymic,
     avatar,
+    active,
     view: [last_name, first_name, patronymic].filter(Boolean).join(' '),
     course_ids: courses.data.map(({ id }) => id)
   }

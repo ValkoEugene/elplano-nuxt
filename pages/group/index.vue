@@ -14,19 +14,14 @@
             sm12
             md4
             :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
+            class="pb-0"
           >
-            <v-card min-height="100" elevation="5">
-              <CardTitle>
-                <v-chip
-                  v-if="student.president"
-                  class="ma-2"
-                  color="primary"
-                  small
-                  label
-                  >{{ $t('students.president') }}</v-chip
-                >
-                {{ student.full_name }}</CardTitle
-              >
+            <v-card min-height="100">
+              <CardBadge v-if="student.president">{{
+                $t('students.president')
+              }}</CardBadge>
+
+              <CardTitle> {{ student.full_name }}</CardTitle>
 
               <v-card-text class="student__info">
                 <img src="~static/images/avatar.png" class="student__avatar" />
@@ -73,6 +68,10 @@ export default {
     Search: () =>
       import(
         '../../components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
+      ),
+    CardBadge: () =>
+      import(
+        '../../components/cards/card-badge.vue' /* webpackChunkName: 'components/cards/card-badge' */
       )
   },
   mixins: [checkGroup],

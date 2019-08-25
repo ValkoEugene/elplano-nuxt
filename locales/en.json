@@ -58,7 +58,12 @@
   "ui": {
     "loading": "Loading...",
     "cancel": "Cancel",
-    "confirm": "Ok"
+    "confirm": "Ok",
+    "card": {
+      "badges": {
+        "active": "Active"
+      }
+    }
   },
   "student": {
     "title": "Profile settings"

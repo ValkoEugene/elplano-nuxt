@@ -58,7 +58,12 @@
   "ui": {
     "loading": "Загрузка...",
     "cancel": "Отмена",
-    "confirm": "Да"
+    "confirm": "Да",
+    "card": {
+      "badges": {
+        "active": "Активный"
+      }
+    }
   },
   "student": {
     "title": "Настройка профиля"

@@ -15,7 +15,11 @@
             md4
             :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
           >
-            <v-card min-height="100" elevation="5">
+            <v-card min-height="100">
+              <CardBadge v-if="course.active">{{
+                $t('ui.card.badges.active')
+              }}</CardBadge>
+
               <CardTitle>{{ course.title }}</CardTitle>
 
               <v-card-text class="pb-0">
@@ -116,6 +120,10 @@ export default {
     EditButton: () =>
       import(
         '../../components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
+      ),
+    CardBadge: () =>
+      import(
+        '../../components/cards/card-badge.vue' /* webpackChunkName: 'components/cards/card-badge' */
       )
   },
   mixins: [checkGroup],
@@ -134,6 +142,7 @@ export default {
      */
     courseEmptyModel: {
       id: '',
+      active: true,
       title: '',
       lecturer_ids: []
     }
@@ -185,6 +194,11 @@ export default {
     editSchema() {
       return {
         fields: [
+          {
+            model: 'active',
+            type: 'v-checkbox',
+            label: 'Активный'
+          },
           {
             model: 'title',
             type: 'v-text-field',
