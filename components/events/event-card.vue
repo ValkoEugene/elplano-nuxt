@@ -1,5 +1,5 @@
 <template>
-  <v-card min-height="100" elevation="5">
+  <v-card min-height="100">
     <CardTitle>{{ event.title }}</CardTitle>
 
     <v-card-text class="pb-0">

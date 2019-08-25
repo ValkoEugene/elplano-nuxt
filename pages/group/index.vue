@@ -14,7 +14,6 @@
             sm12
             md4
             :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
-            class="pb-0"
           >
             <v-card min-height="100">
               <CardBadge v-if="student.president">{{

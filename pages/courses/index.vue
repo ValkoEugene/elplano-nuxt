@@ -214,6 +214,7 @@ export default {
           {
             model: 'lecturer_ids',
             type: 'v-select',
+            multiple: true,
             items: this.lecturers,
             itemValue: 'id',
             itemText: 'view',

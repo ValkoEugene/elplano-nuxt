@@ -45,10 +45,11 @@
                 :item-value="field.itemValue"
                 :item-text="field.itemText"
                 :label="field.label"
+                :rules="Array.isArray(field.rules) ? field.rules : undefined"
+                :chips="field.multiple"
+                :multiple="field.multiple"
                 outlined
                 attach
-                chips
-                multiple
               />
 
               <v-checkbox

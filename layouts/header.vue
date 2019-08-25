@@ -57,8 +57,8 @@ export default {
      */
     links() {
       const links = [
-        { url: '/student', text: this.$t('header.profile') },
-        { url: '/settings', text: this.$t('header.settings') }
+        { url: '/student', text: this.$t('header.profile') }
+        // { url: '/settings', text: this.$t('header.settings') }
       ]
 
       if (this.isPresident)
