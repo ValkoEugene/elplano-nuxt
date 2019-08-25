@@ -58,25 +58,34 @@
   "ui": {
     "loading": "Loading...",
     "cancel": "Cancel",
-    "confirm": "Ok"
+    "confirm": "Ok",
+    "card": {
+      "badges": {
+        "active": "Active"
+      }
+    }
   },
   "student": {
     "title": "Profile settings"
   },
   "lesson": {
+    "empty": "No saved courses",
     "lessons": "Lessons",
     "edit": "Edit lesson",
     "create": "Create lesson",
     "confirm": "Delete lesson?"
   },
   "lecturers": {
+    "empty": "No saved lecturers",
     "lecturers": "Lecturers",
     "confirm": "Delete lecturer?"
   },
   "events": {
+    "empty": "No saved events",
     "confirm": "Delete from schedule?"
   },
   "invites": {
+    "empty": "No saved invites",
     "accept": "Accept",
     "invites": "Invites",
     "send": "Send invite",

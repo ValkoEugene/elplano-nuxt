@@ -3,7 +3,11 @@
     <Loader v-if="loading" />
 
     <template v-else>
-      <v-layout row wrap>
+      <v-alert v-if="!courses.length" type="info" prominent>
+        <span>{{ $t('lesson.empty') }}</span>
+      </v-alert>
+
+      <v-layout v-else row wrap>
         <Search v-model="search" />
 
         <template v-for="course in courses">
@@ -15,7 +19,11 @@
             md4
             :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
           >
-            <v-card min-height="100" elevation="5">
+            <v-card min-height="100">
+              <CardBadge v-if="course.active">{{
+                $t('ui.card.badges.active')
+              }}</CardBadge>
+
               <CardTitle>{{ course.title }}</CardTitle>
 
               <v-card-text class="pb-0">
@@ -116,6 +124,10 @@ export default {
     EditButton: () =>
       import(
         '../../components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
+      ),
+    CardBadge: () =>
+      import(
+        '../../components/cards/card-badge.vue' /* webpackChunkName: 'components/cards/card-badge' */
       )
   },
   mixins: [checkGroup],
@@ -134,6 +146,7 @@ export default {
      */
     courseEmptyModel: {
       id: '',
+      active: true,
       title: '',
       lecturer_ids: []
     }
@@ -185,6 +198,11 @@ export default {
     editSchema() {
       return {
         fields: [
+          {
+            model: 'active',
+            type: 'v-checkbox',
+            label: 'Активный'
+          },
           {
             model: 'title',
             type: 'v-text-field',

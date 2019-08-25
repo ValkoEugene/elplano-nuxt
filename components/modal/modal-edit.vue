@@ -51,6 +51,23 @@
                 multiple
               />
 
+              <v-checkbox
+                v-if="field.type === 'v-checkbox'"
+                :key="field.model"
+                v-model="localModel[field.model]"
+                :label="field.label"
+                color="primary"
+                class="mt-0"
+              />
+
+              <v-switch
+                v-if="field.type === 'v-switch'"
+                :key="field.model"
+                v-model="localModel[field.model]"
+                :label="field.label"
+                color="primary"
+              />
+
               <Datepicker
                 v-if="field.type === 'datepicker'"
                 :key="field.model"

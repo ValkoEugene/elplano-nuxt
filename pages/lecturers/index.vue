@@ -3,7 +3,11 @@
     <Loader v-if="loading" />
 
     <template v-else>
-      <v-layout row wrap>
+      <v-alert v-if="!lecturers.length" type="info" prominent>
+        <span>{{ $t('lecturers.empty') }}</span>
+      </v-alert>
+
+      <v-layout v-else row wrap>
         <Search v-model="search" />
 
         <template v-for="lecturer in lecturers">
@@ -15,8 +19,12 @@
             md4
             :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
           >
-            <v-card min-height="100" elevation="5">
-              <CardTitle>{{ lecturer.view }}</CardTitle>
+            <v-card min-height="100">
+              <CardBadge v-if="lecturer.active">{{
+                $t('ui.card.badges.active')
+              }}</CardBadge>
+
+              <CardTitle> {{ lecturer.view }}</CardTitle>
 
               <v-card-text class="pb-0">
                 <div v-if="!loadingCources">
@@ -105,6 +113,10 @@ export default {
     EditButton: () =>
       import(
         '../../components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
+      ),
+    CardBadge: () =>
+      import(
+        '../../components/cards/card-badge.vue' /* webpackChunkName: 'components/cards/card-badge' */
       )
   },
   mixins: [checkGroup],
@@ -123,6 +135,7 @@ export default {
      */
     lectureEmptyModel: {
       id: '',
+      active: true,
       first_name: '',
       last_name: '',
       patronymic: '',
@@ -177,6 +190,11 @@ export default {
     editSchema() {
       return {
         fields: [
+          {
+            model: 'active',
+            type: 'v-checkbox',
+            label: 'Препадает'
+          },
           {
             model: 'last_name',
             type: 'v-text-field',
