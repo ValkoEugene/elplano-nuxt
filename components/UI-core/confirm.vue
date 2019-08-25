@@ -1,7 +1,6 @@
 <template>
   <v-dialog v-model="localActive" max-width="290">
     <v-card>
-      <!-- eslint-disable-next-line -->
       <v-card-title class="headline">
         <slot name="title">Are you sure?</slot>
       </v-card-title>

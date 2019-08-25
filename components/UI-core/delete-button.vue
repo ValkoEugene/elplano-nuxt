@@ -1,6 +1,6 @@
 <template>
-  <!-- eslint-disable -->
   <v-btn
+    v-show="!presidentAccess || $store.getters['user/IS_PRESIDENT']"
     icon
     color="error"
     :disabled="disabled"
@@ -24,6 +24,14 @@ export default {
     id: {
       type: String,
       required: true
+    },
+    /**
+     * Flag that the button is available only for president
+     * @type {Boolean}
+     */
+    presidentAccess: {
+      type: Boolean,
+      default: true
     },
     /**
      * Flag that the button is disabled

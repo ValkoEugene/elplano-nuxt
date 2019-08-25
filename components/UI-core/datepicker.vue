@@ -1,5 +1,4 @@
 <template>
-  <!-- eslint-disable-next-line -->
   <div>
     <v-text-field
       :value="formatedDate"

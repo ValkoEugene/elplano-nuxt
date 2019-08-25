@@ -1,7 +1,8 @@
 <template>
   <v-card>
-    <!-- eslint-disable-next-line -->
-    <v-card-title>{{ $t(`group.${localGroup.id ? 'update' : 'create'}`) }}</v-card-title>
+    <v-card-title>{{
+      $t(`group.${localGroup.id ? 'update' : 'create'}`)
+    }}</v-card-title>
 
     <v-card-text>
       <v-form ref="form" :lazy-validation="true">
@@ -26,8 +27,9 @@
     </v-card-text>
 
     <v-card-actions>
-      <!-- eslint-disable-next-line -->
-      <v-btn color="primary" :disabled="updating" @click="save">{{ $t('actions.save') }}</v-btn>
+      <v-btn color="primary" :disabled="updating" @click="save">{{
+        $t('actions.save')
+      }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>
