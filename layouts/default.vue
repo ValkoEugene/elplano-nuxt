@@ -9,7 +9,7 @@
       <!-- Provides the application the proper gutter -->
       <!-- <v-container fluid> -->
       <!-- If using vue-router -->
-      <div :class="[$vuetify.breakpoint.smAndDown ? '' : 'pa-6']">
+      <div :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']">
         <Loader v-if="loading" />
 
         <nuxt v-else />

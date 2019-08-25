@@ -3,7 +3,7 @@
     <v-alert type="info" class="ma-6" prominent>
       <span>{{ $t('group.infoline1') }}</span>
       <br />
-      <!-- eslint-disable -->
+      <!-- eslint-disable-next-line -->
       <span>{{ $t('group.infoline2') }}</span>
     </v-alert>
 

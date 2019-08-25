@@ -1,6 +1,6 @@
 <template>
   <v-layout align-center justify-center fill-height>
-    <!-- eslint-disable -->
+    <!-- eslint-disable-next-line -->
     <v-alert v-if="!token" type="error">Проблема с токеном, повторите попытку.</v-alert>
 
     <v-progress-circular v-else :size="100" color="primary" indeterminate />

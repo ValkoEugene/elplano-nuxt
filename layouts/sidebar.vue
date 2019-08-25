@@ -8,9 +8,12 @@
   >
     <v-list-item>
       <v-list-item-content>
-        <!-- eslint-disable -->
-        <v-list-item-title class="title">{{ user && user.username }}</v-list-item-title>
-        <v-list-item-subtitle>{{ student && student.full_name }}</v-list-item-subtitle>
+        <v-list-item-title class="title">{{
+          user && user.username
+        }}</v-list-item-title>
+        <v-list-item-subtitle>{{
+          student && student.full_name
+        }}</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
 

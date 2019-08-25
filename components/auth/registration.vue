@@ -1,8 +1,9 @@
 <template>
   <v-card>
     <v-card-text>
-      <!-- eslint-disable -->
-      <v-alert v-if="successMessage" type="success">{{ successMessage }}</v-alert>
+      <v-alert v-if="successMessage" type="success">{{
+        successMessage
+      }}</v-alert>
 
       <v-form v-else ref="form" :lazy-validation="true">
         <v-text-field
@@ -14,7 +15,6 @@
           outlined
         />
 
-        <!-- eslint-disable -->
         <v-text-field
           v-model.trim="user.email"
           label="Email"
@@ -38,19 +38,23 @@
           :label="$t('field.confirmPasswordField')"
           :placeholder="$t('field.confirmPasswordField')"
           type="password"
-          :rules="[$rules.required, $rules.equal(user.password, $t('field.confirmPasswordValidate'))]"
+          :rules="[
+            $rules.required,
+            $rules.equal(user.password, $t('field.confirmPasswordValidate'))
+          ]"
           outlined
         />
       </v-form>
     </v-card-text>
     <v-card-actions v-if="!successMessage">
       <v-spacer></v-spacer>
-      <!-- eslint-disable -->
+
       <v-btn
         color="primary"
         :disabled="unactive"
         @click="$refs.form.validate() && createUser()"
-      >{{ $t('auth.sigunBtn') }}</v-btn>
+        >{{ $t('auth.sigunBtn') }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>

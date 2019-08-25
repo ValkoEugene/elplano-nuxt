@@ -54,12 +54,12 @@
     </v-card-text>
 
     <v-card-actions>
-      <!-- eslint-disable -->
       <v-btn
         color="primary"
         :disabled="updating"
         @click="updateStudent(localStudent)"
-      >{{ $t('actions.save') }}</v-btn>
+        >{{ $t('actions.save') }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>

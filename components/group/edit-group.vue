@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <!-- eslint-disable -->
+    <!-- eslint-disable-next-line -->
     <v-card-title>{{ $t(`group.${localGroup.id ? 'update' : 'create'}`) }}</v-card-title>
 
     <v-card-text>
@@ -26,7 +26,7 @@
     </v-card-text>
 
     <v-card-actions>
-      <!-- eslint-disable -->
+      <!-- eslint-disable-next-line -->
       <v-btn color="primary" :disabled="updating" @click="save">{{ $t('actions.save') }}</v-btn>
     </v-card-actions>
   </v-card>

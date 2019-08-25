@@ -16,7 +16,7 @@
       </template>
 
       <v-list :min-width="200">
-        <!-- eslint-disable -->
+        <!-- eslint-disable-next-line -->
         <v-list-item v-for="link in links" :key="link.url" :to="link.url" nuxt>{{ link.text }}</v-list-item>
       </v-list>
     </v-menu>

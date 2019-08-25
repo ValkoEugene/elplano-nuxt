@@ -1,11 +1,11 @@
 <template>
   <v-card>
     <v-card-text>
-      <!-- eslint-disable -->
-      <v-alert v-if="successMessage" type="success">{{ successMessage }}</v-alert>
+      <v-alert v-if="successMessage" type="success">{{
+        successMessage
+      }}</v-alert>
 
       <v-form v-else ref="form" :lazy-validation="true">
-        <!-- eslint-disable -->
         <v-text-field
           v-model.trim="login"
           label="Email"
@@ -18,12 +18,13 @@
     </v-card-text>
     <v-card-actions v-if="!successMessage">
       <v-spacer></v-spacer>
-      <!-- eslint-disable -->
+
       <v-btn
         color="primary"
         :disabled="unactive"
         @click="$refs.form.validate() && resetPassword()"
-      >{{ $t('auth.resetPasswordBtn') }}</v-btn>
+        >{{ $t('auth.resetPasswordBtn') }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
