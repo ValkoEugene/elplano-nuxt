@@ -1,10 +1,39 @@
+/* Бейдж карточек */
 .custom-badge {
   position: absolute !important;
   top: -10px !important;
   left: 10px !important;
 }
 
+/* Тени карточек */
 .v-card {
   box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
     0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Фикс выбранных элементов для мультиселекта */
+.v-chip.v-size--default {
+  height: auto !important;
+}
+
+/* Фикс высоты модального окна  */
+.v-dialog--fullscreen {
+  min-height: 100vh !important;
+}
+
+.v-timeline--dense .v-timeline-item .v-timeline-item__body > .v-card:before,
+.v-timeline--dense .v-timeline-item .v-timeline-item__body .v-card:after {
+  display: none;
+}
+
+.mobile .v-timeline-item__divider {
+  display: none;
+}
+
+.mobile .v-timeline--dense .v-timeline-item__body {
+  max-width: 100%;
+}
+
+.mobile .v-timeline--dense:not(.v-timeline--reverse):before {
+  display: none;
 }

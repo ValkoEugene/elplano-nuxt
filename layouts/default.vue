@@ -1,11 +1,15 @@
 <template>
-  <v-app light :style="cssVariblesFromTheme">
+  <v-app
+    light
+    :style="cssVariblesFromTheme"
+    :class="[$vuetify.breakpoint.smAndDown ? 'mobile' : '']"
+  >
     <Sidebar :have-group="haveGroup" />
 
-    <Header :class="[$vuetify.breakpoint.smAndDown ? 'header-mobile' : '']" />
+    <Header class="mobile__header" />
 
     <!-- Sizes your content based upon application components -->
-    <v-content :class="[$vuetify.breakpoint.smAndDown ? 'content-mobile' : '']">
+    <v-content class="mobile__content">
       <!-- Provides the application the proper gutter -->
       <!-- <v-container fluid> -->
       <!-- If using vue-router -->
@@ -125,11 +129,11 @@ export default {
   background: #000ef30a;
 }
 
-.header-mobile {
+.mobile .mobile__header {
   max-width: 100vw;
 }
 
-.content-mobile {
+.mobile .mobile__content {
   overflow-x: hidden;
 }
 

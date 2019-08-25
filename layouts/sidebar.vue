@@ -4,10 +4,15 @@
     app
     dark
     src="https://develop.d2ykf6mixoqcwa.amplifyapp.com/images/sidebar_bg.jpg"
-    class="bg-primary-darken3"
+    class="drawer-background"
   >
     <v-list-item>
       <v-list-item-content>
+        <img
+          v-if="user && user.avatar_url"
+          :src="user.avatar_url"
+          class="user__avatar"
+        />
         <v-list-item-title class="title">{{
           user && user.username
         }}</v-list-item-title>
@@ -146,7 +151,11 @@ export default {
 
 <style>
 .drawer-background {
-  background-image: linear-gradient(45deg, #c2185b, #ba68c8);
+  background-image: linear-gradient(
+    45deg,
+    rgb(74, 19, 140),
+    rgb(186, 104, 200)
+  );
 }
 
 .v-navigation-drawer__image {
@@ -155,5 +164,16 @@ export default {
 
 .v-application .v-navigation-drawer__content a {
   color: #ffffff;
+}
+
+.user__avatar {
+  height: 100px;
+  width: 100px;
+  flex: none;
+  margin: auto;
+  border-radius: 50%;
+  padding: 5px;
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12) !important;
 }
 </style>

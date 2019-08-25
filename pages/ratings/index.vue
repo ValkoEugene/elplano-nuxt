@@ -1,5 +1,9 @@
 <template>
-  <div>ratings</div>
+  <div>
+    <v-alert type="info" prominent>
+      <span>{{ $t('ui.notready') }}</span>
+    </v-alert>
+  </div>
 </template>
 
 <script>

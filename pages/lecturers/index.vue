@@ -222,6 +222,7 @@ export default {
           {
             model: 'course_ids',
             type: 'v-select',
+            multiple: true,
             items: this.courses,
             itemValue: 'id',
             itemText: 'title',

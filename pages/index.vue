@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="d-flex justify-center pa-6">
-      <v-btn color="primary" @click="prevWeek">-</v-btn>
+    <div class="d-flex justify-center">
+      <v-btn color="primary" class="prev-week" @click="prevWeek">-</v-btn>
 
-      <p class="title text-primary px-6">
+      <p class="title text-primary week-title px-6">
         {{ weekDates[0] }} - {{ weekDates[6] }}
       </p>
-      <v-btn color="primary" @click="nextWeek">+</v-btn>
+      <v-btn color="primary" class="next-week" @click="nextWeek">+</v-btn>
     </div>
 
     <template v-if="!loading">
@@ -17,8 +17,13 @@
       <v-timeline v-else dense>
         <template v-for="(day, dayIndex) in daysOfWeekList">
           <v-timeline-item v-if="weekEvents[day].length" :key="day" small>
-            <p>{{ getDayView(weekDates[dayIndex]) }}</p>
-            <p>{{ weekDates[dayIndex] }}</p>
+            <span class="text-primary font-weight-medium">{{
+              getDayView(weekDates[dayIndex])
+            }}</span>
+            <br />
+            <span class="text-primary font-weight-medium">{{
+              weekDates[dayIndex]
+            }}</span>
 
             <template v-for="event in weekEvents[day]">
               <Event-card
@@ -30,7 +35,7 @@
                 :updating="updating"
                 :namespace="eventsNamespace"
                 :delete-action="deleteAction"
-                class="ma-6"
+                class="mb-3"
                 @edit="edit"
               />
             </template>
@@ -146,6 +151,7 @@ export default {
      */
     eventEmptyTemplate: {
       id: '',
+      course_id: '',
       title: '',
       description: '',
       start_at: '',
@@ -214,7 +220,8 @@ export default {
     },
 
     /**
-     *
+     * Схема на редактирование
+     * @type {Object}
      */
     editSchema() {
       return {
@@ -226,6 +233,16 @@ export default {
             placeholder: this.$t('field.title'),
             rules: [this.$rules.required],
             inputType: 'text'
+          },
+          {
+            model: 'course_id',
+            type: 'v-select',
+            multiple: false,
+            items: this.courses,
+            itemValue: 'id',
+            itemText: 'title',
+            rules: [this.$rules.required],
+            label: this.$t('lesson.lesson')
           },
           {
             type: 'v-text-field',
@@ -250,6 +267,7 @@ export default {
             model: 'by_day',
             type: 'v-select',
             items: this.weekDayItems,
+            multiple: true,
             itemValue: 'value',
             itemText: 'view',
             label: this.$t('field.daysOfWeek')
@@ -405,6 +423,8 @@ export default {
       this.startWeekDate = startWeekDate
       this.weekEvents = weekEvents
       this.weekDates = weekDates
+
+      window.scrollTo(0, 0)
     },
 
     /**
@@ -444,3 +464,22 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.mobile .prev-week {
+  position: fixed;
+  left: 5px;
+  z-index: 1;
+}
+
+.mobile .next-week {
+  position: fixed;
+  right: 5px;
+  z-index: 1;
+}
+
+.mobile .week-title {
+  text-align: center;
+  font-size: 1rem !important;
+}
+</style>

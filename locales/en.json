@@ -59,6 +59,7 @@
     "loading": "Loading...",
     "cancel": "Cancel",
     "confirm": "Ok",
+    "notready": "This page in progress",
     "card": {
       "badges": {
         "active": "Active"
@@ -71,6 +72,7 @@
   "lesson": {
     "empty": "No saved courses",
     "lessons": "Lessons",
+    "lesson": "Lesson",
     "edit": "Edit lesson",
     "create": "Create lesson",
     "confirm": "Delete lesson?"
@@ -89,6 +91,7 @@
     "accept": "Accept",
     "invites": "Invites",
     "send": "Send invite",
+    "sended": "Invitate sent",
     "statuses": {
       "pending": "pending",
       "accepted": "accepted"

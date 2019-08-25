@@ -6,6 +6,8 @@ export default function({ isHMR, app, store, route, params, error, redirect }) {
   // Игнорируем hotreload
   if (isHMR) return
 
+  if (store.state.i18n.locale) return
+
   const locale = route.query.lang || defaultLocale
 
   if (!store.state.i18n.locales.includes(locale)) {
