@@ -14,11 +14,11 @@
     </v-card-text>
 
     <v-card-actions class="pt-0">
-      <v-btn icon class="text-primary">
+      <v-btn icon class="text-primary" :disabled="true">
         <v-icon>star_half</v-icon>
       </v-btn>
 
-      <v-btn icon class="text-primary">
+      <v-btn icon class="text-primary" :disabled="true">
         <v-icon>work</v-icon>
       </v-btn>
 

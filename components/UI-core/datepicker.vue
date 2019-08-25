@@ -137,3 +137,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.v-picker.v-card {
+  box-shadow: none !important;
+}
+</style>

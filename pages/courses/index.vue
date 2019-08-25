@@ -49,11 +49,11 @@
               </v-card-text>
 
               <v-card-actions class="pt-0">
-                <v-btn icon class="text-primary-darken1" :disabled="updating">
+                <v-btn icon class="text-primary-darken1" :disabled="true">
                   <v-icon>star_half</v-icon>
                 </v-btn>
 
-                <v-btn icon class="text-primary-darken1" :disabled="updating">
+                <v-btn icon class="text-primary-darken1" :disabled="true">
                   <v-icon>work</v-icon>
                 </v-btn>
 
