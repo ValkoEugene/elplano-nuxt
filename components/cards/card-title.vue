@@ -1,10 +1,5 @@
 <template>
-  <v-card-title
-    class="text-primary-darken3"
-    :class="[
-      $vuetify.breakpoint.width > 900 ? 'title' : 'subtitle-1 font-weight-black'
-    ]"
-  >
+  <v-card-title class="title custom-title">
     <slot />
   </v-card-title>
 </template>
@@ -14,3 +9,10 @@ export default {
   name: 'CardTitle'
 }
 </script>
+
+<style>
+.custom-title {
+  font-weight: normal !important;
+  line-height: normal !important;
+}
+</style>

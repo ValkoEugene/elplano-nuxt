@@ -3,9 +3,9 @@
     <Loader v-if="loading" />
 
     <template v-else>
-      <Search v-model="search" />
-
       <v-layout row wrap>
+        <Search v-model="search" />
+
         <template v-for="lecturer in lecturers">
           <v-flex
             v-if="!search || $customHelpers.search(lecturer.view, search)"
@@ -13,7 +13,7 @@
             xs12
             sm12
             md4
-            class="pa-4"
+            :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
           >
             <v-card min-height="100" elevation="5">
               <CardTitle>{{ lecturer.view }}</CardTitle>
@@ -29,7 +29,7 @@
                     <div
                       v-for="id in lecturer.course_ids"
                       :key="id"
-                      class="pa-2"
+                      class="mb-1"
                     >
                       {{ getCourseView(id) }}
                     </div>
@@ -38,14 +38,6 @@
               </v-card-text>
 
               <v-card-actions class="pt-0">
-                <v-btn icon class="text-primary" :disabled="updating">
-                  <v-icon>star_half</v-icon>
-                </v-btn>
-
-                <v-btn icon class="text-primary" :disabled="updating">
-                  <v-icon>work</v-icon>
-                </v-btn>
-
                 <EditButton
                   :disabled="updating"
                   @click="edit(lecturer.id, lecturer)"

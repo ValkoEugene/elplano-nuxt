@@ -2,6 +2,7 @@
   <v-text-field
     v-model="localValue"
     class="search"
+    :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
     :label="$t('field.search')"
     :placeholder="$t('field.search')"
     type="text"
@@ -68,6 +69,7 @@ export default {
 
 <style scoped>
 .search {
-  margin-bottom: -16px;
+  margin: -16px 0;
+  width: 100%;
 }
 </style>
