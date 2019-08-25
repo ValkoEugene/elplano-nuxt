@@ -1,20 +1,18 @@
 <template>
   <v-card>
-    <!-- eslint-disable -->
     <v-card-title>{{ $t(`invites.invites`) }}</v-card-title>
 
     <v-card-text>
-      <!-- eslint-disable -->
       <v-data-table :headers="headers" :items="invites" :items-per-page="5">
         <template v-slot:item.status="{ item }">
-          <v-chip
-            class="ma-2"
-            :color="colors[item.status]"
-            label
-          >{{ $t(`invites.statuses.${item.status}`) }}</v-chip>
+          <v-chip class="ma-2" :color="colors[item.status]" label>{{
+            $t(`invites.statuses.${item.status}`)
+          }}</v-chip>
         </template>
 
-        <template v-slot:item.sent_at="{ item }">{{ formatDate(item.sent_at )}}</template>
+        <template v-slot:item.sent_at="{ item }">{{
+          formatDate(item.sent_at)
+        }}</template>
       </v-data-table>
     </v-card-text>
   </v-card>

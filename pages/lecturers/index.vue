@@ -1,14 +1,12 @@
 <template>
-  <v-container :fluid="!loading">
-    <!-- eslint-disable -->
-
+  <v-container :fluid="!loading" class="pa-0">
     <Loader v-if="loading" />
 
     <template v-else>
       <Search v-model="search" />
 
       <v-layout row wrap>
-        <template v-for="(lecturer) in lecturers">
+        <template v-for="lecturer in lecturers">
           <v-flex
             v-if="!search || $customHelpers.search(lecturer.view, search)"
             :key="lecturer.id"
@@ -22,15 +20,20 @@
 
               <v-card-text class="pb-0">
                 <div v-if="!loadingCources">
-                  <span class="font-weight-bold">{{ $t('lesson.lessons') }}:</span>
+                  <span class="font-weight-bold"
+                    >{{ $t('lesson.lessons') }}:</span
+                  >
                   <span v-if="!lecturer.course_ids.length">-</span>
 
-                  <div v-else v-for="id in lecturer.course_ids" :key="id" class="pa-2">
-                    <!-- <v-avatar class="bg-primary-lighten2" size="32">
-                      <v-icon dark>book</v-icon>
-                    </v-avatar>-->
-                    {{ getCourseView(id) }}
-                  </div>
+                  <template v-else>
+                    <div
+                      v-for="id in lecturer.course_ids"
+                      :key="id"
+                      class="pa-2"
+                    >
+                      {{ getCourseView(id) }}
+                    </div>
+                  </template>
                 </div>
               </v-card-text>
 
@@ -43,14 +46,10 @@
                   <v-icon>work</v-icon>
                 </v-btn>
 
-                <v-btn
-                  icon
-                  class="text-primary"
+                <EditButton
                   :disabled="updating"
                   @click="edit(lecturer.id, lecturer)"
-                >
-                  <v-icon>edit</v-icon>
-                </v-btn>
+                />
 
                 <v-spacer></v-spacer>
 
@@ -110,6 +109,10 @@ export default {
     DeleteButton: () =>
       import(
         '../../components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
+      ),
+    EditButton: () =>
+      import(
+        '../../components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
       )
   },
   mixins: [checkGroup],

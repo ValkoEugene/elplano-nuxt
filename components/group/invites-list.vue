@@ -1,19 +1,20 @@
 <template>
   <v-card>
-    <!-- eslint-disable -->
     <v-card-title>{{ $t(`invites.invites`) }}</v-card-title>
 
     <v-card-text>
-      <!-- eslint-disable -->
       <v-data-table :headers="headers" :items="invites" :items-per-page="5">
-        <template v-slot:item.sent_at="{ item }">{{ formatDate(item.sent_at )}}</template>
+        <template v-slot:item.sent_at="{ item }">{{
+          formatDate(item.sent_at)
+        }}</template>
 
         <template v-slot:item.invitation_token="{ item }">
           <v-btn
             text
             :disabled="updating"
             @click="accept(item.invitation_token)"
-          >{{ $t('invites.accept') }}</v-btn>
+            >{{ $t('invites.accept') }}</v-btn
+          >
         </template>
       </v-data-table>
     </v-card-text>

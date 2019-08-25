@@ -1,5 +1,4 @@
 <template>
-  <!-- eslint-disable -->
   <div>
     <v-text-field
       :value="formatedDate"
@@ -33,7 +32,9 @@
 
           <v-btn text @click="close">{{ $t('ui.cancel') }}</v-btn>
 
-          <v-btn text :disabled="!localDate || !localTime" @click="save">{{ $t('ui.confirm') }}</v-btn>
+          <v-btn text :disabled="!localDate || !localTime" @click="save">{{
+            $t('ui.confirm')
+          }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

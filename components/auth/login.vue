@@ -23,12 +23,13 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <!-- eslint-disable -->
+
       <v-btn
         color="primary"
         :disabled="loginFetching"
         @click="$refs.form.validate() && login(user)"
-      >{{ $t("auth.loginBtn") }}</v-btn>
+        >{{ $t('auth.loginBtn') }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>

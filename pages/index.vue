@@ -2,8 +2,10 @@
   <div>
     <div class="d-flex justify-center pa-6">
       <v-btn color="primary" @click="prevWeek">-</v-btn>
-      <!-- eslint-disable -->
-      <p class="title text-primary px-6">{{ weekDates[0] }} - {{ weekDates[6] }}</p>
+
+      <p class="title text-primary px-6">
+        {{ weekDates[0] }} - {{ weekDates[6] }}
+      </p>
       <v-btn color="primary" @click="nextWeek">+</v-btn>
     </div>
 
@@ -31,7 +33,7 @@
       </template>
     </v-timeline>
 
-    <AddNew @click="edit({ id: '' })" />
+    <AddNew :president-access="false" @click="edit({ id: '' })" />
   </div>
 </template>
 

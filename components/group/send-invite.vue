@@ -1,6 +1,5 @@
 <template>
   <v-card>
-    <!-- eslint-disable -->
     <v-card-title>{{ $t('invites.send') }}</v-card-title>
 
     <v-card-text>
@@ -10,19 +9,19 @@
           label="Email"
           placeholder="Email"
           type="text"
-          :rules="[ $rules.email]"
+          :rules="[$rules.email]"
           outlined
         />
       </v-form>
     </v-card-text>
 
     <v-card-actions>
-      <!-- eslint-disable -->
       <v-btn
         color="primary"
         :disabled="!invite.email.length || updating"
         @click="send"
-      >{{ $t('actions.send') }}</v-btn>
+        >{{ $t('actions.send') }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -51,6 +50,17 @@ export default {
       'updating'
     ])
   },
+  watch: {
+    /**
+     * Обновляем список приглашений
+     */
+    updating() {
+      if (!this.updating) {
+        this.invite = { email: '' }
+        this.$emit('sendInvite')
+      }
+    }
+  },
   methods: {
     ...mapActions(namespace, {
       /**
@@ -66,8 +76,6 @@ export default {
       if (!this.$refs.form.validate()) return
 
       this.sendInvite(this.invite)
-      this.invite = { email: '' }
-      this.$emit('sendInvite')
     }
   }
 }

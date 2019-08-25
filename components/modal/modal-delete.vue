@@ -1,6 +1,9 @@
 <template>
-  <!-- eslint-disable -->
-  <Confirm :active="showingConfirmation" @cancel="showConfirmation(false)" @confirm="onConfirm">
+  <Confirm
+    :active="showingConfirmation"
+    @cancel="showConfirmation(false)"
+    @confirm="onConfirm"
+  >
     <template v-slot:title>{{ text }}</template>
   </Confirm>
 </template>

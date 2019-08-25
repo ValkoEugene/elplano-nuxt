@@ -1,14 +1,12 @@
 <template>
-  <v-container :fluid="!loading">
-    <!-- eslint-disable -->
-
+  <v-container :fluid="!loading" class="pa-0">
     <Loader v-if="loading" />
 
     <template v-else>
       <Search v-model="search" />
 
       <v-layout row wrap>
-        <template v-for="(course) in courses">
+        <template v-for="course in courses">
           <v-flex
             v-if="!search || $customHelpers.search(course.title, search)"
             :key="course.id"
@@ -22,15 +20,23 @@
 
               <v-card-text class="pb-0">
                 <div v-if="!loadingLecturers">
-                  <span class="font-weight-bold">{{ $t('lecturers.lecturers') }}:</span>
+                  <span class="font-weight-bold"
+                    >{{ $t('lecturers.lecturers') }}:</span
+                  >
                   <span v-if="!course.lecturer_ids.length">-</span>
 
-                  <div v-else v-for="id in course.lecturer_ids" :key="id" class="pa-2">
-                    <v-avatar class="bg-primary-lighten2" size="32">
-                      <v-icon dark>account_circle</v-icon>
-                    </v-avatar>
-                    {{ getLecturerView(id) }}
-                  </div>
+                  <template v-else>
+                    <div
+                      v-for="id in course.lecturer_ids"
+                      :key="id"
+                      class="pa-2"
+                    >
+                      <v-avatar class="bg-primary-lighten2" size="32">
+                        <v-icon dark>account_circle</v-icon>
+                      </v-avatar>
+                      {{ getLecturerView(id) }}
+                    </div>
+                  </template>
                 </div>
               </v-card-text>
 
@@ -43,14 +49,10 @@
                   <v-icon>work</v-icon>
                 </v-btn>
 
-                <v-btn
-                  icon
-                  class="text-primary-darken1"
+                <EditButton
                   :disabled="updating"
                   @click="edit(course.id, course)"
-                >
-                  <v-icon>edit</v-icon>
-                </v-btn>
+                />
 
                 <v-spacer></v-spacer>
 
@@ -110,6 +112,10 @@ export default {
     DeleteButton: () =>
       import(
         '../../components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
+      ),
+    EditButton: () =>
+      import(
+        '../../components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
       )
   },
   mixins: [checkGroup],

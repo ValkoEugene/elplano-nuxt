@@ -1,7 +1,11 @@
 <template>
   <v-row justify="center">
-    <!-- eslint-disable -->
-    <v-dialog :value="showingEdit" fullscreen hide-overlay transition="dialog-bottom-transition">
+    <v-dialog
+      :value="showingEdit"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
       <v-card>
         <v-toolbar dark color="primary">
           <v-btn icon dark @click="setShowing(false)">
@@ -9,13 +13,13 @@
           </v-btn>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <!-- eslint-disable -->
             <v-btn
               dark
               text
               :disabled="updating"
               @click="$refs.form.validate() && save(localModel)"
-            >{{ $t('actions.save') }}</v-btn>
+              >{{ $t('actions.save') }}</v-btn
+            >
           </v-toolbar-items>
         </v-toolbar>
 
@@ -24,6 +28,7 @@
             <template v-for="field in editSchema.fields">
               <v-text-field
                 v-if="field.type === 'v-text-field'"
+                :key="field.model"
                 v-model.trim="localModel[field.model]"
                 :label="field.label"
                 :placeholder="field.placeholder"
@@ -34,6 +39,7 @@
 
               <v-select
                 v-if="field.type === 'v-select'"
+                :key="field.model"
                 v-model="localModel[field.model]"
                 :items="field.items"
                 :item-value="field.itemValue"
@@ -47,6 +53,7 @@
 
               <Datepicker
                 v-if="field.type === 'datepicker'"
+                :key="field.model"
                 v-model="localModel[field.model]"
                 :label="field.label"
                 :rules="Array.isArray(field.rules) ? field.rules : undefined"

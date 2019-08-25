@@ -1,22 +1,18 @@
 <template>
   <v-btn
     v-show="!presidentAccess || $store.getters['user/IS_PRESIDENT']"
-    fixed
-    dark
-    fab
-    bottom
-    right
-    class="bg-primary-darken1"
+    icon
+    class="text-primary"
     :disabled="disabled"
     @click="$emit('click')"
   >
-    <v-icon>add</v-icon>
+    <v-icon>edit</v-icon>
   </v-btn>
 </template>
 
 <script>
 export default {
-  name: 'AddNew',
+  name: 'EditButton',
   props: {
     /**
      * Флаг отключения кнопки

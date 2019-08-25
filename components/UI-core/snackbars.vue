@@ -2,14 +2,14 @@
 
 <template>
   <div>
-    <!-- eslint-disable -->
     <template v-if="haveSnackbars">
+      <!-- eslint-disable -->
       <v-snackbar
         v-for="(snackbar, index) in snackbars"
         v-if="index === 0"
-        :color="snackbar.color"
         :key="snackbars.text"
         v-model="active"
+        :color="snackbar.color"
         :timeout="0"
       >
         {{ snackbar.text }}
