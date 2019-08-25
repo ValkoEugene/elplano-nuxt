@@ -5,6 +5,7 @@
       fullscreen
       hide-overlay
       transition="dialog-bottom-transition"
+      @keydown="escHandler"
     >
       <v-card>
         <v-toolbar dark color="primary">
@@ -163,7 +164,15 @@ export default {
        * @type {Function}
        */
       save: modalEditTypes.actions.SAVE
-    })
+    }),
+
+    /**
+     * Обработчик нажатия на esc
+     * @param {Object} event - объект события
+     */
+    escHandler(event) {
+      if (event.code === 'Escape') this.setShowing(false)
+    }
   }
 }
 </script>
