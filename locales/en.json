@@ -91,6 +91,7 @@
     "accept": "Accept",
     "invites": "Invites",
     "send": "Send invite",
+    "sended": "Invitate sent",
     "statuses": {
       "pending": "pending",
       "accepted": "accepted"

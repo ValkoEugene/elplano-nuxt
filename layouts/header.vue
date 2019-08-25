@@ -32,6 +32,10 @@
 import { mapMutations, mapState, mapGetters } from 'vuex'
 import { namespace, Types } from '../store/i18n'
 import { namespace as userNamespace, Types as userTypes } from '../store/user'
+import {
+  namespace as groupNamespace,
+  Types as groupTypes
+} from '../store/group'
 import { TOGGLE_SIDEBAR_ROOT_LISTENER } from './sidebar.vue'
 
 export default {
@@ -51,15 +55,26 @@ export default {
       isPresident: userTypes.getters.IS_PRESIDENT
     }),
 
+    ...mapGetters(groupNamespace, {
+      /**
+       * Флаг наличия группы
+       * @type {Boolean}
+       */
+      haveGroup: groupTypes.getters.HAVE_GROUP
+    }),
+
     /**
      * Ссылки для меню
      * @type {[ { url: String, text: String } ]}
      */
     links() {
       const links = [
-        { url: '/student', text: this.$t('header.profile') }
         // { url: '/settings', text: this.$t('header.settings') }
       ]
+
+      if (this.haveGroup) {
+        links.push({ url: '/student', text: this.$t('header.profile') })
+      }
 
       if (this.isPresident)
         links.push({

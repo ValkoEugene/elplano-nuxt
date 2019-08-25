@@ -101,6 +101,12 @@ export const actions = {
 
     try {
       await adminInvitesApi.sendInvite(data)
+
+      context.commit(
+        `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
+        [{ text: window.$nuxt.$t('invites.sended'), color: 'success' }],
+        { root: true }
+      )
     } catch (error) {
       context.commit(
         `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
