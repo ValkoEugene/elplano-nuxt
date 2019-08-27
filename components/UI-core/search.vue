@@ -1,8 +1,7 @@
 <template>
   <v-text-field
     v-model="localValue"
-    class="custom-search mb-2"
-    :class="[$vuetify.breakpoint.smAndDown ? 'px-3' : 'px-6']"
+    class="custom-search px-3 mb-4"
     :label="$t('field.search')"
     :placeholder="$t('field.search')"
     type="text"

@@ -1,13 +1,14 @@
 <template>
-  <v-btn
+  <v-list-item
     v-show="!presidentAccess || $store.getters['user/IS_PRESIDENT']"
     icon
     class="text-primary"
     :disabled="disabled"
     @click="$emit('click')"
   >
-    <v-icon>edit</v-icon>
-  </v-btn>
+    <v-icon class="pr-2">edit</v-icon>
+    {{ $t('ui.edit') }}
+  </v-list-item>
 </template>
 
 <script>

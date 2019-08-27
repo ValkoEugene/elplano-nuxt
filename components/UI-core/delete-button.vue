@@ -1,13 +1,14 @@
 <template>
-  <v-btn
+  <v-list-item
     v-show="!presidentAccess || $store.getters['user/IS_PRESIDENT']"
     icon
     color="error"
     :disabled="disabled"
     @click="initDeleting({ id, namespace, action, text: confirmText })"
   >
-    <v-icon>delete</v-icon>
-  </v-btn>
+    <v-icon class="pr-2">delete</v-icon>
+    {{ $t('ui.delete') }}
+  </v-list-item>
 </template>
 
 <script>

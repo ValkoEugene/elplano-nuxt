@@ -13,7 +13,7 @@
             xs12
             sm12
             md4
-            :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
+            class="pa-3"
           >
             <v-card min-height="100">
               <CardBadge v-if="student.president">{{
@@ -117,6 +117,11 @@ export default {
 .student__avatar {
   width: 100px;
   height: 100px;
+}
+
+.mobile .student__avatar {
+  width: 50px;
+  height: 50px;
 }
 
 .student__about {

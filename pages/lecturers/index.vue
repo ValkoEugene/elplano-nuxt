@@ -17,12 +17,14 @@
             xs12
             sm12
             md4
-            :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
+            class="pa-3"
           >
             <v-card min-height="100">
-              <CardBadge v-if="lecturer.active">{{
-                $t('ui.card.badges.active')
-              }}</CardBadge>
+              <div>
+                <CardBadge v-if="lecturer.active">{{
+                  $t('ui.card.badges.active')
+                }}</CardBadge>
+              </div>
 
               <CardTitle> {{ lecturer.view }}</CardTitle>
 
@@ -45,13 +47,11 @@
                 </div>
               </v-card-text>
 
-              <v-card-actions class="pt-0">
+              <CardMenu>
                 <EditButton
                   :disabled="updating"
                   @click="edit(lecturer.id, lecturer)"
                 />
-
-                <v-spacer></v-spacer>
 
                 <DeleteButton
                   :id="lecturer.id"
@@ -60,7 +60,7 @@
                   :action="deleteAction"
                   :confirm-text="$t('lecturers.confirm')"
                 />
-              </v-card-actions>
+              </CardMenu>
             </v-card>
           </v-flex>
         </template>
@@ -117,6 +117,10 @@ export default {
     CardBadge: () =>
       import(
         '../../components/cards/card-badge.vue' /* webpackChunkName: 'components/cards/card-badge' */
+      ),
+    CardMenu: () =>
+      import(
+        '../../components/cards/card-menu.vue' /* webpackChunkName: 'components/cards/card-menu' */
       )
   },
   mixins: [checkGroup],
@@ -193,7 +197,7 @@ export default {
           {
             model: 'active',
             type: 'v-checkbox',
-            label: 'Препадает'
+            label: this.$t('ui.card.badges.active')
           },
           {
             model: 'last_name',

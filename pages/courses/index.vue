@@ -17,7 +17,7 @@
             xs12
             sm12
             md4
-            :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
+            class="pa-3"
           >
             <v-card min-height="100">
               <CardBadge v-if="course.active">{{
@@ -48,22 +48,19 @@
                 </div>
               </v-card-text>
 
-              <v-card-actions class="pt-0">
-                <v-btn icon class="text-primary-darken1" :disabled="true">
-                  <v-icon>star_half</v-icon>
-                </v-btn>
-
-                <v-btn icon class="text-primary-darken1" :disabled="true">
-                  <v-icon>work</v-icon>
-                </v-btn>
-
+              <CardMenu>
+                <v-list-item :disabled="true">
+                  <v-icon class="pr-2">star_half</v-icon>
+                  {{ $t('ratings.add') }}
+                </v-list-item>
+                <v-list-item :disabled="true">
+                  <v-icon class="pr-2">work</v-icon>
+                  {{ $t('tasks.add') }}
+                </v-list-item>
                 <EditButton
                   :disabled="updating"
                   @click="edit(course.id, course)"
                 />
-
-                <v-spacer></v-spacer>
-
                 <DeleteButton
                   :id="course.id"
                   :disabled="updating"
@@ -71,7 +68,7 @@
                   :action="deleteAction"
                   :confirm-text="$t('lesson.confirm')"
                 />
-              </v-card-actions>
+              </CardMenu>
             </v-card>
           </v-flex>
         </template>
@@ -128,6 +125,10 @@ export default {
     CardBadge: () =>
       import(
         '../../components/cards/card-badge.vue' /* webpackChunkName: 'components/cards/card-badge' */
+      ),
+    CardMenu: () =>
+      import(
+        '../../components/cards/card-menu.vue' /* webpackChunkName: 'components/cards/card-menu' */
       )
   },
   mixins: [checkGroup],
@@ -201,7 +202,7 @@ export default {
           {
             model: 'active',
             type: 'v-checkbox',
-            label: 'Активный'
+            label: this.$t('ui.card.badges.active')
           },
           {
             model: 'title',
