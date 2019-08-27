@@ -1,5 +1,5 @@
 <template>
-  <v-chip class="custom-badge elevation-5" color="primary" small label>
+  <v-chip class="custom-badge elevation-5" color="info" small label>
     <slot />
   </v-chip>
 </template>

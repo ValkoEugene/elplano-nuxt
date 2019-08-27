@@ -59,6 +59,8 @@
     "loading": "Loading...",
     "cancel": "Cancel",
     "confirm": "Ok",
+    "edit": "Edit",
+    "delete": "Delete",
     "notready": "This page in progress",
     "card": {
       "badges": {
@@ -105,5 +107,11 @@
   },
   "students": {
     "president": "President"
+  },
+  "ratings": {
+    "add": "Add rating"
+  },
+  "tasks": {
+    "add": "Add task"
   }
 }

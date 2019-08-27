@@ -81,7 +81,8 @@ export default {
             accent2: colors.purple.accent2,
             accent3: colors.purple.accent3,
             accent4: colors.purple.accent4
-          }
+          },
+          info: colors.purple.lighten1
         }
       }
     }

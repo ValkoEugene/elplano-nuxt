@@ -2,7 +2,7 @@
 .custom-badge {
   position: absolute !important;
   top: -10px !important;
-  left: 10px !important;
+  left: 15px !important;
 }
 
 /* Тени карточек */
@@ -26,6 +26,15 @@
   display: none;
 }
 
+/* .v-card.v-sheet {
+  border-radius: 14px !important;
+} */
+
+.v-card__title.custom-title {
+  padding-right: 50px;
+}
+
+/* Переопределяем для мобильных */
 .mobile .v-timeline-item__divider {
   display: none;
 }

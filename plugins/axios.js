@@ -60,7 +60,7 @@ const updateToken = (error) => {
         )
 
         // Обновляем заголовки для повторного запроса
-        axios.defaults.headers.commonAuthorization = `Bearer ${access_token}`
+        axios.defaults.headers.common.Authorization = `Bearer ${access_token}`
         originalRequest.headers.Authorization = `Bearer ${access_token}`
 
         return axios(originalRequest)
