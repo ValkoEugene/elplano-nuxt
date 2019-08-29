@@ -5,12 +5,16 @@
     "email": "Email must contain @"
   },
   "auth": {
+    "loginTitle": "Login to your account",
     "loginBtn": "Login",
-    "sigunBtn": "Signup",
+    "sigunTitle": "Create account",
+    "sigunBtn": "Create",
+    "resetPasswordTitle": "Reset password",
     "resetPasswordBtn": "Reset",
-    "loginTab": "Login",
-    "sigunpTab": "Signup",
-    "resetPasswordTab": "Reset password"
+    "loginLink": "Login with password",
+    "signupText": "Dont have an account yet?",
+    "sigunpLink": "Register now",
+    "resetPasswordLink": "Forgot your password?"
   },
   "sidebar": {
     "schedule": "Schedule",

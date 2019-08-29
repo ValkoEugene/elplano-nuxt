@@ -1,6 +1,8 @@
 <template>
   <v-card>
     <v-card-text>
+      <h3 class="login-card__title">{{ $t('auth.loginTitle') }}</h3>
+
       <v-form ref="form" :lazy-validation="true">
         <v-text-field
           v-model.trim="user.login"
@@ -22,11 +24,11 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
-
       <v-btn
         color="primary"
+        rounded
         :disabled="loginFetching"
+        class="login__btn elevation-10"
         @click="$refs.form.validate() && login(user)"
         >{{ $t('auth.loginBtn') }}</v-btn
       >

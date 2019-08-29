@@ -5,12 +5,16 @@
     "email": "Email должен содержать @"
   },
   "auth": {
+    "loginTitle": "Войти",
     "loginBtn": "Вход",
+    "sigunTitle": "Создать аккаунт",
     "sigunBtn": "Зарегистироваться",
+    "resetPasswordTitle": "Сбросить пароль",
     "resetPasswordBtn": "Сбросить",
-    "loginTab": "Вход",
-    "sigunpTab": "Регистрация",
-    "resetPasswordTab": "Сброс пароля"
+    "loginLink": "Войти с паролем",
+    "signupText": "Еще нет аккаунта?",
+    "sigunpLink": "Зарегистрироваться",
+    "resetPasswordLink": "Забыли пароль?"
   },
   "sidebar": {
     "schedule": "Расписание",
