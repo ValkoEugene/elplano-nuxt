@@ -1,6 +1,8 @@
 <template>
   <v-card>
     <v-card-text>
+      <h3 class="login-card__title">{{ $t('auth.sigunTitle') }}</h3>
+
       <v-alert v-if="successMessage" type="success">{{
         successMessage
       }}</v-alert>
@@ -47,11 +49,11 @@
       </v-form>
     </v-card-text>
     <v-card-actions v-if="!successMessage">
-      <v-spacer></v-spacer>
-
       <v-btn
         color="primary"
+        rounded
         :disabled="unactive"
+        class="login__btn elevation-10"
         @click="$refs.form.validate() && createUser()"
         >{{ $t('auth.sigunBtn') }}</v-btn
       >
