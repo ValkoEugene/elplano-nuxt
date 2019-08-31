@@ -1,5 +1,7 @@
 <template>
-  <v-card>
+  <Loader v-if="loading" :show-form="true" :form-inputs-count="2" />
+
+  <v-card v-else>
     <v-card-title>{{
       $t(`group.${localGroup.id ? 'update' : 'create'}`)
     }}</v-card-title>
@@ -38,6 +40,12 @@ import { namespace, Types } from '../../store/group'
 
 export default {
   name: 'CreateGroup',
+  components: {
+    Loader: () =>
+      import(
+        '../../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+      )
+  },
   props: {
     /**
      * Загружать ли данные при монтирование компонента

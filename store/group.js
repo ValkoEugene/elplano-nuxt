@@ -32,6 +32,18 @@ export const state = () => ({
   groupId: '',
 
   /**
+   * Флаг загрузки
+   * @type {Boolean}
+   */
+  loading: true,
+
+  /**
+   * Флаг процесса обновления
+   * @type {Boolean}
+   */
+  updating: false,
+
+  /**
    * Группа
    * @type {Object}
    */

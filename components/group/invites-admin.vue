@@ -1,21 +1,29 @@
 <template>
-  <v-card>
-    <v-card-title>{{ $t(`invites.invites`) }}</v-card-title>
+  <div v-if="loading">
+    <Loader :show-form="true" :form-inputs-count="1" class="mb-6" />
+  </div>
 
-    <v-card-text>
-      <v-data-table :headers="headers" :items="invites" :items-per-page="5">
-        <template v-slot:item.status="{ item }">
-          <v-chip class="ma-2" :color="colors[item.status]" label>{{
-            $t(`invites.statuses.${item.status}`)
-          }}</v-chip>
-        </template>
+  <div v-else>
+    <SendInvite class="mb-6" @sendInvite="loadData" />
 
-        <template v-slot:item.sent_at="{ item }">{{
-          formatDate(item.sent_at)
-        }}</template>
-      </v-data-table>
-    </v-card-text>
-  </v-card>
+    <v-card>
+      <v-card-title>{{ $t(`invites.invites`) }}</v-card-title>
+
+      <v-card-text>
+        <v-data-table :headers="headers" :items="invites" :items-per-page="5">
+          <template v-slot:item.status="{ item }">
+            <v-chip class="ma-2" :color="colors[item.status]" label>{{
+              $t(`invites.statuses.${item.status}`)
+            }}</v-chip>
+          </template>
+
+          <template v-slot:item.sent_at="{ item }">{{
+            formatDate(item.sent_at)
+          }}</template>
+        </v-data-table>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -25,6 +33,13 @@ import moment from '../../plugins/moment'
 
 export default {
   name: 'InvitesList',
+  components: {
+    SendInvite: () => import('./send-invite.vue'),
+    Loader: () =>
+      import(
+        '../UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+      )
+  },
   data: () => ({
     /**
      * Заголовки таблицы
