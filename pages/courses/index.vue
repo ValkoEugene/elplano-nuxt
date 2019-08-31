@@ -65,7 +65,7 @@
                   :id="course.id"
                   :disabled="updating"
                   :namespace="coursesNamespace"
-                  :action="deleteAction"
+                  :action="coursesTypes.actions.DELETE_COURSE"
                   :confirm-text="$t('lesson.confirm')"
                 />
               </CardMenu>
@@ -75,12 +75,21 @@
       </v-layout>
     </template>
 
+    <ModalEdit
+      ref="modal"
+      :namespace="coursesNamespace"
+      :edit-model="editModel"
+      :edit-schema="editSchema"
+      :create-action="coursesTypes.actions.CREATE_COURSE"
+      :update-action="coursesTypes.actions.EDIT_COURSE"
+    />
+
     <AddNew @click="edit('', courseEmptyModel)" />
   </v-container>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import {
   namespace as coursesNamespace,
   Types as coursesTypes
@@ -89,10 +98,6 @@ import {
   namespace as lecturersNamespace,
   Types as lecturersTypes
 } from '../../store/lecturers'
-import {
-  namespace as modalEditNamespace,
-  Types as modalEditTypes
-} from '../../store/modal/edit'
 import checkGroup from '../../mixins/checkgroup'
 
 export default {
@@ -129,12 +134,26 @@ export default {
     CardMenu: () =>
       import(
         '../../components/cards/card-menu.vue' /* webpackChunkName: 'components/cards/card-menu' */
+      ),
+    ModalEdit: () =>
+      import(
+        '../../components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
       )
   },
   mixins: [checkGroup],
   data: () => ({
+    /**
+     * namaspace модуля предметов
+     * @type {String}
+     */
     coursesNamespace,
-    deleteAction: coursesTypes.actions.DELETE_COURSE,
+
+    /**
+     * Типы для модуля предметов
+     * @type {Object}
+     */
+    coursesTypes,
+
     /**
      * Строка поиска
      * @type {String}
@@ -142,7 +161,13 @@ export default {
     search: '',
 
     /**
-     * Модель предмета
+     * Редактируемая модель предмета
+     * @type {String}
+     */
+    editModel: {},
+
+    /**
+     * Шаблон модели предмета
      * @type {Object}
      */
     courseEmptyModel: {
@@ -230,14 +255,6 @@ export default {
     this.loadLecturers()
   },
   methods: {
-    ...mapActions(modalEditNamespace, {
-      /**
-       * Инициализация редактирования (открывает модальное окно)
-       * @type {Function}
-       */
-      initEdit: modalEditTypes.actions.INIT_EDIT
-    }),
-
     /**
      * Получить отображение преподавателя
      * @type {Function}
@@ -254,17 +271,22 @@ export default {
      * Редактировать предмет
      * @type {Function}
      * @param {String} id - id предмета
+     * @param {Object} model - модель редакртируемого предмета
      */
     edit(id, model) {
-      this.initEdit({
-        id,
-        namespace: coursesNamespace,
-        editModel: model || this.courseEmptyModel,
-        editSchema: this.editSchema,
-        updateAction: coursesTypes.actions.EDIT_COURSE,
-        createAction: coursesTypes.actions.CREATE_COURSE
-      })
+      this.setEditingId(id)
+      this.editModel = { ...model }
+
+      this.$refs.modal.open()
     },
+
+    ...mapMutations(coursesNamespace, {
+      /**
+       * Установить id редактируемого предмета
+       * @type {Functiob}
+       */
+      setEditingId: coursesTypes.mutations.SET_EDITING_ID
+    }),
 
     ...mapActions(coursesNamespace, {
       /**

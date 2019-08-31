@@ -21,7 +21,6 @@
       <Snackbars />
 
       <ModalDelete />
-      <ModalEdit />
       <!-- </v-container> -->
     </v-content>
   </v-app>
@@ -51,10 +50,6 @@ export default {
     Snackbars: () =>
       import(
         '../components/UI-core/snackbars.vue' /* webpackChunkName: 'components/UI-core/snackbars' */
-      ),
-    ModalEdit: () =>
-      import(
-        '../components/modal/modal-edit.vue' /* webpackChunkName: 'components/modal/modal-edit' */
       ),
     ModalDelete: () =>
       import(

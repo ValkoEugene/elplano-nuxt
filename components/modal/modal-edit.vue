@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-dialog
-      :value="showingEdit"
+      v-model="visible"
       fullscreen
       hide-overlay
       transition="dialog-bottom-transition"
@@ -9,7 +9,7 @@
     >
       <v-card>
         <v-toolbar dark color="primary">
-          <v-btn icon dark @click="setShowing(false)">
+          <v-btn icon dark @click="close">
             <v-icon>close</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
@@ -24,7 +24,7 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <v-card-text v-if="showingEdit" class="pa-6">
+        <v-card-text v-if="visible" class="pa-6">
           <v-form ref="form" :lazy-validation="true">
             <template v-for="field in editSchema.fields">
               <v-text-field
@@ -32,7 +32,6 @@
                 :key="field.model"
                 v-model.trim="localModel[field.model]"
                 :label="field.label"
-                :placeholder="field.placeholder"
                 :rules="Array.isArray(field.rules) ? field.rules : undefined"
                 :type="field.inputType || 'text'"
                 outlined
@@ -58,6 +57,7 @@
                 :key="field.model"
                 v-model="localModel[field.model]"
                 :label="field.label"
+                :rules="Array.isArray(field.rules) ? field.rules : undefined"
                 color="primary"
                 class="mt-0"
               />
@@ -69,6 +69,20 @@
                 :label="field.label"
                 color="primary"
               />
+
+              <v-radio-group
+                v-if="field.type === 'v-radio-group'"
+                :key="field.model"
+                v-model="localModel[field.model]"
+                :row="field.row"
+              >
+                <v-radio
+                  v-for="option in field.options"
+                  :key="option.value"
+                  :label="option.label"
+                  :value="option.value"
+                />
+              </v-radio-group>
 
               <Datepicker
                 v-if="field.type === 'datepicker'"
@@ -87,11 +101,6 @@
 
 <script>
 import clonedeep from 'lodash.clonedeep'
-import { mapState, mapMutations, mapActions } from 'vuex'
-import {
-  namespace as modalEditNamespace,
-  Types as modalEditTypes
-} from '../../store/modal/edit'
 
 export default {
   name: 'ModalEdit',
@@ -101,44 +110,93 @@ export default {
         '../UI-core/datepicker.vue' /* webpackChunkName: 'components/UI-core/datepicker' */
       )
   },
+  props: {
+    /**
+     * Редактируемая модель
+     * @type {Object}
+     */
+    editModel: {
+      type: Object,
+      required: true
+    },
+
+    /**
+     * Схема полей
+     * @type {{ fields: Array }}
+     */
+    editSchema: {
+      type: Object,
+      required: true
+    },
+
+    /**
+     * namespace модуля редактируемой сущности
+     * @type {String}
+     */
+    namespace: {
+      type: String,
+      required: true
+    },
+
+    /**
+     * Action на обновление
+     * @type {String}
+     */
+    updateAction: {
+      type: String,
+      required: true
+    },
+
+    /**
+     * Action на создание
+     * @type {String}
+     */
+    createAction: {
+      type: String,
+      required: true
+    },
+
+    /**
+     * Сигнализировать об изменениях модели
+     * @type {Boolean}
+     */
+    watchModelChange: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
     /**
      * Локальная копия модели на редактирование
      * @type {Object}
      */
-    localModel: {}
+    localModel: {},
+
+    /**
+     * Флаг показа модкльно окна
+     * @type {String}
+     */
+    visible: false
   }),
   computed: {
-    ...mapState(modalEditNamespace, [
-      /**
-       * Флаг показа модального окна
-       * @type {Boolean}
-       */
-      'showingEdit',
-      /**
-       * Редактируемая модель
-       * @type {Object}
-       */
-      'editModel',
-      /**
-       * Схема полей
-       * @type {{ fields: Array }}
-       */
-      'editSchema',
-      /**
-       * namespace редактируемой сущности в модуле vuex
-       */
-      'editNamespace'
-    ]),
-
     /**
      * Флаг обновления
      * @type {Boolean}
      */
     updating() {
-      if (!this.editNamespace) return false
+      if (!this.namespace) return false
 
-      return this.$store.state[this.editNamespace].updating
+      return this.$store.state[this.namespace].updating
+    },
+
+    /**
+     * Id редактируемой сущности
+     * @type {String}
+     */
+    id() {
+      if (!this.namespace) return ''
+
+      return this.$store.state[this.namespace].editingId
     }
   },
   watch: {
@@ -147,31 +205,55 @@ export default {
      */
     editModel() {
       this.localModel = clonedeep(this.editModel)
+    },
+
+    /**
+     * Отправляем наверх актуальные данные о редактируемой модели
+     *
+     */
+    localModel: {
+      deep: true,
+      handler() {
+        if (!this.watchModelChange) return
+
+        this.$emit('modelChange', this.localModel)
+      }
     }
   },
+  mounted() {
+    this.localModel = clonedeep(this.editModel)
+  },
   methods: {
-    ...mapMutations(modalEditNamespace, {
-      /**
-       * Установить флаг показа модального окна
-       * @type {Function}
-       */
-      setShowing: modalEditTypes.mutations.SET_SHOWING_EDIT
-    }),
+    /**
+     * Открыть модально окно
+     */
+    open() {
+      this.visible = true
+    },
 
-    ...mapActions(modalEditNamespace, {
-      /**
-       * Сохранение
-       * @type {Function}
-       */
-      save: modalEditTypes.actions.SAVE
-    }),
+    /**
+     * Закрыть модально окно
+     */
+    close() {
+      this.visible = false
+    },
+
+    /**
+     * Сохранение
+     * @type {Function}
+     */
+    save() {
+      const saveAction = this.id ? this.updateAction : this.createAction
+
+      this.$store.dispatch(`${this.namespace}/${saveAction}`, this.localModel)
+    },
 
     /**
      * Обработчик нажатия на esc
      * @param {Object} event - объект события
      */
     escHandler(event) {
-      if (event.code === 'Escape') this.setShowing(false)
+      if (event.code === 'Escape') this.close()
     }
   }
 }

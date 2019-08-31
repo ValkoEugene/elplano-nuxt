@@ -5,10 +5,6 @@ import {
   namespace as snackbarNamespace,
   Types as snackbarTypes
 } from './snackbars'
-import {
-  namespace as modalEditNamespace,
-  Types as modalEditTypes
-} from './modal/edit'
 
 export const namespace = 'events'
 
@@ -170,14 +166,6 @@ export const actions = {
 
       context.commit(Types.mutations.SET_EVENT, event)
       context.commit(Types.mutations.SET_EDITING_ID, event.id)
-
-      if (!context.rootState.modal.edit.editId) {
-        context.commit(
-          `${modalEditNamespace}/${modalEditTypes.mutations.SET_EDITING_ID}`,
-          event.id,
-          { root: true }
-        )
-      }
     } catch (error) {
       context.commit(
         `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
@@ -198,7 +186,7 @@ export const actions = {
     context.commit(Types.mutations.SET_UPDATING, true)
 
     try {
-      const event = await eventsApi.update(data, data.id)
+      const event = await eventsApi.update(data, context.state.editingId)
 
       context.commit(Types.mutations.SET_EVENT, event)
     } catch (error) {

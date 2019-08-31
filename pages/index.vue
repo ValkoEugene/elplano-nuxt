@@ -44,13 +44,27 @@
       </v-timeline>
     </template>
 
-    <AddNew :president-access="false" @click="edit({ id: '' })" />
+    <ModalEdit
+      ref="modal"
+      :namespace="eventsNamespace"
+      :edit-model="editModel"
+      :edit-schema="editSchema"
+      :create-action="eventsTypes.actions.CREATE_EVENT"
+      :update-action="eventsTypes.actions.EDIT_EVENT"
+      :watch-model-change="true"
+      @modelChange="onModelChange"
+    />
+
+    <AddNew
+      :president-access="false"
+      @click="edit({ id: '', model: eventEmptyTemplate })"
+    />
   </div>
 </template>
 
 <script>
 import clonedeep from 'lodash.clonedeep'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import moment, { setLocale } from '../plugins/moment'
 import {
   namespace as eventsNamespace,
@@ -61,10 +75,6 @@ import {
   Types as coursesTypes
 } from '../store/courses'
 import { namespace as i18nNamespace } from '../store/i18n'
-import {
-  namespace as modalEditNamespace,
-  Types as modalEditTypes
-} from '../store/modal/edit'
 import checkGroup from '../mixins/checkgroup'
 
 export default {
@@ -73,6 +83,10 @@ export default {
     EventCard: () =>
       import(
         '../components/events/event-card.vue' /* webpackChunkName: 'components/events/event-card' */
+      ),
+    ModalEdit: () =>
+      import(
+        '../components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
       ),
     AddNew: () =>
       import(
@@ -86,6 +100,12 @@ export default {
      * @type {String}
      */
     eventsNamespace,
+
+    /**
+     * Типы vuex модуля с расписанием
+     * @type {Object}
+     */
+    eventsTypes,
 
     /**
      * Action на удаления элмента расписания
@@ -155,14 +175,20 @@ export default {
       title: '',
       description: '',
       start_at: '',
-      end_at: ''
+      end_at: '',
+      eventable_type: '',
+      eventable_id: '',
+      by_day: []
     },
+
+    editModel: {},
 
     weekDayItems: []
   }),
   computed: {
     /**
-     *
+     * Флаг наличия событий на неделю
+     * @type {Boolen}
      */
     haveEvents() {
       for (const day in this.weekEvents) {
@@ -227,6 +253,15 @@ export default {
       return {
         fields: [
           {
+            model: 'eventable_type',
+            type: 'v-radio-group',
+            row: true,
+            options: [
+              { label: 'Для всей группы', value: 'group' },
+              { label: 'Собственное', value: 'student' }
+            ]
+          },
+          {
             type: 'v-text-field',
             model: 'title',
             label: this.$t('field.title'),
@@ -267,6 +302,7 @@ export default {
             model: 'by_day',
             type: 'v-select',
             items: this.weekDayItems,
+            rules: [this.$rules.required],
             multiple: true,
             itemValue: 'value',
             itemText: 'view',
@@ -313,7 +349,6 @@ export default {
     this.loadCourses()
   },
   methods: {
-    moment,
     /**
      * Инициализация элментов выбора для дней недели
      * @type {Function}
@@ -333,20 +368,19 @@ export default {
       this.weekDayItems = weekDayItems
     },
 
-    ...mapActions(modalEditNamespace, {
-      /**
-       * Инициализация редактирования (открывает модальное окно)
-       * @type {Function}
-       */
-      initEdit: modalEditTypes.actions.INIT_EDIT
-    }),
-
     ...mapActions(eventsNamespace, {
       /**
        * Загрузить расписание
        * @type {Fucntion}
        */
       loadEvents: eventsTypes.actions.LOAD_EVENTS
+    }),
+
+    ...mapMutations(eventsNamespace, {
+      /**
+       *
+       */
+      setEditingId: eventsTypes.mutations.SET_EDITING_ID
     }),
 
     ...mapActions(coursesNamespace, {
@@ -363,14 +397,27 @@ export default {
      * @param {String} id
      */
     edit({ id, model }) {
-      this.initEdit({
-        id,
-        namespace: eventsNamespace,
-        editModel: model || this.eventEmptyTemplate,
-        editSchema: this.editSchema,
-        updateAction: eventsTypes.actions.EDIT_EVENT,
-        createAction: eventsTypes.actions.CREATE_EVENT
-      })
+      this.setEditingId(id)
+      this.editModel = { ...model }
+
+      this.$refs.modal.open()
+    },
+
+    /**
+     * Следим за изменением модели редактируемого элемента расписания
+     * (при изменение типа эвента подставляем id)
+     */
+    onModelChange(model) {
+      const ids = {
+        student: this.$store.state.user.userInfo.id,
+        group: this.$store.state.group.groupId
+      }
+
+      const eventable_id = ids[model.eventable_type]
+
+      if (model.eventable_id !== eventable_id) {
+        model.eventable_id = eventable_id
+      }
     },
 
     /**

@@ -7,7 +7,6 @@
         <v-text-field
           v-model="invite.email"
           label="Email"
-          placeholder="Email"
           type="text"
           :rules="[$rules.email]"
           outlined

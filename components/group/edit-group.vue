@@ -9,7 +9,6 @@
         <v-text-field
           v-model="localGroup.title"
           :label="$t('field.title')"
-          :placeholder="$t('field.title')"
           type="text"
           :rules="[$rules.required]"
           outlined
@@ -18,7 +17,6 @@
         <v-text-field
           v-model="localGroup.number"
           :label="$t('field.number')"
-          :placeholder="$t('field.number')"
           type="text"
           :rules="[$rules.required]"
           outlined

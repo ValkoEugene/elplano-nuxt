@@ -21,14 +21,27 @@ const formatDataFromApi = (data) => {
   const { id, attributes, relationships } = data
 
   let course_id = ''
+  let eventable_id = ''
+  let eventable_type = ''
 
   if (relationships && relationships.course && relationships.course.data) {
     course_id = relationships.course.data.id
   }
 
+  if (
+    relationships &&
+    relationships.eventable &&
+    relationships.eventable.data
+  ) {
+    eventable_id = relationships.eventable.data.id
+    eventable_type = relationships.eventable.data.type
+  }
+
   return {
     id,
     ...attributes,
+    eventable_id,
+    eventable_type,
     by_day: parseDaysOfWeek(attributes.recurrence),
     course_id
   }
@@ -38,7 +51,7 @@ const formatDataForApi = (event) => {
   event.timezone = moment.tz.guess()
   event.recurrence = [`RRULE:FREQ=WEEKLY;BYDAY=${event.by_day.join(',')}`]
 
-  return event
+  return { event }
 }
 
 const lecturersApi = createApi({ restUrl, formatDataForApi, formatDataFromApi })
