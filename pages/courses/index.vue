@@ -1,8 +1,8 @@
 <template>
-  <v-container :fluid="!loading" class="pa-0">
-    <Loader v-if="loading" />
+  <Loader v-if="loading" :show-search="true" :show-cards="true" />
 
-    <template v-else>
+  <div v-else>
+    <template>
       <v-alert v-if="!courses.length" type="info" prominent>
         <span>{{ $t('lesson.empty') }}</span>
       </v-alert>
@@ -85,7 +85,7 @@
     />
 
     <AddNew @click="edit('', courseEmptyModel)" />
-  </v-container>
+  </div>
 </template>
 
 <script>
