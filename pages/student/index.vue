@@ -6,7 +6,6 @@
       <v-text-field
         v-model="localStudent.full_name"
         :label="$t('field.fullName')"
-        :placeholder="$t('field.fullName')"
         type="text"
         outlined
       />
@@ -14,7 +13,6 @@
       <v-text-field
         v-model="localStudent.email"
         label="Email"
-        placeholder="Email"
         type="text"
         :rules="[$rules.email]"
         outlined
@@ -23,7 +21,6 @@
       <v-text-field
         v-model="localStudent.phone"
         :label="$t('field.phone')"
-        :placeholder="$t('field.phone')"
         type="number"
         outlined
       />
@@ -31,7 +28,6 @@
       <v-text-field
         v-model="localStudent.about"
         :label="$t('field.about')"
-        :placeholder="$t('field.about')"
         type="text"
         outlined
       />
@@ -39,7 +35,6 @@
       <v-text-field
         v-model="localStudent.social_networks.facebook"
         label="Facebook"
-        placeholder="Facebook"
         type="text"
         outlined
       />
@@ -47,7 +42,6 @@
       <v-text-field
         v-model="localStudent.social_networks.twitter"
         label="Twitter"
-        placeholder="Twitter"
         type="text"
         outlined
       />
