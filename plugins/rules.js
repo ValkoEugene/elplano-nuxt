@@ -12,6 +12,10 @@ export default ({ app }, inject) => {
 
   inject('rules', {
     required(v) {
+      if (Array.isArray(v)) {
+        return !v.length ? getErrorText('required') : false
+      }
+
       return !v ? getErrorText('required') : false
     },
     getMinLength(len) {

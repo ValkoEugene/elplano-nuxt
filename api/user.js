@@ -8,12 +8,13 @@ const REST_URL = '/user'
  * @returns {{User, Student, groupId: String}}
  */
 function formatDataFromApi(response) {
+  const id = response.data.data.id
   const user = response.data.data.attributes
   const student = response.data.included.find((item) => item.type === 'student')
   const group = student.relationships.group
 
   return {
-    user,
+    user: { ...user, id },
     student: student.attributes,
     groupId: group && group.data && group.data.id
   }
