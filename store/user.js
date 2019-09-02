@@ -20,7 +20,8 @@ export const Types = {
     SET_LOADING: 'SET_LOADING',
     SET_UPDATING: 'SET_UPDATING',
     SET_ACCESS_TOKEN: 'SET_ACCESS_TOKEN',
-    SET_REFRESH_TOKEN: 'SET_REFRESH_TOKEN'
+    SET_REFRESH_TOKEN: 'SET_REFRESH_TOKEN',
+    SET_SHOW_A2HS_BUTTON: 'SET_SHOW_A2HS_BUTTON'
   },
   actions: {
     SET_TOKENS: 'SET_TOKENS',
@@ -88,7 +89,13 @@ export const state = () => ({
    * Рефреш токен
    * @type {String}
    */
-  refresh_token: ''
+  refresh_token: '',
+
+  /**
+   * Флаг показа кнопки Добавить на главный экран
+   * @type {Boolean}
+   */
+  showA2hsButton: false
 })
 
 export const mutations = {
@@ -153,6 +160,15 @@ export const mutations = {
    */
   [Types.mutations.SET_UPDATING](state, updating) {
     state.updating = updating
+  },
+
+  /**
+   * Установить флаг показа кнопки Добавить на главный экран
+   * @param {Object} state
+   * @param {Boolean} value
+   */
+  [Types.mutations.SET_SHOW_A2HS_BUTTON](state, value) {
+    state.showA2hsButton = value
   }
 }
 

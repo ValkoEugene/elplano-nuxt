@@ -31,7 +31,12 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/rules', '~/plugins/i18n', '~/plugins/helpers'],
+  plugins: [
+    '~/plugins/rules',
+    '~/plugins/i18n',
+    '~/plugins/helpers',
+    { src: '~/plugins/a2hs.js', mode: 'client' }
+  ],
   /*
    ** Nuxt.js dev-modules
    */
@@ -46,10 +51,29 @@ export default {
   router: {
     middleware: ['i18n']
   },
+  manifest: {
+    name: 'EL Plano app',
+    short_name: 'EL Plano',
+    description: 'Student schedule management applications',
+    theme_color: '#7b1fa2',
+    start_url: '/',
+    icons: [
+      {
+        src: 'icon.png',
+        sizes: '192x192',
+        type: 'image/png'
+      }
+    ],
+    display: 'standalone'
+  },
+  workbox: {
+    offline: true
+    // importScripts: ['custom-sw.js']
+  },
   /*
    ** Nuxt.js modules
    */
-  modules: ['nuxt-material-design-icons'],
+  modules: ['nuxt-material-design-icons', '@nuxtjs/pwa'],
   /**
    * Перменные окружения
    */

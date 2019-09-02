@@ -16,6 +16,10 @@
       </template>
 
       <v-list :min-width="200">
+        <v-list-item v-if="showA2hsButton" @click="addToHomeScreen">
+          {{ $t('ui.a2hsButton') }}
+        </v-list-item>
+
         <v-list-item
           v-for="link in links"
           :key="link.url"
@@ -41,11 +45,21 @@ import { TOGGLE_SIDEBAR_ROOT_LISTENER } from './sidebar.vue'
 export default {
   name: 'Header',
   computed: {
-    /**
-     * Текущая локаль
-     * @type {String}
-     */
-    ...mapState(namespace, ['locale']),
+    ...mapState(namespace, [
+      /**
+       * Текущая локаль
+       * @type {String}
+       */
+      'locale'
+    ]),
+
+    ...mapState(userNamespace, [
+      /**
+       * Флаг показа кнопки Добавить на главный экран
+       * @type {Boolean}
+       */
+      'showA2hsButton'
+    ]),
 
     ...mapGetters(userNamespace, {
       /**
@@ -108,6 +122,33 @@ export default {
      */
     toggleSidebar() {
       this.$root.$emit(TOGGLE_SIDEBAR_ROOT_LISTENER)
+    },
+
+    /**
+     * Добавить приложение на главный экран
+     */
+    addToHomeScreen() {
+      const deferredPrompt = window.deferredPrompt
+
+      if (!deferredPrompt) return
+
+      // Show the prompt
+      deferredPrompt.prompt()
+      // Wait for the user to respond to the prompt
+      deferredPrompt.userChoice
+        .then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            this.$store.commit(
+              `${userNamespace}/${userTypes.mutations.SET_SHOW_A2HS_BUTTON}`,
+              false
+            )
+          } else {
+            console.log('User dismissed the A2HS prompt')
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }
 }
