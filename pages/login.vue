@@ -155,8 +155,8 @@ export default {
 }
 
 .login__btn {
-  min-width: 200px !important;
-  margin: auto;
+  width: 200px !important;
+  margin-left: calc(50% - 100px);
 }
 
 .mobile.login__wrapper {

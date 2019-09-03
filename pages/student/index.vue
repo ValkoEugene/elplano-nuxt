@@ -1,8 +1,10 @@
 <template>
-  <v-card>
-    <v-card-title>{{ $t('student.title') }}</v-card-title>
+  <Card>
+    <template v-slot:title>
+      {{ $t('student.title') }}
+    </template>
 
-    <v-card-text>
+    <template v-slot:content>
       <v-text-field
         v-model="localStudent.full_name"
         :label="$t('field.fullName')"
@@ -45,17 +47,17 @@
         type="text"
         outlined
       />
-    </v-card-text>
+    </template>
 
-    <v-card-actions>
+    <template v-slot:actions>
       <v-btn
         color="primary"
         :disabled="updating"
         @click="updateStudent(localStudent)"
         >{{ $t('actions.save') }}</v-btn
       >
-    </v-card-actions>
-  </v-card>
+    </template>
+  </Card>
 </template>
 
 <script>
@@ -66,6 +68,12 @@ import checkGroup from '../../mixins/checkgroup'
 
 export default {
   name: 'StudentPage',
+  components: {
+    Card: () =>
+      import(
+        '../../components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      )
+  },
   mixins: [checkGroup],
   data: () => ({
     /**

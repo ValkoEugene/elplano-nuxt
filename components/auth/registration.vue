@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <v-card-text>
+  <Card>
+    <template v-slot:content>
       <h3 class="login-card__title">{{ $t('auth.sigunTitle') }}</h3>
 
       <v-alert v-if="successMessage" type="success">{{
@@ -47,8 +47,8 @@
           outlined
         />
       </v-form>
-    </v-card-text>
-    <v-card-actions v-if="!successMessage">
+    </template>
+    <template v-if="!successMessage" v-slot:actions>
       <v-btn
         color="primary"
         rounded
@@ -57,8 +57,8 @@
         @click="$refs.form.validate() && createUser()"
         >{{ $t('auth.sigunBtn') }}</v-btn
       >
-    </v-card-actions>
-  </v-card>
+    </template>
+  </Card>
 </template>
 
 <script>
@@ -76,6 +76,12 @@ import { setRegistrationInfo } from '../../utils/auth'
 
 export default {
   name: 'Registration',
+  components: {
+    Card: () =>
+      import(
+        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      )
+  },
   data: () => ({
     /**
      * Информация о пользователе

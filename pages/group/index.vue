@@ -15,32 +15,41 @@
             md4
             class="pa-3"
           >
-            <v-card min-height="100">
-              <CardBadge v-if="student.president">{{
-                $t('students.president')
-              }}</CardBadge>
+            <Card>
+              <template v-slot:badges>
+                <span v-if="student.president">
+                  {{ $t('students.president') }}
+                </span>
+              </template>
 
-              <CardTitle> {{ student.full_name }}</CardTitle>
+              <template v-slot:title>
+                {{ student.full_name }}
+              </template>
 
-              <v-card-text class="student__info">
-                <img src="~static/images/avatar.png" class="student__avatar" />
+              <template v-slot:content>
+                <div class="student__info">
+                  <img
+                    src="~static/images/avatar.png"
+                    class="student__avatar"
+                  />
 
-                <div class="student__about">
-                  <p>Email: {{ student.email || '-' }}</p>
-                  <p>{{ $t('field.number') }}: {{ student.phone || '-' }}</p>
+                  <div class="student__about">
+                    <p>Email: {{ student.email || '-' }}</p>
+                    <p>{{ $t('field.number') }}: {{ student.phone || '-' }}</p>
 
-                  <template
-                    v-for="(social_network, name) in student.social_networks"
-                  >
-                    <p v-if="social_network" :key="name">
-                      {{ name }}: {{ social_network }}
-                    </p>
-                  </template>
+                    <template
+                      v-for="(social_network, name) in student.social_networks"
+                    >
+                      <p v-if="social_network" :key="name">
+                        {{ name }}: {{ social_network }}
+                      </p>
+                    </template>
 
-                  <p>{{ $t('field.about') }}: {{ student.about || '-' }}</p>
+                    <p>{{ $t('field.about') }}: {{ student.about || '-' }}</p>
+                  </div>
                 </div>
-              </v-card-text>
-            </v-card>
+              </template>
+            </Card>
           </v-flex>
         </template>
       </v-layout>
@@ -60,17 +69,13 @@ export default {
       import(
         '../../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       ),
-    CardTitle: () =>
+    Card: () =>
       import(
-        '../../components/cards/card-title.vue' /* webpackChunkName: 'components/cards/card-title' */
+        '../../components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       ),
     Search: () =>
       import(
         '../../components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
-      ),
-    CardBadge: () =>
-      import(
-        '../../components/cards/card-badge.vue' /* webpackChunkName: 'components/cards/card-badge' */
       )
   },
   mixins: [checkGroup],

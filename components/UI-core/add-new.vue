@@ -6,7 +6,7 @@
     fab
     bottom
     right
-    class="bg-primary-darken1"
+    class="bg-primary-darken4"
     :disabled="disabled"
     @click="$emit('click')"
   >

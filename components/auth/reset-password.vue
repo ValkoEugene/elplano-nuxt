@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <v-card-text>
+  <Card>
+    <template v-slot:content>
       <h3 class="login-card__title">{{ $t('auth.resetPasswordTitle') }}</h3>
 
       <v-alert v-if="successMessage" type="success">{{
@@ -17,8 +17,8 @@
           outlined
         />
       </v-form>
-    </v-card-text>
-    <v-card-actions v-if="!successMessage">
+    </template>
+    <template v-if="!successMessage" v-slot:actions>
       <v-btn
         color="primary"
         rounded
@@ -27,8 +27,8 @@
         @click="$refs.form.validate() && resetPassword()"
         >{{ $t('auth.resetPasswordBtn') }}</v-btn
       >
-    </v-card-actions>
-  </v-card>
+    </template>
+  </Card>
 </template>
 
 <script>
@@ -41,6 +41,12 @@ import {
 
 export default {
   name: 'ResetPassword',
+  components: {
+    Card: () =>
+      import(
+        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      )
+  },
   data: () => ({
     /**
      * Логин для сброса

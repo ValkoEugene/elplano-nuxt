@@ -1,28 +1,30 @@
 <template>
   <v-dialog v-model="localActive" max-width="290">
-    <v-card>
-      <v-card-title class="headline">
+    <Card actions-justify-content="end">
+      <template v-slot:title class="headline">
         <slot name="title">Are you sure?</slot>
-      </v-card-title>
+      </template>
 
-      <v-card-text v-if="haveContentSlot">
+      <template v-if="haveContentSlot" v-slot:content>
         <slot name="content" />
-      </v-card-text>
+      </template>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
-
+      <template v-slot:actions>
         <v-btn text @click="cancel">{{ $t('ui.cancel') }}</v-btn>
 
         <v-btn text @click="confirm">{{ $t('ui.confirm') }}</v-btn>
-      </v-card-actions>
-    </v-card>
+      </template>
+    </Card>
   </v-dialog>
 </template>
 
 <script>
 export default {
   name: 'Confirm',
+  components: {
+    Card: () =>
+      import('./card.vue' /* webpackChunkName: 'components/UI-core/card' */)
+  },
   props: {
     /**
      * Флаг показа окна подтверждения

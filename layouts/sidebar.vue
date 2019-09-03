@@ -159,7 +159,7 @@ export default {
 }
 
 .v-navigation-drawer__image {
-  opacity: 0.1;
+  opacity: 0.05;
 }
 
 .v-application .v-navigation-drawer__content a {

@@ -19,16 +19,18 @@
             md4
             class="pa-3"
           >
-            <v-card min-height="100">
-              <div>
-                <CardBadge v-if="lecturer.active">{{
-                  $t('ui.card.badges.active')
-                }}</CardBadge>
-              </div>
+            <Card>
+              <template v-slot:badges>
+                <span v-if="lecturer.active">
+                  {{ $t('ui.card.badges.active') }}
+                </span>
+              </template>
 
-              <CardTitle> {{ lecturer.view }}</CardTitle>
+              <template v-slot:title>
+                {{ lecturer.view }}
+              </template>
 
-              <v-card-text class="pb-0">
+              <template v-slot:content>
                 <div v-if="!loadingCources">
                   <span class="font-weight-bold"
                     >{{ $t('lesson.lessons') }}:</span
@@ -45,9 +47,9 @@
                     </div>
                   </template>
                 </div>
-              </v-card-text>
+              </template>
 
-              <CardMenu>
+              <template v-slot:menu>
                 <EditButton
                   :disabled="updating"
                   @click="edit(lecturer.id, lecturer)"
@@ -60,8 +62,8 @@
                   :action="lecturersTypes.actions.DELETE_LECTURER"
                   :confirm-text="$t('lecturers.confirm')"
                 />
-              </CardMenu>
-            </v-card>
+              </template>
+            </Card>
           </v-flex>
         </template>
       </v-layout>
@@ -103,10 +105,6 @@ export default {
       import(
         '../../components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
       ),
-    CardTitle: () =>
-      import(
-        '../../components/cards/card-title.vue' /* webpackChunkName: 'components/cards/card-title' */
-      ),
     AddNew: () =>
       import(
         '../../components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
@@ -119,13 +117,9 @@ export default {
       import(
         '../../components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
       ),
-    CardBadge: () =>
+    Card: () =>
       import(
-        '../../components/cards/card-badge.vue' /* webpackChunkName: 'components/cards/card-badge' */
-      ),
-    CardMenu: () =>
-      import(
-        '../../components/cards/card-menu.vue' /* webpackChunkName: 'components/cards/card-menu' */
+        '../../components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       ),
     ModalEdit: () =>
       import(
