@@ -55,7 +55,7 @@ export default {
     name: 'EL Plano app',
     short_name: 'EL Plano',
     description: 'Student schedule management applications',
-    theme_color: '#7b1fa2',
+    theme_color: '#4a148c',
     start_url: '/',
     icons: [
       {
