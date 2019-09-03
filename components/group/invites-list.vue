@@ -1,8 +1,8 @@
 <template>
-  <v-card>
-    <v-card-title>{{ $t(`invites.invites`) }}</v-card-title>
+  <Card>
+    <template v-slot:title>{{ $t(`invites.invites`) }}</template>
 
-    <v-card-text>
+    <template v-slot:content>
       <v-data-table :headers="headers" :items="invites" :items-per-page="5">
         <template v-slot:item.sent_at="{ item }">{{
           formatDate(item.sent_at)
@@ -17,8 +17,8 @@
           >
         </template>
       </v-data-table>
-    </v-card-text>
-  </v-card>
+    </template>
+  </Card>
 </template>
 
 <script>
@@ -28,6 +28,12 @@ import moment from '../../plugins/moment'
 
 export default {
   name: 'InvitesList',
+  components: {
+    Card: () =>
+      import(
+        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      )
+  },
   data: () => ({
     /**
      * Заголовки таблицы

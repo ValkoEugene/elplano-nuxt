@@ -6,10 +6,10 @@
   <div v-else>
     <SendInvite class="mb-6" @sendInvite="loadData" />
 
-    <v-card>
-      <v-card-title>{{ $t(`invites.invites`) }}</v-card-title>
+    <Card>
+      <template v-slot:title>{{ $t(`invites.invites`) }}</template>
 
-      <v-card-text>
+      <template v-slot:content>
         <v-data-table :headers="headers" :items="invites" :items-per-page="5">
           <template v-slot:item.status="{ item }">
             <v-chip class="ma-2" :color="colors[item.status]" label>{{
@@ -21,8 +21,8 @@
             formatDate(item.sent_at)
           }}</template>
         </v-data-table>
-      </v-card-text>
-    </v-card>
+      </template>
+    </Card>
   </div>
 </template>
 
@@ -38,6 +38,10 @@ export default {
     Loader: () =>
       import(
         '../UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+      ),
+    Card: () =>
+      import(
+        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
   },
   data: () => ({

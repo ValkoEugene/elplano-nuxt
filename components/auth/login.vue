@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <v-card-text>
+  <Card>
+    <template v-slot:content>
       <h3 class="login-card__title">{{ $t('auth.loginTitle') }}</h3>
 
       <v-form ref="form" :lazy-validation="true">
@@ -22,8 +22,9 @@
           outlined
         />
       </v-form>
-    </v-card-text>
-    <v-card-actions>
+    </template>
+
+    <template v-slot:actions>
       <v-btn
         color="primary"
         rounded
@@ -32,8 +33,8 @@
         @click="$refs.form.validate() && login(user)"
         >{{ $t('auth.loginBtn') }}</v-btn
       >
-    </v-card-actions>
-  </v-card>
+    </template>
+  </Card>
 </template>
 
 <script>
@@ -42,6 +43,12 @@ import { Types, namespace } from '../../store/user'
 
 export default {
   name: 'Login',
+  components: {
+    Card: () =>
+      import(
+        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      )
+  },
   data: () => ({
     /**
      * Информация о пользователе

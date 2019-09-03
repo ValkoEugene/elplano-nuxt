@@ -1,8 +1,8 @@
 <template>
-  <v-card>
-    <v-card-title>{{ $t('invites.send') }}</v-card-title>
+  <Card>
+    <template v-slot:title>{{ $t('invites.send') }}</template>
 
-    <v-card-text>
+    <template v-slot:content>
       <v-form ref="form" :lazy-validation="true">
         <v-text-field
           v-model="invite.email"
@@ -12,17 +12,17 @@
           outlined
         />
       </v-form>
-    </v-card-text>
+    </template>
 
-    <v-card-actions>
+    <template v-slot:actions>
       <v-btn
         color="primary"
         :disabled="!invite.email.length || updating"
         @click="send"
         >{{ $t('actions.send') }}</v-btn
       >
-    </v-card-actions>
-  </v-card>
+    </template>
+  </Card>
 </template>
 
 <script>
@@ -31,6 +31,12 @@ import { namespace, Types } from '../../store/invites/group-invites'
 
 export default {
   name: 'SendInvite',
+  components: {
+    Card: () =>
+      import(
+        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      )
+  },
   data: () => ({
     /**
      * Группа

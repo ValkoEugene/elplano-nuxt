@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="login__wrapper"
-    :class="[$vuetify.breakpoint.smAndDown ? 'mobile' : 'desktop']"
-  >
+  <div class="login__wrapper">
     <div class="login__title">
       <h1 :style="colorStyle">Welcom to ELplano</h1>
       <div
@@ -105,86 +102,87 @@ export default {
 </script>
 
 <style>
-.login__wrapper {
-  display: flex;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-}
-
-.desktop.login__wrapper {
-  background: url(~assets/images/login-bg.png);
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-.desktop .login__title {
-  position: absolute;
-  width: 500px;
-  top: 50px;
-  left: 50px;
-}
-
-.desktop .login__title h1 {
-  font-size: 42px;
-}
-
-.login__title--registration {
-  display: flex;
-  align-items: center;
-}
-
-.login__title--registration p {
-  margin: 0;
-}
-
-.login-card__title {
-  font-size: 32px;
-  margin-bottom: 25px;
-  text-align: center;
-}
-
-.desktop .login__content {
-  width: 500px;
-  padding-left: 50px;
-}
-
 .login__content .v-card {
   width: 100%;
   padding: 15px 0;
 }
 
 .login__btn {
-  min-width: 200px !important;
-  margin: auto;
+  width: 200px !important;
+  margin-left: calc(50% - 100px);
 }
 
-.mobile.login__wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: none;
+.login__title--registration p {
+  margin: 0;
 }
 
-.mobile .login__title {
-  position: absolute;
-  width: auto;
-  top: 50px;
-  left: inherit;
+/**/
+
+@media (max-width: 900px) {
+  .login__wrapper {
+    min-width: 100vw;
+    min-height: 100vh;
+  }
+
+  .login__title {
+    position: static;
+    width: auto;
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .login__title h1 {
+    font-size: 26px;
+    margin-bottom: 15px;
+  }
+
+  .login__content {
+    width: 90%;
+    margin: auto;
+  }
+
+  .login-card__title {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
 }
 
-.mobile .login__title h1 {
-  font-size: 26px;
-}
+@media (min-width: 900px) {
+  .login__wrapper {
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background: url(~assets/images/login-bg.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
 
-.mobile .login__content {
-  width: 90%;
-  padding-left: 0;
-}
+  .login__title {
+    position: absolute;
+    width: 500px;
+    top: 50px;
+    left: 50px;
+  }
 
-.mobile .login-card__title {
-  font-size: 22px;
-  margin-bottom: 15px;
+  .login__title h1 {
+    font-size: 42px;
+  }
+
+  .login__title--registration {
+    display: flex;
+    align-items: center;
+  }
+
+  .login-card__title {
+    font-size: 32px;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  .login__content {
+    width: 500px;
+    padding-left: 50px;
+  }
 }
 </style>
