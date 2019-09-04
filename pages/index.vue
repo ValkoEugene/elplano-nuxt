@@ -1,72 +1,76 @@
 <template>
-  <div class="events">
-    <div class="events__actions">
-      <v-btn small dark fab class="bg-primary" @click="prevWeek">
-        <v-icon>navigate_before</v-icon>
-      </v-btn>
+  <div>
+    <Loader v-if="loading" :show-search="true" :show-cards="true" />
 
-      <p class="title text-primary week-title px-6">
-        {{ weekDates[0] }} - {{ weekDates[6] }}
-      </p>
-      <v-btn small dark fab class="bg-primary" @click="nextWeek">
-        <v-icon>navigate_next</v-icon>
-      </v-btn>
-    </div>
+    <div v-else class="events">
+      <div class="events__actions">
+        <v-btn small dark fab class="bg-primary" @click="prevWeek">
+          <v-icon>navigate_before</v-icon>
+        </v-btn>
 
-    <template v-if="!loading">
-      <v-alert v-if="!haveEvents" type="info" prominent>
-        <span>{{ $t('events.empty') }}</span>
-      </v-alert>
+        <p class="title text-primary week-title px-6">
+          {{ weekDates[0] }} - {{ weekDates[6] }}
+        </p>
+        <v-btn small dark fab class="bg-primary" @click="nextWeek">
+          <v-icon>navigate_next</v-icon>
+        </v-btn>
+      </div>
 
-      <template v-else>
-        <template v-for="(day, dayIndex) in daysOfWeekList">
-          <div v-if="weekEvents[day].length" :key="day" class="day__wrapper">
-            <div class="day__date">
-              <span class="day__date--ddd">{{
-                getDayView(weekDates[dayIndex], 'ddd')
-              }}</span>
-              <br />
-              <span class="day__date--DD text-primary font-weight-medium">{{
-                getDayView(weekDates[dayIndex], 'DD')
-              }}</span>
+      <template>
+        <v-alert v-if="!haveEvents" type="info" prominent>
+          <span>{{ $t('events.empty') }}</span>
+        </v-alert>
+
+        <template v-else>
+          <template v-for="(day, dayIndex) in daysOfWeekList">
+            <div v-if="weekEvents[day].length" :key="day" class="day__wrapper">
+              <div class="day__date">
+                <span class="day__date--ddd">{{
+                  getDayView(weekDates[dayIndex], 'ddd')
+                }}</span>
+                <br />
+                <span class="day__date--DD text-primary font-weight-medium">{{
+                  getDayView(weekDates[dayIndex], 'DD')
+                }}</span>
+              </div>
+
+              <div class="day__events">
+                <template v-for="event in weekEvents[day]">
+                  <Event-card
+                    :id="event.id"
+                    :key="event.id"
+                    :event="event"
+                    :course-id="event.course_id"
+                    :courses="courses"
+                    :updating="updating"
+                    :namespace="eventsNamespace"
+                    :delete-action="deleteAction"
+                    class="mb-3"
+                    @edit="edit"
+                  />
+                </template>
+              </div>
             </div>
-
-            <div class="day__events">
-              <template v-for="event in weekEvents[day]">
-                <Event-card
-                  :id="event.id"
-                  :key="event.id"
-                  :event="event"
-                  :course-id="event.course_id"
-                  :courses="courses"
-                  :updating="updating"
-                  :namespace="eventsNamespace"
-                  :delete-action="deleteAction"
-                  class="mb-3"
-                  @edit="edit"
-                />
-              </template>
-            </div>
-          </div>
+          </template>
         </template>
       </template>
-    </template>
 
-    <ModalEdit
-      ref="modal"
-      :namespace="eventsNamespace"
-      :edit-model="editModel"
-      :edit-schema="editSchema"
-      :create-action="eventsTypes.actions.CREATE_EVENT"
-      :update-action="eventsTypes.actions.EDIT_EVENT"
-      :watch-model-change="true"
-      @modelChange="onModelChange"
-    />
+      <ModalEdit
+        ref="modal"
+        :namespace="eventsNamespace"
+        :edit-model="editModel"
+        :edit-schema="editSchema"
+        :create-action="eventsTypes.actions.CREATE_EVENT"
+        :update-action="eventsTypes.actions.EDIT_EVENT"
+        :watch-model-change="true"
+        @modelChange="onModelChange"
+      />
 
-    <AddNew
-      :president-access="false"
-      @click="edit({ id: '', model: eventEmptyTemplate })"
-    />
+      <AddNew
+        :president-access="false"
+        @click="edit({ id: '', model: eventEmptyTemplate })"
+      />
+    </div>
   </div>
 </template>
 
@@ -91,6 +95,10 @@ export default {
     EventCard: () =>
       import(
         '../components/events/event-card.vue' /* webpackChunkName: 'components/events/event-card' */
+      ),
+    Loader: () =>
+      import(
+        '../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       ),
     ModalEdit: () =>
       import(

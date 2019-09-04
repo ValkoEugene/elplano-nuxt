@@ -13,7 +13,7 @@
     <v-menu left bottom>
       <template v-slot:activator="{ on }">
         <v-btn icon v-on="on">
-          <v-icon>mdi-dots-vertical</v-icon>
+          <v-icon>account_circle</v-icon>
         </v-btn>
       </template>
 
