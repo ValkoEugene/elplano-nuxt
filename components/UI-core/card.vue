@@ -1,5 +1,5 @@
 <template>
-  <div class="card elevation-5">
+  <div class="card elevation-5" :style="cardStyle">
     <div v-if="$scopedSlots.badges" class="card__badges">
       <slot name="badges" />
     </div>
@@ -7,6 +7,7 @@
     <div
       v-if="$scopedSlots.title || $scopedSlots.menu"
       class="card__title--wrapper"
+      :style="titleStyle"
     >
       <div v-if="$scopedSlots.title" class="card__title--text">
         <slot name="title" />
@@ -50,9 +51,39 @@ export default {
     actionsJustifyContent: {
       type: String,
       default: 'start'
+    },
+
+    /**
+     * Флаг уменшенного отображения карточки
+     * @type {Boolean}
+     */
+    small: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
+    /**
+     * Стили для карточки
+     * @type {Object}
+     */
+    cardStyle() {
+      return {
+        'min-height': this.small ? '50px' : '100px',
+        padding: this.small ? '10px' : '15px'
+      }
+    },
+
+    /**
+     * Стили для заголовка
+     * @type {Object}
+     */
+    titleStyle() {
+      return {
+        'margin-bottom': this.small ? '' : '10px'
+      }
+    },
+
     /**
      * Стили для кнопок
      * @type {Object}
@@ -69,11 +100,9 @@ export default {
 <style scoped>
 .card {
   position: relative;
-  min-height: 100px;
   background-color: #ffffff;
   color: rgba(0, 0, 0, 0.87);
   border-radius: 4px;
-  padding: 15px;
   word-break: break-word;
   word-wrap: break-word;
 }
@@ -102,7 +131,6 @@ export default {
   justify-content: space-between;
   font-size: 1.25rem;
   font-family: 'Roboto', sans-serif;
-  margin-bottom: 10px;
 }
 .mobile .card__title--wrapper {
   font-size: 1rem;

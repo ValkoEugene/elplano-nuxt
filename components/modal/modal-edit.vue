@@ -243,9 +243,34 @@ export default {
      * @type {Function}
      */
     save() {
-      const saveAction = this.id ? this.updateAction : this.createAction
+      this.id ? this.update() : this.create()
+    },
 
-      this.$store.dispatch(`${this.namespace}/${saveAction}`, this.localModel)
+    /**
+     * Создать сущность
+     * @type {Function}
+     */
+    create() {
+      this.$store.dispatch(
+        `${this.namespace}/${this.createAction}`,
+        this.localModel
+      )
+    },
+
+    /**
+     * Обновить сущность
+     * TODO: Доделать сравнение массивов
+     * @type {Function}
+     */
+    update() {
+      const data = {}
+
+      for (const key in this.localModel) {
+        if (this.editModel[key] !== this.localModel[key])
+          data[key] = this.localModel[key]
+      }
+
+      this.$store.dispatch(`${this.namespace}/${this.updateAction}`, data)
     },
 
     /**

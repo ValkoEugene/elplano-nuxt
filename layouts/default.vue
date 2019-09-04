@@ -13,7 +13,10 @@
       <!-- Provides the application the proper gutter -->
       <!-- <v-container fluid> -->
       <!-- If using vue-router -->
-      <div :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']">
+      <div
+        class="nuxt-wrapper"
+        :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
+      >
         <Loader v-if="loading" />
 
         <nuxt v-else />
@@ -122,6 +125,11 @@ export default {
 <style>
 .v-content__wrap {
   background: #000ef30a;
+}
+
+.nuxt-wrapper {
+  max-width: 1280px;
+  margin: auto;
 }
 
 .mobile .mobile__header {

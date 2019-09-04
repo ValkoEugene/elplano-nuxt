@@ -2,7 +2,9 @@
   <v-app-bar class="bg-primary-darken4" app dark>
     <v-app-bar-nav-icon @click="toggleSidebar"></v-app-bar-nav-icon>
 
-    <v-toolbar-title>Elplano</v-toolbar-title>
+    <v-toolbar-title class="page__title">{{
+      currentPageTitle
+    }}</v-toolbar-title>
 
     <v-spacer></v-spacer>
 
@@ -11,7 +13,7 @@
     <v-menu left bottom>
       <template v-slot:activator="{ on }">
         <v-btn icon v-on="on">
-          <v-icon>mdi-dots-vertical</v-icon>
+          <v-icon>account_circle</v-icon>
         </v-btn>
       </template>
 
@@ -44,6 +46,24 @@ import { TOGGLE_SIDEBAR_ROOT_LISTENER } from './sidebar.vue'
 
 export default {
   name: 'Header',
+  data: () => ({
+    /**
+     * Загодовки страниц в i18n
+     * @type {String}
+     */
+    pageTitlesI18n: {
+      '/': 'schedule',
+      '/courses': 'lessons',
+      '/lecturers': 'teachers',
+      '/group': 'group',
+      '/tasks': 'tasks',
+      '/measure': 'measure',
+      '/ratings': 'ratings',
+      '/attachments': 'attachments',
+      '/student': 'student',
+      '/group/settings': 'groupSettings'
+    }
+  }),
   computed: {
     ...mapState(namespace, [
       /**
@@ -99,6 +119,22 @@ export default {
       links.push({ url: '/log-off', text: this.$t('header.logout') })
 
       return links
+    },
+
+    /**
+     * Текущий путь
+     * @type {String}
+     */
+    currentPath() {
+      return this.$route.path
+    },
+
+    /**
+     * Текущий заголовок страницы
+     * @type {String}
+     */
+    currentPageTitle() {
+      return this.$t(`sidebar.${this.pageTitlesI18n[this.currentPath]}`)
     }
   },
   methods: {
@@ -153,3 +189,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.mobile .page__title {
+  font-size: 1rem;
+  padding-left: 0;
+}
+</style>
