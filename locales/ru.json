@@ -24,7 +24,9 @@
     "group": "Группа",
     "measure": "Мероприятия",
     "ratings": "Оценки",
-    "attachments": "Вложения"
+    "attachments": "Вложения",
+    "student": "Профиль",
+    "groupSettings": "Настройки группы"
   },
   "header": {
     "logout": "Выход",

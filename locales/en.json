@@ -24,7 +24,9 @@
     "group": "Group",
     "measure": "Measure",
     "ratings": "Ratings",
-    "attachments": "Attachmets"
+    "attachments": "Attachmets",
+    "student": "Profile",
+    "groupSettings": "Group setting"
   },
   "header": {
     "logout": "Logout",
