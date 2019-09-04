@@ -1,12 +1,16 @@
 <template>
-  <div>
-    <div class="d-flex justify-center">
-      <v-btn color="primary" class="prev-week" @click="prevWeek">-</v-btn>
+  <div class="events">
+    <div class="events__actions">
+      <v-btn small dark fab class="bg-primary" @click="prevWeek">
+        <v-icon>navigate_before</v-icon>
+      </v-btn>
 
       <p class="title text-primary week-title px-6">
         {{ weekDates[0] }} - {{ weekDates[6] }}
       </p>
-      <v-btn color="primary" class="next-week" @click="nextWeek">+</v-btn>
+      <v-btn small dark fab class="bg-primary" @click="nextWeek">
+        <v-icon>navigate_next</v-icon>
+      </v-btn>
     </div>
 
     <template v-if="!loading">
@@ -14,34 +18,38 @@
         <span>{{ $t('events.empty') }}</span>
       </v-alert>
 
-      <v-timeline v-else dense>
+      <template v-else>
         <template v-for="(day, dayIndex) in daysOfWeekList">
-          <v-timeline-item v-if="weekEvents[day].length" :key="day" small>
-            <span class="text-primary font-weight-medium">{{
-              getDayView(weekDates[dayIndex])
-            }}</span>
-            <br />
-            <span class="text-primary font-weight-medium">{{
-              weekDates[dayIndex]
-            }}</span>
+          <div v-if="weekEvents[day].length" :key="day" class="day__wrapper">
+            <div class="day__date">
+              <span class="day__date--ddd">{{
+                getDayView(weekDates[dayIndex], 'ddd')
+              }}</span>
+              <br />
+              <span class="day__date--DD text-primary font-weight-medium">{{
+                getDayView(weekDates[dayIndex], 'DD')
+              }}</span>
+            </div>
 
-            <template v-for="event in weekEvents[day]">
-              <Event-card
-                :id="event.id"
-                :key="event.id"
-                :event="event"
-                :course-id="event.course_id"
-                :courses="courses"
-                :updating="updating"
-                :namespace="eventsNamespace"
-                :delete-action="deleteAction"
-                class="mb-3"
-                @edit="edit"
-              />
-            </template>
-          </v-timeline-item>
+            <div class="day__events">
+              <template v-for="event in weekEvents[day]">
+                <Event-card
+                  :id="event.id"
+                  :key="event.id"
+                  :event="event"
+                  :course-id="event.course_id"
+                  :courses="courses"
+                  :updating="updating"
+                  :namespace="eventsNamespace"
+                  :delete-action="deleteAction"
+                  class="mb-3"
+                  @edit="edit"
+                />
+              </template>
+            </div>
+          </div>
         </template>
-      </v-timeline>
+      </template>
     </template>
 
     <ModalEdit
@@ -257,8 +265,8 @@ export default {
             type: 'v-radio-group',
             row: true,
             options: [
-              { label: 'Для всей группы', value: 'group' },
-              { label: 'Собственное', value: 'student' }
+              { label: 'Для всей группы', value: 'Group' },
+              { label: 'Собственное', value: 'Student' }
             ]
           },
           {
@@ -356,12 +364,12 @@ export default {
     initWeekDayItems() {
       const weekDayItems = []
 
-      for (let i = 1; i < 8; i++) {
+      for (let i = 1; i < 7; i++) {
         weekDayItems.push({
           view: moment()
             .isoWeekday(i)
             .format('dddd'),
-          value: this.daysOfWeekList[i]
+          value: this.daysOfWeekList[i - 1]
         })
       }
 
@@ -409,8 +417,8 @@ export default {
      */
     onModelChange(model) {
       const ids = {
-        student: this.$store.state.user.userInfo.id,
-        group: this.$store.state.group.groupId
+        Student: this.$store.state.user.userInfo.id,
+        Group: this.$store.state.group.groupId
       }
 
       const eventable_id = ids[model.eventable_type]
@@ -502,27 +510,49 @@ export default {
 
     /**
      * Получить отображение дня
-     * @param {Date} date
+     * @param {Date} date - дата
+     * @param {String} foramt - желаемый формат отображения даты
      * @return {String}
      */
-    getDayView(date) {
-      return moment(date, 'DD.MM.YYYY').format('dddd')
+    getDayView(date, format = 'dddd') {
+      return moment(date, 'DD.MM.YYYY').format(format)
     }
   }
 }
 </script>
 
 <style scoped>
-.mobile .prev-week {
-  position: fixed;
-  left: 5px;
-  z-index: 1;
+.day__wrapper {
+  display: flex;
+  margin-bottom: 25px;
 }
 
-.mobile .next-week {
-  position: fixed;
-  right: 5px;
-  z-index: 1;
+.day__date {
+  margin-right: 10px;
+}
+
+.day__events {
+  display: block;
+  flex-grow: 1;
+}
+
+.events__actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.events__actions p {
+  margin: 0;
+}
+
+.day__date--ddd {
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.day__date--DD {
+  font-size: 1.5rem;
 }
 
 .mobile .week-title {

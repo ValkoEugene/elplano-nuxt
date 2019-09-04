@@ -65,6 +65,7 @@
     "confirm": "Ok",
     "edit": "Edit",
     "delete": "Delete",
+    "add": "Add",
     "notready": "This page in progress",
     "a2hsButton": "Add to home screen",
     "card": {
@@ -91,7 +92,9 @@
   },
   "events": {
     "empty": "No saved events",
-    "confirm": "Delete from schedule?"
+    "confirm": "Delete from schedule?",
+    "prev": "Prev",
+    "next": "Next"
   },
   "invites": {
     "empty": "No saved invites",
