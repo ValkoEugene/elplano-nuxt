@@ -43,8 +43,8 @@
                       :key="id"
                       class="ma-1"
                     >
-                      <v-avatar class="bg-primary-lighten2" size="32">
-                        <v-icon dark>account_circle</v-icon>
+                      <v-avatar size="32">
+                        <img src="/images/mad-scientist.png" />
                       </v-avatar>
                       {{ getLecturerView(id) }}
                     </div>

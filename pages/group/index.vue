@@ -15,7 +15,7 @@
             md4
             class="pa-3"
           >
-            <Card>
+            <Card avatar-url="/images/avatar.png">
               <template v-slot:badges>
                 <span v-if="student.president">
                   {{ $t('students.president') }}
@@ -27,26 +27,19 @@
               </template>
 
               <template v-slot:content>
-                <div class="student__info">
-                  <img
-                    src="~static/images/avatar.png"
-                    class="student__avatar"
-                  />
+                <div>
+                  <p>Email: {{ student.email || '-' }}</p>
+                  <p>{{ $t('field.number') }}: {{ student.phone || '-' }}</p>
 
-                  <div class="student__about">
-                    <p>Email: {{ student.email || '-' }}</p>
-                    <p>{{ $t('field.number') }}: {{ student.phone || '-' }}</p>
+                  <template
+                    v-for="(social_network, name) in student.social_networks"
+                  >
+                    <p v-if="social_network" :key="name">
+                      {{ name }}: {{ social_network }}
+                    </p>
+                  </template>
 
-                    <template
-                      v-for="(social_network, name) in student.social_networks"
-                    >
-                      <p v-if="social_network" :key="name">
-                        {{ name }}: {{ social_network }}
-                      </p>
-                    </template>
-
-                    <p>{{ $t('field.about') }}: {{ student.about || '-' }}</p>
-                  </div>
+                  <p>{{ $t('field.about') }}: {{ student.about || '-' }}</p>
                 </div>
               </template>
             </Card>
@@ -113,27 +106,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.student__info {
-  display: flex;
-}
-
-.student__avatar {
-  width: 100px;
-  height: 100px;
-}
-
-.mobile .student__avatar {
-  width: 50px;
-  height: 50px;
-}
-
-.student__about {
-  margin-left: 10px;
-}
-
-.student__about p {
-  margin: 0px;
-}
-</style>
