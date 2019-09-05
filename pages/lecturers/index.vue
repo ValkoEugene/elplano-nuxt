@@ -19,7 +19,7 @@
             md4
             class="pa-3"
           >
-            <Card>
+            <Card avatar-url="/images/mad-scientist.png">
               <template v-slot:badges>
                 <span v-if="lecturer.active">
                   {{ $t('ui.card.badges.active') }}

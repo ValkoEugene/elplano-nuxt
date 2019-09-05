@@ -26,7 +26,13 @@
       </v-menu>
     </div>
 
-    <div v-if="$scopedSlots.content" class="card__content">
+    <div
+      v-if="$scopedSlots.content"
+      class="card__content"
+      :class="[avatarUrl ? 'd-flex' : '']"
+    >
+      <img v-if="avatarUrl" :src="avatarUrl" class="card__content--avatar" />
+
       <slot name="content" />
     </div>
 
@@ -60,6 +66,15 @@ export default {
     small: {
       type: Boolean,
       default: false
+    },
+
+    /**
+     * SRC для аватара
+     * @type {String}
+     */
+    avatarUrl: {
+      type: String,
+      default: ''
     }
   },
   computed: {
@@ -150,6 +165,20 @@ export default {
 }
 .mobile .card__content {
   font-size: 0.875rem;
+}
+
+.card__content--avatar {
+  width: 100px;
+  height: 100px;
+  margin-right: 10px;
+  border-radius: 50%;
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12) !important;
+}
+
+.mobile .card__content--avatar {
+  width: 50px;
+  height: 50px;
 }
 
 .card__menu {
