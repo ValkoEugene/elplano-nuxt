@@ -9,6 +9,15 @@ export const Types = {
   }
 }
 
+/**
+ * Добавить сообщения через экземпляр store
+ * @param {Object} store - экземпдяр store vuex
+ * @param {Array} snackbars - сообщения
+ */
+export const addSnackbarsByStore = (store, snackbars) => {
+  store.commit(`${namespace}/${Types.mutations.ADD_SNACKBARS}`, snackbars)
+}
+
 export const state = () => ({
   /**
    * Список сообщений

@@ -168,6 +168,7 @@ export default {
 }
 
 .card__content--avatar {
+  max-width: 100%;
   width: 100px;
   height: 100px;
   margin-right: 10px;

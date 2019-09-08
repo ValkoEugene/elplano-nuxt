@@ -31,7 +31,7 @@
               </template>
 
               <template v-slot:content>
-                <div v-if="!loadingLecturers">
+                <div>
                   <span class="font-weight-bold"
                     >{{ $t('lecturers.lecturers') }}:</span
                   >
@@ -61,16 +61,12 @@
                   <v-icon class="pr-2">work</v-icon>
                   {{ $t('tasks.add') }}
                 </v-list-item>
-                <EditButton
-                  :disabled="updating"
-                  @click="edit(course.id, course)"
-                />
+                <EditButton :disabled="updating" @click="edit(course)" />
                 <DeleteButton
                   :id="course.id"
                   :disabled="updating"
-                  :namespace="coursesNamespace"
-                  :action="coursesTypes.actions.DELETE_COURSE"
                   :confirm-text="$t('lesson.confirm')"
+                  @delete="delteCourse(course.id)"
                 />
               </template>
             </Card>
@@ -81,27 +77,20 @@
 
     <ModalEdit
       ref="modal"
-      :namespace="coursesNamespace"
       :edit-model="editModel"
       :edit-schema="editSchema"
-      :create-action="coursesTypes.actions.CREATE_COURSE"
-      :update-action="coursesTypes.actions.EDIT_COURSE"
+      :updating="updating"
+      @create="create"
+      @update="update"
     />
 
-    <AddNew @click="edit('', courseEmptyModel)" />
+    <AddNew @click="edit(courseEmptyModel)" />
   </div>
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex'
-import {
-  namespace as coursesNamespace,
-  Types as coursesTypes
-} from '../../store/courses'
-import {
-  namespace as lecturersNamespace,
-  Types as lecturersTypes
-} from '../../store/lecturers'
+import Course from '../../models/Course'
+import Lecturer from '../../models/Lecturer'
 import checkGroup from '../../mixins/checkgroup'
 
 export default {
@@ -139,18 +128,6 @@ export default {
   mixins: [checkGroup],
   data: () => ({
     /**
-     * namaspace модуля предметов
-     * @type {String}
-     */
-    coursesNamespace,
-
-    /**
-     * Типы для модуля предметов
-     * @type {Object}
-     */
-    coursesTypes,
-
-    /**
      * Строка поиска
      * @type {String}
      */
@@ -174,43 +151,36 @@ export default {
     }
   }),
   computed: {
-    ...mapState(coursesNamespace, {
-      /**
-       * Предметы
-       * @type {Array}
-       */
-      courses: 'courses',
-      /**
-       * Флаг загрузки предметов
-       * @type {Boolean}
-       */
-      loadingCources: 'loading',
-      /**
-       * Флаг обновления данных
-       * @type {Boolean}
-       */
-      updating: 'updating'
-    }),
+    /**
+     * Список преподавателей
+     * @type {Array}
+     */
+    courses() {
+      return Course.all()
+    },
 
-    ...mapState(lecturersNamespace, {
-      /**
-       * Преподаватели
-       * @type {Object}
-       */
-      lecturers: 'lecturers',
-      /**
-       * Флаг загрузки преподавателей
-       * @type {Boolean}
-       */
-      loadingLecturers: 'loading'
-    }),
+    /**
+     * Флаг обновления
+     * @type {Boolean}
+     */
+    updating() {
+      return Course.getUpdatingStatus()
+    },
+
+    /**
+     * Преподаватели
+     * @type {Array}
+     */
+    lecturers() {
+      return Lecturer.all()
+    },
 
     /**
      * Флаг загрузки
      * @type {Boolean}
      */
     loading() {
-      return this.loadingCources || this.loadingLecturers
+      return Course.getFetchingStatus() || Lecturer.getFetchingStatus()
     },
 
     /**
@@ -247,8 +217,8 @@ export default {
     }
   },
   mounted() {
-    this.loadCourses()
-    this.loadLecturers()
+    Course.$apiFetch()
+    Lecturer.$apiFetch()
   },
   methods: {
     /**
@@ -266,44 +236,40 @@ export default {
     /**
      * Редактировать предмет
      * @type {Function}
-     * @param {String} id - id предмета
      * @param {Object} model - модель редакртируемого предмета
      */
-    edit(id, model) {
-      this.setEditingId(id)
+    edit(model) {
       this.editModel = { ...model }
 
       this.$refs.modal.open()
     },
 
-    ...mapMutations(coursesNamespace, {
-      /**
-       * Установить id редактируемого предмета
-       * @type {Functiob}
-       */
-      setEditingId: coursesTypes.mutations.SET_EDITING_ID
-    }),
+    /**
+     * Создать пердмет
+     * @type {Function}
+     */
+    async create(data) {
+      const course = await Course.$apiCreate(data)
 
-    ...mapActions(coursesNamespace, {
-      /**
-       * Загрузить предметы
-       * @type {Function}
-       */
-      loadCourses: coursesTypes.actions.LOAD_COURSES,
-      /**
-       * Удалить предмет
-       * @type {Function}
-       */
-      deleteCourse: coursesTypes.actions.DELETE_COURSE
-    }),
+      this.editModel = course
+    },
 
-    ...mapActions(lecturersNamespace, {
-      /**
-       * Загрузить преподавателей
-       * @type {Function}
-       */
-      loadLecturers: lecturersTypes.actions.LOAD_LECTURERS
-    })
+    /**
+     * Обновить предмет
+     * @type {Function}
+     */
+    update(data) {
+      Course.$apiUpdate(data)
+    },
+
+    /**
+     * Удалить предмет
+     * @type {Function}
+     * @param {String} id - id предмета
+     */
+    delteCourse(id) {
+      Course.$apiDelete(id)
+    }
   }
 }
 </script>

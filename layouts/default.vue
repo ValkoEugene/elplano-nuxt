@@ -23,7 +23,7 @@
       </div>
       <Snackbars />
 
-      <ModalDelete />
+      <ModalConfirm />
       <!-- </v-container> -->
     </v-content>
   </v-app>
@@ -54,9 +54,9 @@ export default {
       import(
         '../components/UI-core/snackbars.vue' /* webpackChunkName: 'components/UI-core/snackbars' */
       ),
-    ModalDelete: () =>
+    ModalConfirm: () =>
       import(
-        '../components/modal/modal-delete.vue' /* webpackChunkName: 'components/modal/modal-delete' */
+        '../components/modal/modal-confirm.vue' /* webpackChunkName: 'components/modal/modal-confirm' */
       )
   },
   computed: {
