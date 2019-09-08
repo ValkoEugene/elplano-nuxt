@@ -16,6 +16,7 @@ export default class Event extends Model {
       course_id: this.attr(''),
       created_at: this.attr(''),
       description: this.attr(''),
+      start_at: this.attr(''),
       end_at: this.attr(''),
       // ('student', 'group')
       eventable_type: this.attr(''),
