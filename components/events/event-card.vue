@@ -20,10 +20,9 @@
       <DeleteButton
         :id="id"
         :disabled="updating"
-        :namespace="namespace"
-        :action="deleteAction"
         :president-access="false"
         :confirm-text="$t('events.confirm')"
+        @delete="$emit('delete')"
       />
     </template>
   </Card>
@@ -66,65 +65,17 @@ export default {
     },
 
     /**
-     * Id предмета к которому привязан элемент расписани
-     * @type {String}
-     */
-    courseId: {
-      type: String,
-      required: true
-    },
-
-    /**
-     * Список предметов
-     * @type {Array}
-     */
-    courses: {
-      type: Array,
-      required: true
-    },
-
-    /**
      * Флаг обновления
      * @type {Boolean}
      */
     updating: {
       type: Boolean,
       required: true
-    },
-
-    /**
-     * Namespace модуля с расписанием
-     * @type {String}
-     */
-    namespace: {
-      type: String,
-      required: true
-    },
-
-    /**
-     * Action на удаление элемента расписания
-     * @type {Strings}
-     */
-    deleteAction: {
-      type: String,
-      required: true
     }
   },
   methods: {
-    /**
-     * Получить отображение предмета
-     * @type {Function}
-     * @param {String} id
-     * @returns {String}
-     */
-    getCourseView(id) {
-      const course = this.courses.find((item) => item.id === id)
-
-      return course ? course.title : '-'
-    },
-
     edit() {
-      this.$emit('edit', { id: this.id, model: this.event })
+      this.$emit('edit', this.event)
     }
   }
 }

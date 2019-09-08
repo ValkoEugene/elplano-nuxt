@@ -4,12 +4,13 @@
       v-model="visible"
       fullscreen
       hide-overlay
+      :persistent="updating"
       transition="dialog-bottom-transition"
       @keydown="escHandler"
     >
       <v-card>
         <v-toolbar dark color="primary">
-          <v-btn icon dark @click="close">
+          <v-btn icon dark :disabled="updating" @click="close">
             <v-icon>close</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
@@ -130,29 +131,11 @@ export default {
     },
 
     /**
-     * namespace модуля редактируемой сущности
-     * @type {String}
+     * Флаг обновления
+     * @type {Boolean}
      */
-    namespace: {
-      type: String,
-      required: true
-    },
-
-    /**
-     * Action на обновление
-     * @type {String}
-     */
-    updateAction: {
-      type: String,
-      required: true
-    },
-
-    /**
-     * Action на создание
-     * @type {String}
-     */
-    createAction: {
-      type: String,
+    updating: {
+      type: Boolean,
       required: true
     },
 
@@ -178,27 +161,6 @@ export default {
      */
     visible: false
   }),
-  computed: {
-    /**
-     * Флаг обновления
-     * @type {Boolean}
-     */
-    updating() {
-      if (!this.namespace) return false
-
-      return this.$store.state[this.namespace].updating
-    },
-
-    /**
-     * Id редактируемой сущности
-     * @type {String}
-     */
-    id() {
-      if (!this.namespace) return ''
-
-      return this.$store.state[this.namespace].editingId
-    }
-  },
   watch: {
     /**
      * Делаем локальную копию редактируемой сущности
@@ -243,7 +205,7 @@ export default {
      * @type {Function}
      */
     save() {
-      this.id ? this.update() : this.create()
+      this.editModel.id ? this.update() : this.create()
     },
 
     /**
@@ -251,10 +213,7 @@ export default {
      * @type {Function}
      */
     create() {
-      this.$store.dispatch(
-        `${this.namespace}/${this.createAction}`,
-        this.localModel
-      )
+      this.$emit('create', this.localModel)
     },
 
     /**
@@ -263,14 +222,14 @@ export default {
      * @type {Function}
      */
     update() {
-      const data = {}
+      const data = { id: this.localModel.id }
 
       for (const key in this.localModel) {
         if (this.editModel[key] !== this.localModel[key])
           data[key] = this.localModel[key]
       }
 
-      this.$store.dispatch(`${this.namespace}/${this.updateAction}`, data)
+      this.$emit('update', data)
     },
 
     /**
@@ -278,7 +237,7 @@ export default {
      * @param {Object} event - объект события
      */
     escHandler(event) {
-      if (event.code === 'Escape') this.close()
+      if (event.code === 'Escape' && !this.updating) this.close()
     }
   }
 }

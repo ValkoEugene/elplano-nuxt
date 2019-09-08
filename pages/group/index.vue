@@ -51,8 +51,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import { namespace, Types } from '../../store/students'
+import Student from '../../models/Student'
 import checkGroup from '../../mixins/checkgroup'
 
 export default {
@@ -80,29 +79,24 @@ export default {
     search: ''
   }),
   computed: {
-    ...mapState(namespace, [
-      /**
-       * Флаг загрузки
-       * @type {Boolean}
-       */
-      'loading',
-      /**
-       * Список студентов
-       * @type {Array}
-       */
-      'students'
-    ])
+    /**
+     * Флаг загрузки
+     * @type {Boolean}
+     */
+    loading() {
+      return Student.getFetchingStatus()
+    },
+
+    /**
+     * Список студентов
+     * @type {Array}
+     */
+    students() {
+      return Student.all()
+    }
   },
   mounted() {
-    this.loadStudents()
-  },
-  methods: {
-    ...mapActions(namespace, {
-      /**
-       * Загрузить список студентов
-       */
-      loadStudents: Types.actions.LOAD_STUDENTS
-    })
+    Student.$apiFetch()
   }
 }
 </script>

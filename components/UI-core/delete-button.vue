@@ -4,7 +4,7 @@
     icon
     color="error"
     :disabled="disabled"
-    @click="initDeleting({ id, namespace, action, text: confirmText })"
+    @click="showConfirm"
   >
     <v-icon class="pr-2">delete</v-icon>
     {{ $t('ui.delete') }}
@@ -12,54 +12,40 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import { namespace, Types } from '../../store/modal/delet'
+import { SHOW_CONFIRM, CONFIRM_SUCCESS } from '../modal/modal-confirm.vue'
 
 export default {
   name: 'DeleteButton',
   props: {
     /**
-     * Id id of deleted item
+     * ID удаляемого элемента
      * @type {String}
      */
     id: {
       type: String,
       required: true
     },
+
     /**
-     * Flag that the button is available only for president
+     * Флаг доступности только для старосты
      * @type {Boolean}
      */
     presidentAccess: {
       type: Boolean,
       default: true
     },
+
     /**
-     * Flag that the button is disabled
+     * Флаг блокировки
      * @type {Boolean}
      */
     disabled: {
       type: Boolean,
       default: false
     },
+
     /**
-     * Vuex module namespace deleted item
-     * @type {String}
-     */
-    namespace: {
-      type: String,
-      required: true
-    },
-    /**
-     * Action in vuex that delet item
-     * @type {String}
-     */
-    action: {
-      type: String,
-      required: true
-    },
-    /**
-     * Text for deleting confirmation
+     * Текст подтверждения на удаление
      * @type {String}
      */
     confirmText: {
@@ -67,13 +53,28 @@ export default {
       required: true
     }
   },
+  mounted() {
+    this.$root.$on(`${CONFIRM_SUCCESS}_${this.id}`, this.onConfirm)
+  },
+  destroyed() {
+    this.$root.$off(`${CONFIRM_SUCCESS}_${this.id}`, this.onConfirm)
+  },
   methods: {
-    ...mapActions(namespace, {
-      /**
-       * Init data for vuex modal/delete module
-       */
-      initDeleting: Types.actions.INIT_DELETING
-    })
+    /**
+     * Показать окно подтверждения
+     * @type {Function}
+     */
+    showConfirm() {
+      this.$root.$emit(SHOW_CONFIRM, { text: this.confirmText, id: this.id })
+    },
+
+    /**
+     * Обработчик подтверждения удаления
+     * @type {Function}
+     */
+    onConfirm() {
+      this.$emit('delete')
+    }
   }
 }
 </script>

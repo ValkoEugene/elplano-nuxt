@@ -40,13 +40,10 @@
                     :id="event.id"
                     :key="event.id"
                     :event="event"
-                    :course-id="event.course_id"
-                    :courses="courses"
                     :updating="updating"
-                    :namespace="eventsNamespace"
-                    :delete-action="deleteAction"
                     class="mb-3"
                     @edit="edit"
+                    @delete="deleteEvent"
                   />
                 </template>
               </div>
@@ -57,35 +54,26 @@
 
       <ModalEdit
         ref="modal"
-        :namespace="eventsNamespace"
         :edit-model="editModel"
         :edit-schema="editSchema"
-        :create-action="eventsTypes.actions.CREATE_EVENT"
-        :update-action="eventsTypes.actions.EDIT_EVENT"
+        :updating="updating"
         :watch-model-change="true"
+        @create="create"
+        @update="update"
         @modelChange="onModelChange"
       />
 
-      <AddNew
-        :president-access="false"
-        @click="edit({ id: '', model: eventEmptyTemplate })"
-      />
+      <AddNew :president-access="false" @click="edit(eventEmptyTemplate)" />
     </div>
   </div>
 </template>
 
 <script>
 import clonedeep from 'lodash.clonedeep'
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapState } from 'vuex'
+import Event from '../models/Event'
+import Course from '../models/Course'
 import moment, { setLocale } from '../plugins/moment'
-import {
-  namespace as eventsNamespace,
-  Types as eventsTypes
-} from '../store/events'
-import {
-  namespace as coursesNamespace,
-  Types as coursesTypes
-} from '../store/courses'
 import { namespace as i18nNamespace } from '../store/i18n'
 import checkGroup from '../mixins/checkgroup'
 
@@ -111,24 +99,6 @@ export default {
   },
   mixins: [checkGroup],
   data: () => ({
-    /**
-     * namespace модуля с расписанием
-     * @type {String}
-     */
-    eventsNamespace,
-
-    /**
-     * Типы vuex модуля с расписанием
-     * @type {Object}
-     */
-    eventsTypes,
-
-    /**
-     * Action на удаления элмента расписания
-     * @type {String}
-     */
-    deleteAction: eventsTypes.actions.DELETE_EVENT,
-
     /**
      * Шаблон для событий по дням недели
      * @type {Object}
@@ -222,43 +192,36 @@ export default {
       'locale'
     ]),
 
-    ...mapState(eventsNamespace, {
-      /**
-       * Флаг загркзки
-       * @type {Boolean}
-       */
-      loadingEvents: 'loading',
-      /**
-       * Флаг обновления
-       * @type {Boolean}
-       */
-      updating: 'updating',
-      /**
-       * Список с расписанием
-       * @type {Array}
-       */
-      events: 'events'
-    }),
+    /**
+     * Список с расписанием
+     * @type {Array}
+     */
+    events() {
+      return Event.all()
+    },
 
-    ...mapState(coursesNamespace, {
-      /**
-       * Предметы
-       * @type {Array}
-       */
-      courses: 'courses',
-      /**
-       * Флаг загрузки предметов
-       * @type {Boolean}
-       */
-      loadingCources: 'loading'
-    }),
+    /**
+     * Предметы
+     * @type {Array}
+     */
+    courses() {
+      return Course.all()
+    },
 
     /**
      * Флаг загрузки
      * @type {Boolean}
      */
     loading() {
-      return this.loadingCources || this.loadingEvents
+      return Course.getFetchingStatus() || Event.getFetchingStatus()
+    },
+
+    /**
+     * Флаг обновления
+     * @type {Boolean}
+     */
+    updating() {
+      return Event.getUpdatingStatus()
     },
 
     /**
@@ -273,8 +236,8 @@ export default {
             type: 'v-radio-group',
             row: true,
             options: [
-              { label: 'Для всей группы', value: 'Group' },
-              { label: 'Собственное', value: 'Student' }
+              { label: 'Для всей группы', value: 'group' },
+              { label: 'Собственное', value: 'student' }
             ]
           },
           {
@@ -361,8 +324,8 @@ export default {
   mounted() {
     console.log('index mouneted')
     this.initWeekDayItems()
-    this.loadEvents()
-    this.loadCourses()
+    Event.$apiFetch()
+    Course.$apiFetch()
   },
   methods: {
     /**
@@ -384,39 +347,42 @@ export default {
       this.weekDayItems = weekDayItems
     },
 
-    ...mapActions(eventsNamespace, {
-      /**
-       * Загрузить расписание
-       * @type {Fucntion}
-       */
-      loadEvents: eventsTypes.actions.LOAD_EVENTS
-    }),
-
-    ...mapMutations(eventsNamespace, {
-      /**
-       *
-       */
-      setEditingId: eventsTypes.mutations.SET_EDITING_ID
-    }),
-
-    ...mapActions(coursesNamespace, {
-      /**
-       * Загрузить предметы
-       * @type {Function}
-       */
-      loadCourses: coursesTypes.actions.LOAD_COURSES
-    }),
-
     /**
      * Редактировать расписание
      * @type {Function}
-     * @param {String} id
+     * @param {Object} model - модель редакртируемого эвента
      */
-    edit({ id, model }) {
-      this.setEditingId(id)
+    edit(model) {
       this.editModel = { ...model }
 
       this.$refs.modal.open()
+    },
+
+    /**
+     * Создать эвент
+     * @type {Function}
+     */
+    async create(data) {
+      const event = await Event.$apiCreate(data)
+
+      this.editModel = event
+    },
+
+    /**
+     * Обновить эвент
+     * @type {Function}
+     */
+    update(data) {
+      Event.$apiUpdate(data)
+    },
+
+    /**
+     * Удалить эвент
+     * @type {Function}
+     * @param {String} id - id предмета
+     */
+    deleteEvent(id) {
+      Event.$apiDelete(id)
     },
 
     /**
@@ -425,8 +391,8 @@ export default {
      */
     onModelChange(model) {
       const ids = {
-        Student: this.$store.state.user.userInfo.id,
-        Group: this.$store.state.group.groupId
+        student: this.$store.state.user.userInfo.id,
+        group: this.$store.state.group.groupId
       }
 
       const eventable_id = ids[model.eventable_type]
