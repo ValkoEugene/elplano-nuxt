@@ -1,3 +1,4 @@
+import shrinkRay from 'shrink-ray-current'
 import colors from 'vuetify/es5/util/colors'
 import MomentLocalesPlugin from 'moment-locales-webpack-plugin'
 
@@ -65,6 +66,9 @@ export default {
       }
     ],
     display: 'standalone'
+  },
+  render: {
+    compressor: shrinkRay()
   },
   workbox: {
     offline: true

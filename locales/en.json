@@ -58,6 +58,7 @@
     "patronymic": "Patronymic",
     "startAt": "Start date",
     "endAt": "End Date",
+    "time": "Time",
     "daysOfWeek": "Days",
     "number": "Number"
   },
@@ -94,6 +95,7 @@
   },
   "events": {
     "empty": "No saved events",
+    "own": "Own",
     "confirm": "Delete from schedule?",
     "prev": "Prev",
     "next": "Next"

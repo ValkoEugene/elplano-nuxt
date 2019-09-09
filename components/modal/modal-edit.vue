@@ -92,6 +92,22 @@
                 :label="field.label"
                 :rules="Array.isArray(field.rules) ? field.rules : undefined"
               />
+
+              <Date
+                v-if="field.type === 'date'"
+                :key="field.model"
+                v-model.trim="localModel[field.model]"
+                :label="field.label"
+                :rules="Array.isArray(field.rules) ? field.rules : undefined"
+              />
+
+              <Time
+                v-if="field.type === 'time'"
+                :key="field.model"
+                v-model.trim="localModel[field.model]"
+                :label="field.label"
+                :rules="Array.isArray(field.rules) ? field.rules : undefined"
+              />
             </template>
           </v-form>
         </v-card-text>
@@ -109,6 +125,14 @@ export default {
     Datepicker: () =>
       import(
         '../UI-core/datepicker.vue' /* webpackChunkName: 'components/UI-core/datepicker' */
+      ),
+    Date: () =>
+      import(
+        '../UI-core/date.vue' /* webpackChunkName: 'components/UI-core/date' */
+      ),
+    Time: () =>
+      import(
+        '../UI-core/time.vue' /* webpackChunkName: 'components/UI-core/time' */
       )
   },
   props: {

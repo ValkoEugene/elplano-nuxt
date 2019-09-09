@@ -85,7 +85,7 @@ export default {
     cardStyle() {
       return {
         'min-height': this.small ? '50px' : '100px',
-        padding: this.small ? '10px' : '15px'
+        padding: this.small ? '15px 10px' : '15px'
       }
     },
 

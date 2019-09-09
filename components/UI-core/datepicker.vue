@@ -23,7 +23,7 @@
           </v-tab-item>
 
           <v-tab-item>
-            <v-time-picker v-model="localTime" scrollable />
+            <v-time-picker v-model="localTime" format="24hr" scrollable />
           </v-tab-item>
         </v-tabs>
 
@@ -109,6 +109,20 @@ export default {
      */
     formatedDate() {
       return this.value ? moment(this.value).format('YYYY-MM-DD HH:mm') : ''
+    }
+  },
+  watch: {
+    value() {
+      if (this.value) {
+        this.localTime = moment(this.value).format('HH:mm')
+        this.localDate = moment(this.value).format('YYYY-MM-DD')
+      }
+    }
+  },
+  mounted() {
+    if (this.value) {
+      this.localTime = moment(this.value).format('HH:mm')
+      this.localDate = moment(this.value).format('YYYY-MM-DD')
     }
   },
   methods: {
