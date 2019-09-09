@@ -1,14 +1,14 @@
 <template>
   <div class="events">
     <div class="events__actions">
-      <v-btn small dark fab class="bg-primary" @click="prevWeek">
+      <v-btn small dark fab class="white text-primary" @click="prevWeek">
         <v-icon>navigate_before</v-icon>
       </v-btn>
 
-      <p class="title text-primary week-title px-6">
+      <p class="title week-title px-6">
         {{ weekDates[0] }} - {{ weekDates[6] }}
       </p>
-      <v-btn small dark fab class="bg-primary" @click="nextWeek">
+      <v-btn small dark fab class="white text-primary" @click="nextWeek">
         <v-icon>navigate_next</v-icon>
       </v-btn>
     </div>
@@ -33,8 +33,22 @@
 
             <div class="day__events">
               <template v-for="event in weekEvents[day]">
-                <Card :key="event.id" small class="mb-3">
-                  <template v-slot:title>{{ event.title }}</template>
+                <Card :key="event.id" small class="mb-5">
+                  <template
+                    v-if="event.eventable_type === 'student'"
+                    v-slot:badges
+                  >
+                    <span>
+                      {{ $t('events.own') }}
+                    </span>
+                  </template>
+
+                  <template v-slot:title>
+                    <span class="event__time"
+                      >{{ getTime(event.start_at) }} |</span
+                    >
+                    {{ event.title }}
+                  </template>
 
                   <template v-slot:menu>
                     <v-list-item :disabled="true">
@@ -47,12 +61,14 @@
                     </v-list-item>
 
                     <EditButton
+                      v-if="event.eventable_type === 'student' || isPresidents"
                       :president-access="false"
                       :disabled="updating"
                       @click="edit(event)"
                     />
 
                     <DeleteButton
+                      v-if="event.eventable_type === 'student' || isPresidents"
                       :id="event.id"
                       :disabled="updating"
                       :president-access="false"
@@ -188,7 +204,15 @@ export default {
        * @type {('ru' | 'en')}
        */
       'locale'
-    ])
+    ]),
+
+    /**
+     * Флаг является ли студент старостой
+     * @type {Boolean}
+     */
+    isPresidents() {
+      return this.$store.getters['user/IS_PRESIDENT']
+    }
   },
   watch: {
     /**
@@ -282,6 +306,11 @@ export default {
         })
       })
 
+      // Сортируем по времени
+      this.daysOfWeekList.forEach((day) => {
+        weekEvents[day] = this.sortByTime(weekEvents[day])
+      })
+
       const weekDates = this.getWeekDates(startWeekDate)
 
       this.endWeekDate = endWeekDate
@@ -290,6 +319,20 @@ export default {
       this.weekDates = weekDates
 
       window.scrollTo(0, 0)
+    },
+
+    /**
+     * Сортировать события по времени
+     * @param {Array} event
+     * @return {Array}
+     */
+    sortByTime(events) {
+      return [...events].sort((a, b) => {
+        return (
+          this.getTimeInMinutes(this.getTime(a.start_at)) -
+          this.getTimeInMinutes(this.getTime(b.start_at))
+        )
+      })
     },
 
     /**
@@ -326,6 +369,25 @@ export default {
      */
     getDayView(date, format = 'dddd') {
       return moment(date, 'DD.MM.YYYY').format(format)
+    },
+
+    /**
+     * Получить время
+     * @param {Date} date - дата
+     * @returns {String}
+     */
+    getTime(date) {
+      return moment(date).format('HH:mm')
+    },
+
+    /**
+     * Получить время в минутах
+     * @param {String} time
+     * @returns {Number}
+     */
+    getTimeInMinutes(time) {
+      const times = time.split(':').map((item) => Number(item))
+      return times[0] * 60 + time[1]
     },
 
     /**
@@ -373,6 +435,11 @@ export default {
 
 .events__actions p {
   margin: 0;
+}
+
+.event__time {
+  margin: 0;
+  font-weight: 500;
 }
 
 .day__date--ddd {

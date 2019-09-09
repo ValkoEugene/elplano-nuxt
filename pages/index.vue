@@ -65,7 +65,7 @@ export default {
       description: '',
       start_at: '',
       end_at: '',
-      eventable_type: '',
+      eventable_type: 'student',
       eventable_id: '',
       by_day: []
     },
@@ -116,6 +116,22 @@ export default {
     },
 
     /**
+     * Типы событий
+     * @type {Arrau}
+     */
+    eventableTypeOptions() {
+      const types = []
+
+      if (this.$store.getters['user/IS_PRESIDENT']) {
+        types.push({ label: 'Для всей группы', value: 'group' })
+      }
+
+      types.push({ label: 'Собственное', value: 'student' })
+
+      return types
+    },
+
+    /**
      * Схема на редактирование
      * @type {Object}
      */
@@ -126,10 +142,7 @@ export default {
             model: 'eventable_type',
             type: 'v-radio-group',
             row: true,
-            options: [
-              { label: 'Для всей группы', value: 'group' },
-              { label: 'Собственное', value: 'student' }
-            ]
+            options: this.eventableTypeOptions
           },
           {
             type: 'v-text-field',
@@ -168,6 +181,25 @@ export default {
             label: this.$t('field.endAt'),
             rules: [this.$rules.required]
           },
+          // Вариант с выбором даты и время отдельно
+          // {
+          //   type: 'time',
+          //   model: 'time',
+          //   label: this.$t('field.time'),
+          //   rules: [this.$rules.required]
+          // },
+          // {
+          //   type: 'date',
+          //   model: 'start_at',
+          //   label: this.$t('field.startAt'),
+          //   rules: [this.$rules.required]
+          // },
+          // {
+          //   type: 'date',
+          //   model: 'end_at',
+          //   label: this.$t('field.endAt'),
+          //   rules: [this.$rules.required]
+          // },
           {
             model: 'by_day',
             type: 'v-select',
@@ -190,9 +222,10 @@ export default {
     /**
      * Инициализируем список дней
      * @type {Function}
+     * @param {Array} weekDayItems
      */
-    initWeekDayItems(data) {
-      this.weekDayItems = data
+    initWeekDayItems(weekDayItems) {
+      this.weekDayItems = weekDayItems
     },
 
     /**
@@ -201,14 +234,30 @@ export default {
      * @param {Object} model - модель редакртируемого эвента
      */
     edit(model) {
-      this.editModel = { ...model }
+      const data = { ...model }
+
+      if (!data.id) {
+        data.eventable_id = this.$store.state.user.userInfo.id
+      }
+
+      this.editModel = data
 
       this.$refs.modal.open()
     },
 
     /**
+     * Сохранить эвент
+     * @type {Function}
+     * @param {Object} data
+     */
+    save(data) {
+      data.id ? this.update(data) : this.create(data)
+    },
+
+    /**
      * Создать эвент
      * @type {Function}
+     * @param {Object} data
      */
     async create(data) {
       const event = await Event.$apiCreate(data)
@@ -219,6 +268,7 @@ export default {
     /**
      * Обновить эвент
      * @type {Function}
+     * @param {Object} data
      */
     update(data) {
       Event.$apiUpdate(data)
@@ -236,6 +286,7 @@ export default {
     /**
      * Следим за изменением модели редактируемого элемента расписания
      * (при изменение типа эвента подставляем id)
+     * @param {Object} model
      */
     onModelChange(model) {
       const ids = {

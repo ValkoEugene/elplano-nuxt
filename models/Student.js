@@ -18,6 +18,7 @@ export default class Student extends Model {
       full_name: this.attr(''),
       phone: this.attr(''),
       updated_at: this.attr(''),
+      president: this.attr(false),
       social_networks: this.attr({})
     }
   }
