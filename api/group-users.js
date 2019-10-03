@@ -1,6 +1,6 @@
 import axios from '../plugins/axios'
 
-const restUrl = '/group/students'
+const restUrl = '/classmates'
 
 /**
  * Получить список участников группы
