@@ -9,6 +9,14 @@ const axiosInstance = axios.create({
   }
 })
 
+const baseAxiosIntance = axios.create({
+  baseURL: `${process.env.baseUrl}`,
+  data: {},
+  headers: {
+    'Content-Type': 'application/vnd.api+json'
+  }
+})
+
 /**
  * Добавляем токены к каждому запросу
  * @param {import('axios').AxiosRequestConfig} config
@@ -110,4 +118,13 @@ axiosInstance.interceptors.request.use(addToken)
 axiosInstance.interceptors.response.use((response) => response, updateToken)
 axiosInstance.interceptors.response.use((response) => response, handlingErrors)
 
+baseAxiosIntance.interceptors.request.use(addToken)
+baseAxiosIntance.interceptors.response.use((response) => response, updateToken)
+baseAxiosIntance.interceptors.response.use(
+  (response) => response,
+  handlingErrors
+)
+
 export default axiosInstance
+
+export { baseAxiosIntance }

@@ -3,7 +3,6 @@
     v-model="sidebarStatus"
     app
     dark
-    src="https://develop.d2ykf6mixoqcwa.amplifyapp.com/images/sidebar_bg.jpg"
     class="drawer-background"
   >
     <v-list-item>

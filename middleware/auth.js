@@ -37,6 +37,11 @@ export default ({ store, redirect, req, route }) => {
     return redirect('/login')
   }
 
+  // Проверяем является ли пользователь админом
+  if (store.getters[`${namespace}/${Types.getters.IS_ADMIN}`]) {
+    return redirect('/admin')
+  }
+
   // Проверяем состоит ли пользователь в группе
   if (
     !isServer &&
