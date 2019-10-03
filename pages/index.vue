@@ -215,8 +215,10 @@ export default {
     }
   },
   mounted() {
-    Event.$apiFetch()
-    Course.$apiFetch()
+    if (!this.$store.getters['user/IS_ADMIN']) {
+      Event.$apiFetch()
+      Course.$apiFetch()
+    }
   },
   methods: {
     /**

@@ -11,11 +11,11 @@ function formatDataFromApi(response) {
   const id = response.data.data.id
   const user = response.data.data.attributes
   const student = response.data.included.find((item) => item.type === 'student')
-  const group = student.relationships.group
+  const group = student && student.relationships && student.relationships.group
 
   return {
     user: { ...user, id },
-    student: student.attributes,
+    student: student && student.attributes,
     groupId: group && group.data && group.data.id
   }
 }
