@@ -22,6 +22,7 @@
           <SystemHealf />
           <SystemInformation />
         </div>
+        <Users v-if="tab === 2" />
       </div>
     </v-card>
   </v-content>
@@ -36,7 +37,8 @@ export default {
     About: () => import('../../components/admin/about.vue'),
     SystemHealf: () => import('../../components/admin/system-healf.vue'),
     SystemInformation: () =>
-      import('../../components/admin/system-information.vue')
+      import('../../components/admin/system-information.vue'),
+    Users: () => import('../../components/admin/users.vue')
   },
   layout: 'empty',
   data: () => ({

@@ -19,7 +19,7 @@ export async function getAboutInfo() {
 
     return response.data.meta
   } catch (error) {
-    Promise.reject(error)
+    return Promise.reject(error)
   }
 }
 
@@ -34,7 +34,7 @@ export async function updateSettings(admin_settings) {
   try {
     await axios.put('/admin/settings', { admin_settings })
   } catch (error) {
-    Promise.reject(error)
+    return Promise.reject(error)
   }
 }
 
@@ -46,11 +46,11 @@ export async function updateSettings(admin_settings) {
  */
 export async function getSystemHealth() {
   try {
-    const response = await axios.get('/admin/system/health?type=liveness')
+    const response = await axios.get('/admin/system/health/liveness')
 
     return response && response.data && response.data.meta
   } catch (error) {
-    Promise.reject(error)
+    return Promise.reject(error)
   }
 }
 
@@ -66,6 +66,6 @@ export async function getSystemInformation() {
 
     return response && response.data && response.data.meta
   } catch (error) {
-    Promise.reject(error)
+    return Promise.reject(error)
   }
 }
