@@ -31,7 +31,8 @@
     "nuxt-material-design-icons": "^1.0.4",
     "shrink-ray-current": "^4.0.0",
     "vue-content-loader": "^0.2.2",
-    "vue-i18n": "^8.14.0"
+    "vue-i18n": "^8.14.0",
+    "vue-infinite-scroll": "^2.0.2"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^1.0.1",
