@@ -1,13 +1,15 @@
 <template>
   <div>
-    <!-- TODO infinite scroll -->
-    <!-- <div
-      v-infinite-scroll="loadMore"
-      infinite-scroll-disabled="loading"
+    <Search v-model="search" class="mb-6" />
+
+    <div
+      v-infinite-scroll="loadData"
+      infinite-scroll-disabled="disabledInfinitScroll"
       infinite-scroll-distance="10"
+      infinite-scroll-throttle-delay="500"
+      infinite-scroll-immediate-check="false"
       class="users__wrapper"
-    > -->
-    <div class="users__wrapper">
+    >
       <div v-for="user in users" :key="user.id">
         <Card :avatar-url="user.avatar" class="user__wrapper">
           <template v-if="haveBadges(user)" v-slot:badges>
@@ -53,7 +55,7 @@
               unlock
             </v-list-item>
             <v-list-item
-              v-if="!user.confirm"
+              v-if="!user.confirmed"
               :disabled="updating"
               @click="updateUser('confirm', user)"
             >
@@ -63,7 +65,7 @@
         </Card>
       </div>
 
-      <div @click="loadMore">Loading...</div>
+      <div v-if="!allDataloading">Loading...</div>
     </div>
   </div>
 </template>
@@ -76,9 +78,14 @@ import { addSnackbarsByStore } from '../../store/snackbars'
 export default {
   name: 'AdminUsers',
   components: {
-    // TODO проблема с алиасом
-    // eslint-disable-next-line import/no-unresolved
-    Card: () => import('~/components/UI-core/card.vue')
+    Card: () =>
+      import(
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      ),
+    Search: () =>
+      import(
+        '~/components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
+      )
   },
   directives: {
     infiniteScroll
@@ -97,6 +104,12 @@ export default {
     updating: false,
 
     /**
+     * Флаг что все данные загруженны
+     * @type {Boolean}
+     */
+    allDataloading: false,
+
+    /**
      * Список пользователей
      * @type {Array}
      */
@@ -104,11 +117,42 @@ export default {
 
     /**
      * Строка поиска
-     * // TODO
      * @type {String}
      */
     search: ''
   }),
+  computed: {
+    /**
+     * Флаг отключения подгрузки данных при бесконечном скролле
+     * @type {Boolean}
+     */
+    disabledInfinitScroll() {
+      return this.loading || this.allDataloading
+    },
+
+    /**
+     * Фильтры запроса
+     * @type {Object}
+     */
+    filters() {
+      const filters = {
+        direction: 'asc'
+      }
+
+      if (this.search) filters.search = this.search
+      if (this.users.length)
+        filters.last_id = Number(this.users[this.users.length - 1].id)
+
+      return filters
+    }
+  },
+  watch: {
+    search() {
+      this.users = []
+      this.allDataloading = false
+      this.loadData()
+    }
+  },
   mounted() {
     this.loadData()
   },
@@ -127,32 +171,20 @@ export default {
      * @type {Function}
      * @param {Object} params - параметры запроса
      */
-    async loadData(params = {}) {
+    async loadData() {
       try {
         this.loading = true
 
-        const users = await adminUserApi.loadData(params)
-        this.users = [...this.users, ...users]
+        const users = await adminUserApi.loadData({ filters: this.filters })
 
+        if (!users.length) this.allDataloading = true
+        else this.users = [...this.users, ...users]
+
+        await this.$nextTick()
         this.loading = false
       } catch (error) {
         addSnackbarsByStore(this.$store, error.snackbarErrors)
       }
-    },
-
-    /**
-     * Догрузить пользователей
-     * @type {Function}
-     */
-    loadMore() {
-      const params = {
-        filters: {
-          search: this.search,
-          last_id: this.users[this.users.length - 1].id
-        }
-      }
-
-      this.loadData(params)
     },
 
     /**

@@ -50,6 +50,7 @@
     "jest": "^24.1.0",
     "moment-locales-webpack-plugin": "^1.1.0",
     "prettier": "^1.16.4",
-    "vue-jest": "^4.0.0-0"
+    "vue-jest": "^4.0.0-0",
+    "eslint-import-resolver-webpack": "^0.11.1"
   }
 }
