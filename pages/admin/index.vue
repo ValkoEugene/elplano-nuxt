@@ -11,7 +11,7 @@
         <v-tab>
           Admin users
         </v-tab>
-        <v-tab>
+        <v-tab @click="logout">
           Logout
         </v-tab>
       </v-tabs>
@@ -60,6 +60,14 @@ export default {
   mounted() {
     if (!this.isAdmin) {
       this.$router.push('/')
+    }
+  },
+  methods: {
+    /**
+     * Выход
+     */
+    logout() {
+      this.$router.replace('/log-off')
     }
   }
 }

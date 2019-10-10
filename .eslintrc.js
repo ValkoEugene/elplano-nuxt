@@ -21,5 +21,19 @@ module.exports = {
     'vue/max-attributes-per-line': 'off',
     'import/no-unresolved': 'error',
     'prettier/prettier': ['error']
+  },
+  settings: {
+    // Чтобы ESLint понимал импорты с алиасами Nuxt
+    'import/resolver': {
+      webpack: {
+        config: {
+          resolve: {
+            alias: {
+              '~': __dirname
+            }
+          }
+        }
+      }
+    }
   }
 }

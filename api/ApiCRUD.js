@@ -62,12 +62,13 @@ class ApiCRUD {
 
   /**
    * Получить список элементов
+   * @param
    * @returns {Array} форматированный список элементов
    */
-  async loadData() {
+  async loadData(params) {
     try {
       console.log('loadData')
-      const response = await axios.get(this.restUrl)
+      const response = await axios.get(this.restUrl, { params })
       let { data } = response.data
       const { included } = response.data
 
