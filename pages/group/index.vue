@@ -15,7 +15,7 @@
             md4
             class="pa-3"
           >
-            <Card avatar-url="/images/avatar.png">
+            <Card avatar-url="/images/writer.png">
               <template v-slot:badges>
                 <span v-if="student.president">
                   {{ $t('students.president') }}
