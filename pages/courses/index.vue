@@ -44,7 +44,7 @@
                       class="ma-1"
                     >
                       <v-avatar size="32">
-                        <img src="/images/mad-scientist.png" />
+                        <img src="/images/professor.png" />
                       </v-avatar>
                       {{ getLecturerView(id) }}
                     </div>

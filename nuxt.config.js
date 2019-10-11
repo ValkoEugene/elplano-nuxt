@@ -56,7 +56,7 @@ export default {
     name: 'EL Plano app',
     short_name: 'EL Plano',
     description: 'Student schedule management applications',
-    theme_color: '#4a148c',
+    theme_color: '#1976d2',
     start_url: '/',
     icons: [
       {
@@ -96,21 +96,21 @@ export default {
       themes: {
         light: {
           primary: {
-            base: colors.purple.darken2,
-            lighten1: colors.purple.lighten1,
-            lighten2: colors.purple.lighten2,
-            lighten3: colors.purple.lighten3,
-            lighten4: colors.purple.lighten4,
-            darken1: colors.purple.darken1,
-            darken2: colors.purple.darken2,
-            darken3: colors.purple.darken3,
-            darken4: colors.purple.darken4,
-            accent1: colors.purple.accent1,
-            accent2: colors.purple.accent2,
-            accent3: colors.purple.accent3,
-            accent4: colors.purple.accent4
+            base: colors.blue.darken2,
+            lighten1: colors.blue.lighten1,
+            lighten2: colors.blue.lighten2,
+            lighten3: colors.blue.lighten3,
+            lighten4: colors.blue.lighten4,
+            darken1: colors.blue.darken1,
+            darken2: colors.blue.darken2,
+            darken3: colors.blue.darken3,
+            darken4: colors.blue.darken4,
+            accent1: colors.blue.accent1,
+            accent2: colors.blue.accent2,
+            accent3: colors.blue.accent3,
+            accent4: colors.blue.accent4
           },
-          info: colors.purple.lighten1
+          info: colors.blue.lighten1
         }
       }
     }

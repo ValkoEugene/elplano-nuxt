@@ -3,6 +3,7 @@
     v-model="sidebarStatus"
     app
     dark
+    src="/images/sidebar_bg.jpg"
     class="drawer-background"
   >
     <v-list-item>
@@ -150,11 +151,7 @@ export default {
 
 <style>
 .drawer-background {
-  background-image: linear-gradient(
-    45deg,
-    rgb(74, 19, 140),
-    rgb(186, 104, 200)
-  );
+  background-image: linear-gradient(45deg, rgb(31, 71, 160), rgb(31, 71, 160));
 }
 
 .v-navigation-drawer__image {
