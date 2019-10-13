@@ -23,15 +23,15 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { namespace, Types } from '../../store/invites/user-invites'
-import moment from '../../plugins/moment'
+import { namespace, Types } from '~/store/invites/user-invites'
+import moment from '~/plugins/moment'
 
 export default {
   name: 'InvitesList',
   components: {
     Card: () =>
       import(
-        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
   },
   data: () => ({

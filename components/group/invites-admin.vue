@@ -28,8 +28,8 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { namespace, Types } from '../../store/invites/group-invites'
-import moment from '../../plugins/moment'
+import { namespace, Types } from '~/store/invites/group-invites'
+import moment from '~/plugins/moment'
 
 export default {
   name: 'InvitesList',
@@ -37,11 +37,11 @@ export default {
     SendInvite: () => import('./send-invite.vue'),
     Loader: () =>
       import(
-        '../UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       ),
     Card: () =>
       import(
-        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
   },
   data: () => ({

@@ -1,9 +1,9 @@
-import getRouter from '../plugins/getRouter'
-import groupApi from '../api/group'
+import getRouter from '~/plugins/getRouter'
+import groupApi from '~/api/group'
 import {
   namespace as snackbarNamespace,
   Types as snackbarTypes
-} from './snackbars'
+} from '~/store/snackbars'
 
 export const namespace = 'group'
 export const Types = {

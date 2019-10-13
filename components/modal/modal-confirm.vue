@@ -25,7 +25,7 @@ export default {
   components: {
     Confirm: () =>
       import(
-        '../UI-core/confirm.vue' /* webpackChunkName: 'components/UI-core/confirm' */
+        '~/components/UI-core/confirm.vue' /* webpackChunkName: 'components/UI-core/confirm' */
       )
   },
   data: () => ({

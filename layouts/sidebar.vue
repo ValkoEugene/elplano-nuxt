@@ -40,7 +40,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { namespace } from '../store/user'
+import { namespace } from '~/store/user'
 
 /**
  * Слушатель для открытие/закрытия боковой панели

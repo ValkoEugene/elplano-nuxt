@@ -29,16 +29,16 @@
 </template>
 
 <script>
-import { namespace, Types } from '../../store/user'
+import { namespace, Types } from '~/store/user'
 
 export default {
   name: 'AdminPage',
   components: {
-    About: () => import('../../components/admin/about.vue'),
-    SystemHealf: () => import('../../components/admin/system-healf.vue'),
+    About: () => import('~/components/admin/about.vue'),
+    SystemHealf: () => import('~/components/admin/system-healf.vue'),
     SystemInformation: () =>
-      import('../../components/admin/system-information.vue'),
-    Users: () => import('../../components/admin/users.vue')
+      import('~/components/admin/system-information.vue'),
+    Users: () => import('~/components/admin/users.vue')
   },
   layout: 'empty',
   data: () => ({

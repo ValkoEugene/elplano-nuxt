@@ -89,23 +89,23 @@
 <script>
 import clonedeep from 'lodash.clonedeep'
 import { mapState } from 'vuex'
-import moment, { setLocale } from '../../plugins/moment'
-import { namespace as i18nNamespace } from '../../store/i18n'
+import moment, { setLocale } from '~/plugins/moment'
+import { namespace as i18nNamespace } from '~/store/i18n'
 
 export default {
   name: 'Events',
   components: {
     Card: () =>
       import(
-        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       ),
     DeleteButton: () =>
       import(
-        '../UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
+        '~/components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
       ),
     EditButton: () =>
       import(
-        '../UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
+        '~/components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
       )
   },
   props: {

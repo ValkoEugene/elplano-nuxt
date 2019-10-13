@@ -1,7 +1,7 @@
 import { Model } from '@vuex-orm/core'
 // import Lecturer from './Lecturer'
-import coursesApi from '../api/courses'
-import { addSnackbarsByStore } from '../store/snackbars'
+import coursesApi from '~/api/courses'
+import { addSnackbarsByStore } from '~/store/snackbars'
 
 export default class Course extends Model {
   // This is the name used as module name of the Vuex Store.

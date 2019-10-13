@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import throttle from '../../utils/throttle'
+import throttle from '~/utils/throttle'
 
 export default {
   name: 'Search',

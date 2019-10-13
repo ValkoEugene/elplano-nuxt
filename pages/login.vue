@@ -64,15 +64,15 @@ export default {
   components: {
     Login: () =>
       import(
-        '../components/auth/login.vue' /* webpackChunkName: 'components/auth' */
+        '~/components/auth/login.vue' /* webpackChunkName: 'components/auth' */
       ),
     Registration: () =>
       import(
-        '../components/auth/registration.vue' /* webpackChunkName: 'components/auth/login' */
+        '~/components/auth/registration.vue' /* webpackChunkName: 'components/auth/login' */
       ),
     ResetPassword: () =>
       import(
-        '../components/auth/reset-password.vue' /* webpackChunkName: 'components/auth/login' */
+        '~/components/auth/reset-password.vue' /* webpackChunkName: 'components/auth/login' */
       )
   },
   data: () => ({

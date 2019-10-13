@@ -39,19 +39,19 @@
 </template>
 
 <script>
-import { getSystemHealth } from '../../api/admin'
-import { addSnackbarsByStore } from '../../store/snackbars'
+import { getSystemHealth } from '~/api/admin'
+import { addSnackbarsByStore } from '~/store/snackbars'
 
 export default {
   name: 'AdminSystemHealf',
   components: {
     Loader: () =>
       import(
-        '../UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       ),
     Card: () =>
       import(
-        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
   },
   data: () => ({

@@ -1,10 +1,10 @@
 // Информация о предметах
 
-import userInvitesApi from '../../api/user-invites'
+import userInvitesApi from '~/api/user-invites'
 import {
   namespace as snackbarNamespace,
   Types as snackbarTypes
-} from '../snackbars'
+} from '~/store/snackbars'
 
 export const namespace = 'invites/user-invites'
 

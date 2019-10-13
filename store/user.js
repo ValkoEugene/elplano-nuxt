@@ -1,14 +1,14 @@
 // Информация о пользователе
 
 import axios from 'axios'
-import userApi from '../api/user'
-import getRouter from '../plugins/getRouter'
-import { setTokensInCookie, resetTokensInCookie } from '../utils/auth'
+import userApi from '~/api/user'
+import getRouter from '~/plugins/getRouter'
+import { setTokensInCookie, resetTokensInCookie } from '~/utils/auth'
 import {
   namespace as snackbarNamespace,
   Types as snackbarTypes
-} from './snackbars'
-import { namespace as groupNamespace, Types as groupTypes } from './group'
+} from '~/store/snackbars'
+import { namespace as groupNamespace, Types as groupTypes } from '~/store/group'
 
 export const namespace = 'user'
 

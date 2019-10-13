@@ -63,15 +63,15 @@
 <script>
 import clonedeep from 'lodash.clonedeep'
 import { mapActions, mapState } from 'vuex'
-import { namespace, Types } from '../../store/user'
-import checkGroup from '../../mixins/checkgroup'
+import { namespace, Types } from '~/store/user'
+import checkGroup from '~/mixins/checkgroup'
 
 export default {
   name: 'StudentPage',
   components: {
     Card: () =>
       import(
-        '../../components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
   },
   mixins: [checkGroup],

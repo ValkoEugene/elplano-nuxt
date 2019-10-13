@@ -89,40 +89,40 @@
 </template>
 
 <script>
-import Course from '../../models/Course'
-import Lecturer from '../../models/Lecturer'
-import checkGroup from '../../mixins/checkgroup'
+import Course from '~/models/Course'
+import Lecturer from '~/models/Lecturer'
+import checkGroup from '~/mixins/checkgroup'
 
 export default {
   name: 'LessonsPage',
   components: {
     Loader: () =>
       import(
-        '../../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       ),
     Search: () =>
       import(
-        '../../components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
+        '~/components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
       ),
     AddNew: () =>
       import(
-        '../../components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
+        '~/components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
       ),
     DeleteButton: () =>
       import(
-        '../../components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
+        '~/components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
       ),
     EditButton: () =>
       import(
-        '../../components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
+        '~/components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
       ),
     Card: () =>
       import(
-        '../../components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       ),
     ModalEdit: () =>
       import(
-        '../../components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
+        '~/components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
       )
   },
   mixins: [checkGroup],

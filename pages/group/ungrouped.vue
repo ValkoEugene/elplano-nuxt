@@ -16,8 +16,8 @@ export default {
   name: 'Ungrouped',
   middleware: ['auth'],
   components: {
-    EditGroup: () => import('../../components/group/edit-group.vue'),
-    InvitesList: () => import('../../components/group/invites-list.vue')
+    EditGroup: () => import('~/components/group/edit-group.vue'),
+    InvitesList: () => import('~/components/group/invites-list.vue')
   }
 }
 </script>

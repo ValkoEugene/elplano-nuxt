@@ -12,7 +12,10 @@
 </template>
 
 <script>
-import { SHOW_CONFIRM, CONFIRM_SUCCESS } from '../modal/modal-confirm.vue'
+import {
+  SHOW_CONFIRM,
+  CONFIRM_SUCCESS
+} from '~/components/modal/modal-confirm.vue'
 
 export default {
   name: 'DeleteButton',

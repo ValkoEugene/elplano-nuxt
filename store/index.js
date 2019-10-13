@@ -1,4 +1,4 @@
-import vuexOrm from '../plugins/vuexOrm'
+import vuexOrm from '~/plugins/vuexOrm'
 
 export const plugins = [vuexOrm]
 

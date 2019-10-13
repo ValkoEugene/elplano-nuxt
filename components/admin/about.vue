@@ -40,15 +40,15 @@
 </template>
 
 <script>
-import { getAboutInfo, updateSettings } from '../../api/admin'
-import { addSnackbarsByStore } from '../../store/snackbars'
+import { getAboutInfo, updateSettings } from '~/api/admin'
+import { addSnackbarsByStore } from '~/store/snackbars'
 
 export default {
   name: 'AdminAbout',
   components: {
     Loader: () =>
       import(
-        '../UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       )
   },
   data: () => ({

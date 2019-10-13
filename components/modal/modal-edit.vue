@@ -124,15 +124,15 @@ export default {
   components: {
     Datepicker: () =>
       import(
-        '../UI-core/datepicker.vue' /* webpackChunkName: 'components/UI-core/datepicker' */
+        '~/components/UI-core/datepicker.vue' /* webpackChunkName: 'components/UI-core/datepicker' */
       ),
     Date: () =>
       import(
-        '../UI-core/date.vue' /* webpackChunkName: 'components/UI-core/date' */
+        '~/components/UI-core/date.vue' /* webpackChunkName: 'components/UI-core/date' */
       ),
     Time: () =>
       import(
-        '../UI-core/time.vue' /* webpackChunkName: 'components/UI-core/time' */
+        '~/components/UI-core/time.vue' /* webpackChunkName: 'components/UI-core/time' */
       )
   },
   props: {

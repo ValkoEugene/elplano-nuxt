@@ -37,14 +37,14 @@ import { mapMutations } from 'vuex'
 import {
   Types as snackbarsTypes,
   namespace as snackbarsNamespace
-} from '../../store/snackbars'
+} from '~/store/snackbars'
 
 export default {
   name: 'ResetPassword',
   components: {
     Card: () =>
       import(
-        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
   },
   data: () => ({

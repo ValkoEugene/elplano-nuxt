@@ -11,7 +11,7 @@ export default {
   components: {
     Snackbars: () =>
       import(
-        '../components/UI-core/snackbars.vue' /* webpackChunkName: 'components/UI-core/snackbars' */
+        '~/components/UI-core/snackbars.vue' /* webpackChunkName: 'components/UI-core/snackbars' */
       )
   }
 }

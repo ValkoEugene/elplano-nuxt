@@ -1,4 +1,4 @@
-import { namespace, Types } from '../store/user'
+import { namespace, Types } from '~/store/user'
 
 window.addEventListener('beforeinstallprompt', (e) => {
   // Prevent Chrome 67 and earlier from automatically showing the prompt
