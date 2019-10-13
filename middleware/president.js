@@ -1,4 +1,4 @@
-import { namespace, Types } from '../store/user'
+import { namespace, Types } from '~/store/user'
 
 // Middleware для проверки является ли пользователь старостой
 export default ({ store, redirect, req, route }) => {

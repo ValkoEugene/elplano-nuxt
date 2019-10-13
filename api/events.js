@@ -1,5 +1,5 @@
 import momentTz from 'moment-timezone'
-// import moment from '../plugins/moment'
+// import moment from '~/plugins/moment'
 import createApi from './createApi'
 
 /**

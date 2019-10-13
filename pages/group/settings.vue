@@ -13,11 +13,11 @@ export default {
   components: {
     EditGroup: () =>
       import(
-        '../../components/group/edit-group.vue' /*  webpackChunkName: 'components/group' */
+        '~/components/group/edit-group.vue' /*  webpackChunkName: 'components/group' */
       ),
     InvitesAdmin: () =>
       import(
-        '../../components/group/invites-admin.vue' /*  webpackChunkName: 'components/group' */
+        '~/components/group/invites-admin.vue' /*  webpackChunkName: 'components/group' */
       )
   }
 }

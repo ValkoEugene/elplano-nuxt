@@ -14,9 +14,9 @@ import { mapMutations, mapActions } from 'vuex'
 import {
   Types as snackbarsTypes,
   namespace as snackbarsNamespace
-} from '../store/snackbars'
-import { Types as userTypes, namespace as userNamespace } from '../store/user'
-import { getRegistrationInfo } from '../utils/auth'
+} from '~/store/snackbars'
+import { Types as userTypes, namespace as userNamespace } from '~/store/user'
+import { getRegistrationInfo } from '~/utils/auth'
 
 export default {
   name: 'ConfirmAccount',

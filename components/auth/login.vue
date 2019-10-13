@@ -39,14 +39,14 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { Types, namespace } from '../../store/user'
+import { Types, namespace } from '~/store/user'
 
 export default {
   name: 'Login',
   components: {
     Card: () =>
       import(
-        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
   },
   data: () => ({

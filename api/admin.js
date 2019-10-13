@@ -1,5 +1,5 @@
 import baseAxios from 'axios'
-import axios from '../plugins/axios'
+import axios from '~/plugins/axios'
 
 /**
  * Загрузить информацию о приложении

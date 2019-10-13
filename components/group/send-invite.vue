@@ -27,14 +27,14 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { namespace, Types } from '../../store/invites/group-invites'
+import { namespace, Types } from '~/store/invites/group-invites'
 
 export default {
   name: 'SendInvite',
   components: {
     Card: () =>
       import(
-        '../UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
   },
   data: () => ({

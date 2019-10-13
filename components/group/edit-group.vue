@@ -36,14 +36,14 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { namespace, Types } from '../../store/group'
+import { namespace, Types } from '~/store/group'
 
 export default {
   name: 'CreateGroup',
   components: {
     Loader: () =>
       import(
-        '../../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       )
   },
   props: {

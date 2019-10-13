@@ -14,7 +14,7 @@ import { mapMutations } from 'vuex'
 import {
   Types as snackbarsTypes,
   namespace as snackbarsNamespace
-} from '../store/snackbars'
+} from '~/store/snackbars'
 
 export default {
   name: 'ConfirmAccount',

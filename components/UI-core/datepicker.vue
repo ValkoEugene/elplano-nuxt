@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import moment from '../../plugins/moment'
+import moment from '~/plugins/moment'
 
 export default {
   name: 'Datepicker',

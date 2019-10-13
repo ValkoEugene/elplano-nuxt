@@ -31,11 +31,8 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
-import { namespace as userNamespace, Types as userTypes } from '../store/user'
-import {
-  namespace as groupNamespace,
-  Types as groupTypes
-} from '../store/group'
+import { namespace as userNamespace, Types as userTypes } from '~/store/user'
+import { namespace as groupNamespace, Types as groupTypes } from '~/store/group'
 
 export default {
   name: 'DefaultLayout',
@@ -44,7 +41,7 @@ export default {
   components: {
     Loader: () =>
       import(
-        '../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       ),
     Sidebar: () =>
       import('./sidebar.vue' /* webpackChunkName: 'layouts/sidebar' */),
@@ -52,11 +49,11 @@ export default {
       import('./header.vue' /* webpackChunkName: 'layouts/header' */),
     Snackbars: () =>
       import(
-        '../components/UI-core/snackbars.vue' /* webpackChunkName: 'components/UI-core/snackbars' */
+        '~/components/UI-core/snackbars.vue' /* webpackChunkName: 'components/UI-core/snackbars' */
       ),
     ModalConfirm: () =>
       import(
-        '../components/modal/modal-confirm.vue' /* webpackChunkName: 'components/modal/modal-confirm' */
+        '~/components/modal/modal-confirm.vue' /* webpackChunkName: 'components/modal/modal-confirm' */
       )
   },
   computed: {

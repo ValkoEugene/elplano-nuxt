@@ -72,8 +72,8 @@
 
 <script>
 import infiniteScroll from 'vue-infinite-scroll'
-import adminUserApi from '../../api/admin-user'
-import { addSnackbarsByStore } from '../../store/snackbars'
+import adminUserApi from '~/api/admin-user'
+import { addSnackbarsByStore } from '~/store/snackbars'
 
 export default {
   name: 'AdminUsers',

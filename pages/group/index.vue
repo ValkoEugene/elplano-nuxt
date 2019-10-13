@@ -51,23 +51,23 @@
 </template>
 
 <script>
-import Student from '../../models/Student'
-import checkGroup from '../../mixins/checkgroup'
+import Student from '~/models/Student'
+import checkGroup from '~/mixins/checkgroup'
 
 export default {
   name: 'GroupPage',
   components: {
     Loader: () =>
       import(
-        '../../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       ),
     Card: () =>
       import(
-        '../../components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       ),
     Search: () =>
       import(
-        '../../components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
+        '~/components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
       )
   },
   mixins: [checkGroup],

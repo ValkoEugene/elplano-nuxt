@@ -1,10 +1,10 @@
 // Информация о предметах
 
-import adminInvitesApi from '../../api/admin-invites'
+import adminInvitesApi from '~/api/admin-invites'
 import {
   namespace as snackbarNamespace,
   Types as snackbarTypes
-} from '../snackbars'
+} from '~/store/snackbars'
 
 export const namespace = 'invites/group-invites'
 

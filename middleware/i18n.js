@@ -1,4 +1,4 @@
-import { namespace, Types } from '../store/i18n'
+import { namespace, Types } from '~/store/i18n'
 
 export default function({ isHMR, app, store, route, params, error, redirect }) {
   const defaultLocale = app.i18n.fallbackLocale

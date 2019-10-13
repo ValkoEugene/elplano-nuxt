@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { Types, namespace } from '../store/user'
+import { Types, namespace } from '~/store/user'
 
 export default {
   name: 'LogOff',

@@ -28,28 +28,28 @@
 </template>
 
 <script>
-import Event from '../models/Event'
-import Course from '../models/Course'
-import checkGroup from '../mixins/checkgroup'
+import Event from '~/models/Event'
+import Course from '~/models/Course'
+import checkGroup from '~/mixins/checkgroup'
 
 export default {
   name: 'EventsPage',
   components: {
     Events: () =>
       import(
-        '../components/events/events.vue' /* webpackChunkName: 'components/events/events' */
+        '~/components/events/events.vue' /* webpackChunkName: 'components/events/events' */
       ),
     Loader: () =>
       import(
-        '../components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       ),
     ModalEdit: () =>
       import(
-        '../components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
+        '~/components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
       ),
     AddNew: () =>
       import(
-        '../components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
+        '~/components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
       )
   },
   mixins: [checkGroup],

@@ -1,6 +1,6 @@
 import { Model } from '@vuex-orm/core'
-import groupUsersApi from '../api/group-users'
-import { addSnackbarsByStore } from '../store/snackbars'
+import groupUsersApi from '~/api/group-users'
+import { addSnackbarsByStore } from '~/store/snackbars'
 
 export default class Student extends Model {
   // This is the name used as module name of the Vuex Store.
