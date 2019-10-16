@@ -19,57 +19,13 @@
             md4
             class="pa-3"
           >
-            <Card>
-              <template v-slot:badges>
-                <span v-if="course.active">
-                  {{ $t('ui.card.badges.active') }}
-                </span>
-              </template>
-
-              <template v-slot:title>
-                {{ course.title }}
-              </template>
-
-              <template v-slot:content>
-                <div>
-                  <span class="font-weight-bold"
-                    >{{ $t('lecturers.lecturers') }}:</span
-                  >
-                  <span v-if="!course.lecturer_ids.length">-</span>
-
-                  <template v-else>
-                    <div
-                      v-for="id in course.lecturer_ids"
-                      :key="id"
-                      class="ma-1"
-                    >
-                      <v-avatar size="32">
-                        <img src="/images/professor.png" />
-                      </v-avatar>
-                      {{ getLecturerView(id) }}
-                    </div>
-                  </template>
-                </div>
-              </template>
-
-              <template v-slot:menu>
-                <v-list-item :disabled="true">
-                  <v-icon class="pr-2">star_half</v-icon>
-                  {{ $t('ratings.add') }}
-                </v-list-item>
-                <v-list-item :disabled="true">
-                  <v-icon class="pr-2">work</v-icon>
-                  {{ $t('tasks.add') }}
-                </v-list-item>
-                <EditButton :disabled="updating" @click="edit(course)" />
-                <DeleteButton
-                  :id="course.id"
-                  :disabled="updating"
-                  :confirm-text="$t('lesson.confirm')"
-                  @delete="delteCourse(course.id)"
-                />
-              </template>
-            </Card>
+            <CourseCard
+              :course="course"
+              :updating="updating"
+              :get-lecturer-view="getLecturerView"
+              @deleteCourse="deleteCourse"
+              @editCourse="edit"
+            />
           </v-flex>
         </template>
       </v-layout>
@@ -89,9 +45,10 @@
 </template>
 
 <script>
-import Course from '~/models/Course'
-import Lecturer from '~/models/Lecturer'
+import courseApi from '~/api/courses'
+import lecturersApi from '~/api/lecturers'
 import checkGroup from '~/mixins/checkgroup'
+import { addSnackbarsByStore } from '~/store/snackbars'
 
 export default {
   name: 'LessonsPage',
@@ -108,17 +65,9 @@ export default {
       import(
         '~/components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
       ),
-    DeleteButton: () =>
+    CourseCard: () =>
       import(
-        '~/components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
-      ),
-    EditButton: () =>
-      import(
-        '~/components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
-      ),
-    Card: () =>
-      import(
-        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+        '~/components/courses/CourseCard.vue' /* webpackChunkName: 'components/courses' */
       ),
     ModalEdit: () =>
       import(
@@ -135,7 +84,7 @@ export default {
 
     /**
      * Редактируемая модель предмета
-     * @type {String}
+     * @type {Object}
      */
     editModel: {},
 
@@ -148,41 +97,33 @@ export default {
       active: true,
       title: '',
       lecturer_ids: []
-    }
-  }),
-  computed: {
+    },
+
     /**
      * Список преподавателей
      * @type {Array}
      */
-    courses() {
-      return Course.all()
-    },
-
-    /**
-     * Флаг обновления
-     * @type {Boolean}
-     */
-    updating() {
-      return Course.getUpdatingStatus()
-    },
+    courses: [],
 
     /**
      * Преподаватели
      * @type {Array}
      */
-    lecturers() {
-      return Lecturer.all()
-    },
+    lecturers: [],
 
     /**
      * Флаг загрузки
      * @type {Boolean}
      */
-    loading() {
-      return Course.getFetchingStatus() || Lecturer.getFetchingStatus()
-    },
+    loading: true,
 
+    /**
+     * Флаг обновления
+     * @type {Boolean}
+     */
+    updating: false
+  }),
+  computed: {
     /**
      * Схема для редактирования
      * @type {{ fields: Array }}
@@ -217,8 +158,7 @@ export default {
     }
   },
   mounted() {
-    Course.$apiFetch()
-    Lecturer.$apiFetch()
+    this.loadData()
   },
   methods: {
     /**
@@ -245,21 +185,59 @@ export default {
     },
 
     /**
+     * Загрузить данные
+     */
+    async loadData() {
+      try {
+        const [courses, lecturers] = await Promise.all([
+          courseApi.loadData(),
+          lecturersApi.loadData()
+        ])
+
+        this.courses = courses
+        this.lecturers = lecturers
+
+        this.loading = false
+      } catch (error) {
+        addSnackbarsByStore(this.$store, error.snackbarErrors)
+      }
+    },
+
+    /**
      * Создать пердмет
      * @type {Function}
      */
     async create(data) {
-      const course = await Course.$apiCreate(data)
+      try {
+        this.updating = true
+        const course = await courseApi.create(data)
+        this.courses.push(course)
 
-      this.editModel = course
+        this.editModel = course
+      } catch (error) {
+        addSnackbarsByStore(this.$store, error.snackbarErrors)
+      } finally {
+        this.updating = false
+      }
     },
 
     /**
      * Обновить предмет
      * @type {Function}
      */
-    update(data) {
-      Course.$apiUpdate(data)
+    async update(data) {
+      try {
+        this.updating = true
+
+        const course = await courseApi.update(data, data.id)
+        this.courses = this.courses.map((item) =>
+          item.id === course.id ? course : item
+        )
+      } catch (error) {
+        addSnackbarsByStore(this.$store, error.snackbarErrors)
+      } finally {
+        this.updating = false
+      }
     },
 
     /**
@@ -267,8 +245,17 @@ export default {
      * @type {Function}
      * @param {String} id - id предмета
      */
-    delteCourse(id) {
-      Course.$apiDelete(id)
+    async deleteCourse(id) {
+      try {
+        this.updating = true
+
+        await courseApi.deleteById(id)
+        this.courses = this.courses.filter((item) => item.id !== id)
+      } catch (error) {
+        addSnackbarsByStore(this.$store, error.snackbarErrors)
+      } finally {
+        this.updating = false
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
-import createApi from './createApi'
+import ApiCRUD from './ApiCRUD'
 
 const restUrl = '/group/lecturers'
 
@@ -16,7 +16,7 @@ const formatDataFromApi = (data) => {
     patronymic,
     avatar,
     active,
-    // view: [last_name, first_name, patronymic].filter(Boolean).join(' '),
+    view: [last_name, first_name, patronymic].filter(Boolean).join(' '),
     course_ids: courses.data.map(({ id }) => id)
   }
 }
@@ -25,6 +25,4 @@ const formatDataForApi = (data) => ({
   lecturer: data
 })
 
-const lecturersApi = createApi({ restUrl, formatDataForApi, formatDataFromApi })
-
-export default lecturersApi
+export default new ApiCRUD({ restUrl, formatDataForApi, formatDataFromApi })
