@@ -1,4 +1,4 @@
-import createApi from './createApi'
+import ApiCRUD from './ApiCRUD'
 
 const restUrl = '/group/courses'
 
@@ -21,6 +21,4 @@ const formatDataForApi = ({ title, active, lecturer_ids = [] }) => ({
   course: { title, active, lecturer_ids }
 })
 
-const lecturersApi = createApi({ restUrl, formatDataForApi, formatDataFromApi })
-
-export default lecturersApi
+export default new ApiCRUD({ restUrl, formatDataFromApi, formatDataForApi })
