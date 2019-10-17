@@ -4,7 +4,7 @@ export default ({ app }, inject) => {
    * @param {String} rule
    * @returns {String}
    */
-  function getErrorText(rule, ...args) {
+  function getErrorText(rule /** ...args */) {
     const { messages, locale } = app.i18n
 
     return messages[locale].rules[rule]

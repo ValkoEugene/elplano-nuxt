@@ -41,10 +41,11 @@ export default {
   /*
    ** Nuxt.js dev-modules
    */
-  devModules: [
+  buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
-    '@nuxtjs/vuetify'
+    '@nuxtjs/vuetify',
+    '@nuxt/typescript-build'
   ],
   /**
    *
@@ -122,7 +123,7 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {
+    extend(config /** ctx */) {
       // Убираем неиспользуемые локали
       config.plugins.push(new MomentLocalesPlugin())
       config.plugins.push(

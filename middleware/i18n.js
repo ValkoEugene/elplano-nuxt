@@ -1,6 +1,6 @@
 import { namespace, Types } from '~/store/i18n'
 
-export default function({ isHMR, app, store, route, params, error, redirect }) {
+export default function({ isHMR, app, store, route, error }) {
   const defaultLocale = app.i18n.fallbackLocale
 
   // Игнорируем hotreload

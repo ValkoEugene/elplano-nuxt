@@ -4,17 +4,19 @@ module.exports = {
     browser: true,
     node: true
   },
-  parserOptions: {
-    parser: 'babel-eslint'
-  },
+  // Отключил для корректной работы typescript
+  // parserOptions: {
+  //   parser: 'babel-eslint'
+  // },
   extends: [
     '@nuxtjs',
+    '@nuxtjs/eslint-config-typescript',
     'prettier',
     'prettier/vue',
     'plugin:prettier/recommended',
     'plugin:nuxt/recommended'
   ],
-  plugins: ['prettier'],
+  plugins: ['prettier', '@typescript-eslint'],
   // add your custom rules here
   rules: {
     camelcase: 'off',
