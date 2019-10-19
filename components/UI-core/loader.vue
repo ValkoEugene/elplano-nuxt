@@ -59,77 +59,69 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { ContentLoader, FacebookLoader } from 'vue-content-loader'
 
-export default {
-  name: 'Loader',
+@Component({
   components: {
     FacebookLoader,
     ContentLoader
-  },
-  props: {
-    /**
-     * Показывать лоудер для строки поиска
-     * @type {Boolean}
-     */
-    showSearch: {
-      type: Boolean,
-      default: false
-    },
+  }
+})
+export default class Loader extends Vue {
+  /**
+   * Показывать лоудер для строки поиска
+   * @type {Boolean}
+   */
+  @Prop({ type: Boolean, default: false })
+  readonly showSearch!: boolean
 
-    /**
-     * Показывать лоудер для карточек
-     * @type {Boolean}
-     */
-    showCards: {
-      type: Boolean,
-      default: false
-    },
+  /**
+   * Показывать лоудер для карточек
+   * @type {Boolean}
+   */
+  @Prop({ type: Boolean, default: false })
+  readonly showCards!: boolean
 
-    /**
-     * Показывать лоудер для формы
-     * @type {Boolean}
-     */
-    showForm: {
-      type: Boolean,
-      default: false
-    },
+  /**
+   * Показывать лоудер для формы
+   * @type {Boolean}
+   */
+  @Prop({ type: Boolean, default: false })
+  readonly showForm!: boolean
 
-    /**
-     * Количество инпутов у лоудера формы
-     * @type {Number}
-     */
-    formInputsCount: {
-      type: Number,
-      default: 6
-    }
-  },
-  data: () => ({
-    /**
-     * Длина контента
-     * @type {Number}
-     */
-    contentWidth: 0,
+  /**
+   * Количество инпутов у лоудера формы
+   * @type {Number}
+   */
+  @Prop({ type: Number, default: 6 })
+  readonly formInputsCount!: number
 
-    /**
-     * Длина бокового меню
-     * @type {Number}
-     */
-    sidebarWidth: 256,
+  /**
+   * Длина контента
+   * @type {Number}
+   */
+  contentWidth: number = 0
 
-    /**
-     * Флаг просмотра через смартфоны
-     * @type {Boolean}
-     */
-    isMobile: false,
+  /**
+   * Длина бокового меню
+   * @type {Number}
+   */
+  sidebarWidth: number = 256
 
-    /**
-     * Цвета
-     */
-    primaryColor: '#e6e6e6',
-    secondaryColor: '#d8d8d8'
-  }),
+  /**
+   * Флаг просмотра через смартфоны
+   * @type {Boolean}
+   */
+  isMobile: boolean = false
+
+  /**
+   * Цвета
+   */
+  primaryColor: string = '#e6e6e6'
+  secondaryColor: string = '#d8d8d8'
+
   mounted() {
     this.isMobile = this.$vuetify.breakpoint.smAndDown
 

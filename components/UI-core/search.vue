@@ -16,6 +16,10 @@
 import { Vue, Component, Model, Watch } from 'vue-property-decorator'
 import throttle from '~/utils/throttle'
 
+/**
+ * Компонент строки поиска
+ * Паботает через v-model с задержкой, чтобы значения не обновлялось часто
+ */
 @Component
 export default class Search extends Vue {
   /**

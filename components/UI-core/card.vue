@@ -46,67 +46,69 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Card',
-  props: {
-    /**
-     * Направление кнопок
-     * @type {('start' | 'end')}
-     */
-    actionsJustifyContent: {
-      type: String,
-      default: 'start'
-    },
+<script lang="ts">
+import { Vue, Component, Prop } from 'vue-property-decorator'
 
-    /**
-     * Флаг уменшенного отображения карточки
-     * @type {Boolean}
-     */
-    small: {
-      type: Boolean,
-      default: false
-    },
+export enum CardActionsJustifyContent {
+  start = 'start',
+  end = 'end'
+}
 
-    /**
-     * SRC для аватара
-     * @type {String}
-     */
-    avatarUrl: {
-      type: String,
-      default: ''
+/**
+ * Компонент карточки
+ */
+@Component
+export default class Card extends Vue {
+  /**
+   * Направление кнопок
+   * @type {CardActionsJustifyContent}
+   */
+  @Prop({
+    type: String as () => CardActionsJustifyContent,
+    default: CardActionsJustifyContent.start
+  })
+  private readonly actionsJustifyContent!: CardActionsJustifyContent
+
+  /**
+   * Флаг уменшенного отображения карточки
+   * @type {boolean}
+   */
+  @Prop({ type: Boolean, default: false })
+  private readonly small!: boolean
+
+  /**
+   * SRC для аватара
+   * @type {String}
+   */
+  @Prop({ type: String, default: '' })
+  private readonly avatarUrl!: string
+
+  /**
+   * Стили для карточки
+   */
+  get cardStyle() {
+    return {
+      'min-height': this.small ? '50px' : '100px',
+      padding: this.small ? '15px 10px' : '15px'
     }
-  },
-  computed: {
-    /**
-     * Стили для карточки
-     * @type {Object}
-     */
-    cardStyle() {
-      return {
-        'min-height': this.small ? '50px' : '100px',
-        padding: this.small ? '15px 10px' : '15px'
-      }
-    },
+  }
 
-    /**
-     * Стили для заголовка
-     * @type {Object}
-     */
-    titleStyle() {
-      return {
-        'margin-bottom': this.small ? '' : '10px'
-      }
-    },
+  /**
+   * Стили для заголовка
+   */
+  get titleStyle() {
+    return {
+      'margin-bottom': this.small ? '' : '10px'
+    }
+  }
 
-    /**
-     * Стили для кнопок
-     * @type {Object}
-     */
-    actionsStyle() {
-      return {
-        'justify-content': `flex-${this.actionsJustifyContent}`
-      }
+  /**
+   * Стили для кнопок
+   * @type {Object}
+   */
+  get actionsStyle() {
+    return {
+      'justify-content': `flex-${this.actionsJustifyContent}`
     }
   }
 }
