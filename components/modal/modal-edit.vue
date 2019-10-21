@@ -116,11 +116,11 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import clonedeep from 'lodash.clonedeep'
 
-export default {
-  name: 'ModalEdit',
+@Component({
   components: {
     Datepicker: () =>
       import(
@@ -134,135 +134,124 @@ export default {
       import(
         '~/components/UI-core/time.vue' /* webpackChunkName: 'components/UI-core/time' */
       )
-  },
-  props: {
-    /**
-     * Редактируемая модель
-     * @type {Object}
-     */
-    editModel: {
-      type: Object,
-      required: true
-    },
+  }
+})
+export default class ModalEdit extends Vue {
+  /**
+   * Редактируемая модель
+   * @type {{ [key: string]: any }}
+   */
+  @Prop({ type: Object as () => { [key: string]: any }, required: true })
+  readonly editModel!: { [key: string]: any }
 
-    /**
-     * Схема полей
-     * @type {{ fields: Array }}
-     */
-    editSchema: {
-      type: Object,
-      required: true
-    },
+  /**
+   * Схема полей
+   * TODO интерфейсы для схемы
+   * @type {{ fields: Array }}
+   */
+  @Prop({ type: Array as () => any[], required: true })
+  readonly editSchema!: any[]
 
-    /**
-     * Флаг обновления
-     * @type {Boolean}
-     */
-    updating: {
-      type: Boolean,
-      required: true
-    },
+  /**
+   * Флаг обновления
+   * @type {boolean}
+   */
+  @Prop({ type: Boolean, required: true })
+  readonly updating!: boolean
 
-    /**
-     * Сигнализировать об изменениях модели
-     * @type {Boolean}
-     */
-    watchModelChange: {
-      type: Boolean,
-      default: false
+  /**
+   * Сигнализировать об изменениях модели
+   * @type {boolean}
+   */
+  @Prop({ type: Boolean, default: false })
+  readonly watchModelChange!: boolean
+
+  /**
+   * Локальная копия модели на редактирование
+   * @type {{ [key: string]: any }}
+   */
+  localModel: { [key: string]: any } = {}
+
+  /**
+   * Флаг показа модального окна
+   * @type {boolean}
+   */
+  visible: boolean = false
+
+  /**
+   * Открыть модальное окно
+   */
+  open() {
+    this.visible = true
+  }
+
+  /**
+   * Закрыть модально окно
+   */
+  close() {
+    this.visible = false
+  }
+
+  /**
+   * Сохранение
+   * @type {Function}
+   */
+  save() {
+    this.editModel.id ? this.update() : this.create()
+  }
+
+  /**
+   * Создать сущность
+   * @type {Function}
+   */
+  create() {
+    this.$emit('create', this.localModel)
+  }
+
+  /**
+   * Обновить сущность
+   * TODO: Доделать сравнение массивов
+   * @type {Function}
+   */
+  update() {
+    const data: { [key: string]: any } = { id: this.localModel.id }
+
+    for (const key in this.localModel) {
+      if (this.editModel[key] !== this.localModel[key])
+        data[key] = this.localModel[key]
     }
-  },
-  data: () => ({
-    /**
-     * Локальная копия модели на редактирование
-     * @type {Object}
-     */
-    localModel: {},
 
-    /**
-     * Флаг показа модкльно окна
-     * @type {String}
-     */
-    visible: false
-  }),
-  watch: {
-    /**
-     * Делаем локальную копию редактируемой сущности
-     */
-    editModel() {
-      this.localModel = clonedeep(this.editModel)
-    },
+    this.$emit('update', data)
+  }
 
-    /**
-     * Отправляем наверх актуальные данные о редактируемой модели
-     *
-     */
-    localModel: {
-      deep: true,
-      handler() {
-        if (!this.watchModelChange) return
+  /**
+   * Обработчик нажатия на esc
+   * @param {KeyboardEvent} event - объект события
+   */
+  escHandler(event: KeyboardEvent) {
+    if (event.code === 'Escape' && !this.updating) this.close()
+  }
 
-        this.$emit('modelChange', this.localModel)
-      }
-    }
-  },
   mounted() {
     this.localModel = clonedeep(this.editModel)
-  },
-  methods: {
-    /**
-     * Открыть модально окно
-     */
-    open() {
-      this.visible = true
-    },
+  }
 
-    /**
-     * Закрыть модально окно
-     */
-    close() {
-      this.visible = false
-    },
+  /**
+   * Делаем локальную копию редактируемой сущности
+   */
+  @Watch('editModel')
+  onEditModelChange() {
+    this.localModel = clonedeep(this.editModel)
+  }
 
-    /**
-     * Сохранение
-     * @type {Function}
-     */
-    save() {
-      this.editModel.id ? this.update() : this.create()
-    },
+  /**
+   * Отправляем наверх актуальные данные о редактируемой модели
+   */
+  @Watch('localModel', { deep: true })
+  onLocalModelChange() {
+    if (!this.watchModelChange) return
 
-    /**
-     * Создать сущность
-     * @type {Function}
-     */
-    create() {
-      this.$emit('create', this.localModel)
-    },
-
-    /**
-     * Обновить сущность
-     * TODO: Доделать сравнение массивов
-     * @type {Function}
-     */
-    update() {
-      const data = { id: this.localModel.id }
-
-      for (const key in this.localModel) {
-        if (this.editModel[key] !== this.localModel[key])
-          data[key] = this.localModel[key]
-      }
-
-      this.$emit('update', data)
-    },
-
-    /**
-     * Обработчик нажатия на esc
-     * @param {Object} event - объект события
-     */
-    escHandler(event) {
-      if (event.code === 'Escape' && !this.updating) this.close()
-    }
+    this.$emit('modelChange', this.localModel)
   }
 }
 </script>

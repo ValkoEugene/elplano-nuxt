@@ -14,8 +14,8 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import {
-  SHOW_CONFIRM,
-  CONFIRM_SUCCESS
+  ModalConfirmRootEvent,
+  ConfirmData
 } from '~/components/modal/modal-confirm.vue'
 
 @Component
@@ -53,7 +53,12 @@ export default class DeleteButton extends Vue {
    * @type {Function}
    */
   showConfirm(): void {
-    this.$root.$emit(SHOW_CONFIRM, { text: this.confirmText, id: this.id })
+    const data: ConfirmData = {
+      text: this.confirmText,
+      id: this.id
+    }
+
+    this.$root.$emit(ModalConfirmRootEvent.SHOW_CONFIRM, data)
   }
 
   /**
@@ -65,11 +70,17 @@ export default class DeleteButton extends Vue {
   }
 
   mounted() {
-    this.$root.$on(`${CONFIRM_SUCCESS}_${this.id}`, this.onConfirm)
+    this.$root.$on(
+      `${ModalConfirmRootEvent.CONFIRM_SUCCESS}_${this.id}`,
+      this.onConfirm
+    )
   }
 
   destroyed() {
-    this.$root.$off(`${CONFIRM_SUCCESS}_${this.id}`, this.onConfirm)
+    this.$root.$off(
+      `${ModalConfirmRootEvent.CONFIRM_SUCCESS}_${this.id}`,
+      this.onConfirm
+    )
   }
 }
 </script>
