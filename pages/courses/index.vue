@@ -32,7 +32,7 @@
     </template>
 
     <ModalEdit
-      ref="modal"
+      ref="modalEdit"
       :edit-model="editModel"
       :edit-schema="editSchema"
       :updating="updating"
@@ -45,10 +45,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Ref } from 'vue-property-decorator'
+import { Component, Mixins, Ref } from 'vue-property-decorator'
 import { Course, courseApi } from '~/api/courses.ts'
-import { Lecturer, lecturersApi } from '~/api/lecturers.ts'
-import checkGroup from '~/mixins/checkgroup'
+import CoursesList from '~/mixins/CoursesList.ts'
+import LecturersList from '~/mixins/LecturersList.ts'
+import CheckGroup from '~/mixins/CheckGroup.ts'
 import { addSnackbarsByStore } from '~/store/snackbars'
 import ModalEditComponent from '~/components/modal/modal-edit.vue'
 
@@ -74,10 +75,13 @@ import ModalEditComponent from '~/components/modal/modal-edit.vue'
       import(
         '~/components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
       )
-  },
-  mixins: [checkGroup]
+  }
 })
-export class LessonsPage extends Vue {
+export default class LessonsPage extends Mixins(
+  CheckGroup,
+  LecturersList,
+  CoursesList
+) {
   /**
    * Ссылка на экземпляр компонента ModalEdit
    * @type {ModalEditComponent}
@@ -109,28 +113,18 @@ export class LessonsPage extends Vue {
   editModel: Course = { ...this.courseEmptyModel }
 
   /**
-   * Список предметов
-   * @type {Course[]}
+   * Флаг обновления
+   * @type {boolean}
    */
-  courses: Course[] = []
-
-  /**
-   * Список преподавателей
-   * @type {Lecturer[]}
-   */
-  lecturers: Lecturer[] = []
+  updating: boolean = false
 
   /**
    * Флаг загрузки
    * @type {boolean}
    */
-  loading: boolean = true
-
-  /**
-   * Флаг обновления
-   * @type {boolean}
-   */
-  updating: boolean = false
+  get loading(): boolean {
+    return this.loadingCourses && this.loadingLecturers
+  }
 
   /**
    * Схема для редактирования
@@ -166,13 +160,6 @@ export class LessonsPage extends Vue {
   }
 
   /**
-   * Грузим данные
-   */
-  mounted() {
-    this.loadData()
-  }
-
-  /**
    * Получить отображение преподавателя
    * @type {Function}
    * @param {String} id
@@ -187,31 +174,12 @@ export class LessonsPage extends Vue {
   /**
    * Редактировать предмет
    * @type {Function}
-   * @param {Object} model - модель редакртируемого предмета
+   * @param {Course} model - модель редакртируемого предмета
    */
   edit(model: Course): void {
     this.editModel = { ...model }
 
     this.modalEdit.open()
-  }
-
-  /**
-   * Загрузить данные
-   */
-  async loadData(): Promise<void> {
-    try {
-      const [courses, lecturers] = await Promise.all([
-        courseApi.loadData(),
-        lecturersApi.loadData()
-      ])
-
-      this.courses = courses
-      this.lecturers = lecturers
-
-      this.loading = false
-    } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
-    }
   }
 
   /**
