@@ -2,16 +2,21 @@ import axios from '~/plugins/axios'
 
 export type ApiCRUDConfig<T> = {
   restUrl: string
-  includedTypes?: []
+  includedTypes?: string[]
   formatDataFromApi: (item: any) => T
   formatDataForApi: (item: any) => { [key: string]: any }
 }
 
+enum FiltersDirection {
+  asc = 'asc',
+  desc = 'desc'
+}
+
 export type ApiCRUDParams = {
   filters: {
-    direction: string
-    search: string
-    last_id: number
+    direction: FiltersDirection
+    search?: string
+    last_id?: number
   }
 }
 
@@ -21,8 +26,8 @@ export type ApiCRUDParams = {
  * Для более тонкой конфигурации необходимо наследовать этот класс и переопределить необходимые методы
  */
 class ApiCRUD<T> {
-  restUrl = ''
-  includedTypes = []
+  restUrl: string = ''
+  includedTypes: string[] = []
   formatDataFromApi: (v: any) => T = (item) => item
   formatDataForApi: (v: any) => { [key: string]: any } = (item) => item
 

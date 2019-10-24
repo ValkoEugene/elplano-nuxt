@@ -70,13 +70,21 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import infiniteScroll from 'vue-infinite-scroll'
-import adminUserApi from '~/api/admin-user'
+import { adminUserApi, UserInfo } from '~/api/admin-user.ts'
+import { ApiCRUDParams } from '~/api/ApiCRUD.ts'
 import { addSnackbarsByStore } from '~/store/snackbars'
 
-export default {
-  name: 'AdminUsers',
+enum ActionTypes {
+  ban = 'ban',
+  unban = 'unban',
+  unlock = 'unlock',
+  confirm = 'confirm'
+}
+
+@Component({
   components: {
     Card: () =>
       import(
@@ -89,134 +97,132 @@ export default {
   },
   directives: {
     infiniteScroll
-  },
-  data: () => ({
-    /**
-     * Флаг загрузки
-     * @type {Boolean}
-     */
-    loading: true,
+  }
+})
+export default class AdminUsers extends Vue {
+  /**
+   * Флаг загрузки
+   * @type {Boolean}
+   */
+  loading: boolean = true
 
-    /**
-     * Флаг обновления
-     * @type {Boolean}
-     */
-    updating: false,
+  /**
+   * Флаг обновления
+   * @type {Boolean}
+   */
+  updating: boolean = false
 
-    /**
-     * Флаг что все данные загруженны
-     * @type {Boolean}
-     */
-    allDataloading: false,
+  /**
+   * Флаг что все данные загруженны
+   * @type {Boolean}
+   */
+  allDataloading: boolean = false
 
-    /**
-     * Список пользователей
-     * @type {Array}
-     */
-    users: [],
+  /**
+   * Список пользователей
+   * @type {UserInfo[]}
+   */
+  users: UserInfo[] = []
 
-    /**
-     * Строка поиска
-     * @type {String}
-     */
-    search: ''
-  }),
-  computed: {
-    /**
-     * Флаг отключения подгрузки данных при бесконечном скролле
-     * @type {Boolean}
-     */
-    disabledInfinitScroll() {
-      return this.loading || this.allDataloading
-    },
+  /**
+   * Строка поиска
+   * @type {String}
+   */
+  search: string = ''
 
-    /**
-     * Фильтры запроса
-     * @type {Object}
-     */
-    filters() {
-      const filters = {
-        direction: 'asc'
-      }
+  /**
+   * Флаг отключения подгрузки данных при бесконечном скролле
+   * @type {Boolean}
+   */
+  get disabledInfinitScroll(): boolean {
+    return this.loading || this.allDataloading
+  }
 
-      if (this.search) filters.search = this.search
-      if (this.users.length)
-        filters.last_id = Number(this.users[this.users.length - 1].id)
+  /**
+   * Фильтры запроса
+   * @type {Filters}
+   */
+  get filters(): ApiCRUDParams {
+    const filters = {
+      direction: 'asc'
+    } as ApiCRUDParams['filters']
 
-      return filters
-    }
-  },
-  watch: {
-    search() {
-      this.users = []
-      this.allDataloading = false
-      this.loadData()
-    }
-  },
+    if (this.search) filters.search = this.search
+    if (this.users.length)
+      filters.last_id = Number(this.users[this.users.length - 1].id)
+
+    return { filters }
+  }
+
+  @Watch('search')
+  onSearchChange() {
+    this.users = []
+    this.allDataloading = false
+    this.loadData()
+  }
+
   mounted() {
     this.loadData()
-  },
-  methods: {
-    /**
-     * Проверить наличие бейджев для пользователя
-     * @param {Object} user - пользователь
-     * @return {Boolean}
-     */
-    haveBadges({ admin, banned, confirmed, locked }) {
-      return admin || banned || confirmed || locked
-    },
+  }
 
-    /**
-     * Загрузить список пользователей
-     * @type {Function}
-     * @param {Object} params - параметры запроса
-     */
-    async loadData() {
-      try {
-        this.loading = true
+  /**
+   * Проверить наличие бейджев для пользователя
+   * @param {Object} user - пользователь
+   * @return {Boolean}
+   */
+  haveBadges({ admin, banned, confirmed, locked }: UserInfo): boolean {
+    return admin || banned || confirmed || locked
+  }
 
-        const users = await adminUserApi.loadData({ filters: this.filters })
+  /**
+   * Загрузить список пользователей
+   * @type {Function}
+   */
+  async loadData() {
+    try {
+      this.loading = true
 
-        if (!users.length) this.allDataloading = true
-        else this.users = [...this.users, ...users]
+      const users = await adminUserApi.loadData(this.filters)
 
-        await this.$nextTick()
-        this.loading = false
-      } catch (error) {
-        addSnackbarsByStore(this.$store, error.snackbarErrors)
+      if (!users.length) this.allDataloading = true
+      else this.users = [...this.users, ...users]
+
+      await this.$nextTick()
+      this.loading = false
+    } catch (error) {
+      addSnackbarsByStore(this.$store, error.snackbarErrors)
+    }
+  }
+
+  /**
+   * Обновить состояние пользователя
+   * @type {Function}
+   * @param {ActionTypes} action_type - тип действия
+   * @param {String} id - идентификатор пользователя
+   */
+  async updateUser(action_type: ActionTypes, user: UserInfo): Promise<void> {
+    try {
+      this.updating = true
+      await adminUserApi.update({ action_type }, user.id)
+
+      switch (action_type) {
+        case ActionTypes.ban:
+          user.banned = true
+          break
+        case ActionTypes.unban:
+          user.banned = false
+          break
+        case ActionTypes.unlock:
+          user.locked = false
+          break
+        case ActionTypes.confirm:
+          user.confirmed = true
+          break
       }
-    },
-
-    /**
-     * Обновить состояние пользователя
-     * @type {Function}
-     * @param {('ban' | 'unban' | 'unlock', ''confirm')} action_type - тип действия
-     * @param {String} id - идентификатор пользователя
-     */
-    async updateUser(action_type, user) {
-      try {
-        this.updating = true
-        await adminUserApi.update({ action_type }, user.id)
-
-        switch (action_type) {
-          case 'ban':
-            user.banned = true
-            break
-          case 'unban':
-            user.banned = false
-            break
-          case 'unlock':
-            user.locked = false
-            break
-          case 'confirm':
-            user.confirmed = true
-            break
-        }
-      } catch (error) {
-        addSnackbarsByStore(this.$store, error.snackbarErrors)
-      } finally {
-        this.updating = false
-      }
+    } catch (error) {
+      addSnackbarsByStore(this.$store, error.snackbarErrors)
+    } finally {
+      this.updating = false
     }
   }
 }

@@ -39,130 +39,162 @@
   </v-form>
 </template>
 
-<script>
-import { getAboutInfo, updateSettings } from '~/api/admin'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import {
+  getAboutInfo,
+  updateSettings,
+  AdminAbout as AdminAboutType
+} from '~/api/admin.ts'
 import { addSnackbarsByStore } from '~/store/snackbars'
 
-export default {
-  name: 'AdminAbout',
+type FormText = {
+  model: string
+  label: string
+  disabled?: boolean
+  requried?: boolean
+}
+
+type FormTextarea = {
+  model: string
+  label: string
+  textarea: true
+  rows: number
+  disabled?: boolean
+  requried?: boolean
+}
+
+type AdminForm = [
+  FormText,
+  FormText,
+  FormTextarea,
+  FormTextarea,
+  FormTextarea,
+  FormText,
+  FormText,
+  FormText,
+  FormText
+]
+
+@Component({
   components: {
     Loader: () =>
       import(
         '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       )
-  },
-  data: () => ({
-    /**
-     * Флаг загрузки
-     * @type {Boolean}
-     */
-    loading: true,
+  }
+})
+export default class AdminAbout extends Vue {
+  /**
+   * Флаг загрузки
+   * @type {Boolean}
+   */
+  loading: boolean = true
 
-    /**
-     * Флаг обновления данных
-     * @type {Boolean}
-     */
-    updating: false,
+  /**
+   * Флаг обновления данных
+   * @type {Boolean}
+   */
+  updating: boolean = false
 
-    /**
-     * Информация о приложение
-     * @type {Object}
-     */
-    about: {
-      app_title: null,
-      app_description: null,
-      app_short_description: null,
-      app_extended_description: null,
-      app_terms: null,
-      app_contact_email: null,
-      app_contact_username: null,
-      app_version: null,
-      app_revision: null
+  /**
+   * Информация о приложение
+   * @type {Object}
+   */
+  about: AdminAboutType = {
+    app_title: '',
+    app_description: '',
+    app_short_description: '',
+    app_extended_description: '',
+    app_terms: '',
+    app_contact_email: '',
+    app_contact_username: '',
+    app_version: '',
+    app_revision: ''
+  }
+
+  /**
+   * Схема формы
+   * @type {Array}
+   */
+  formSchema: AdminForm = [
+    {
+      model: 'app_title',
+      label: 'Application title'
     },
+    {
+      model: 'app_description',
+      label: 'Application description'
+    },
+    {
+      model: 'app_short_description',
+      label: 'Application short description',
+      textarea: true,
+      rows: 4
+    },
+    {
+      model: 'app_extended_description',
+      label: 'Extended description',
+      textarea: true,
+      rows: 8
+    },
+    {
+      model: 'app_terms',
+      label: 'Application terms',
+      textarea: true,
+      rows: 8
+    },
+    {
+      model: 'app_contact_email',
+      label: 'Contact person’s email',
+      requried: true
+    },
+    {
+      model: 'app_contact_username',
+      label: 'Contact person’s name',
+      requried: true
+    },
+    {
+      model: 'app_revision',
+      label: 'Application revision',
+      disabled: true
+    },
+    {
+      model: 'app_version',
+      label: 'Application version',
+      disabled: true
+    }
+  ]
 
-    /**
-     * Схема формы
-     * @type {Array}
-     */
-    formSchema: [
-      {
-        model: 'app_title',
-        label: 'Application title'
-      },
-      {
-        model: 'app_description',
-        label: 'Application description'
-      },
-      {
-        model: 'app_short_description',
-        label: 'Application short description',
-        textarea: true,
-        rows: 4
-      },
-      {
-        model: 'app_extended_description',
-        label: 'Extended description',
-        textarea: true,
-        rows: 8
-      },
-      {
-        model: 'app_terms',
-        label: 'Application terms',
-        textarea: true,
-        rows: 8
-      },
-      {
-        model: 'app_contact_email',
-        label: 'Contact person’s email',
-        requried: true
-      },
-      {
-        model: 'app_contact_username',
-        label: 'Contact person’s name',
-        requried: true
-      },
-      {
-        model: 'app_revision',
-        label: 'Application revision',
-        disabled: true
-      },
-      {
-        model: 'app_version',
-        label: 'Application version',
-        disabled: true
-      }
-    ]
-  }),
   mounted() {
     this.loadData()
-  },
-  methods: {
-    /**
-     * Загрузить данные
-     * @type {Function}
-     */
-    async loadData() {
-      try {
-        this.about = await getAboutInfo()
-        this.loading = false
-      } catch (error) {
-        addSnackbarsByStore(this.$store, error.snackbarErrors)
-      }
-    },
+  }
 
-    /**
-     * Обновить данные
-     * @type {Function}
-     */
-    async update(data) {
-      try {
-        this.updating = true
-        await updateSettings(data)
-      } catch (error) {
-        addSnackbarsByStore(this.$store, error.snackbarErrors)
-      } finally {
-        this.updating = false
-      }
+  /**
+   * Загрузить данные
+   * @type {Function}
+   */
+  async loadData(): Promise<void> {
+    try {
+      this.about = await getAboutInfo()
+      this.loading = false
+    } catch (error) {
+      addSnackbarsByStore(this.$store, error.snackbarErrors)
+    }
+  }
+
+  /**
+   * Обновить данные
+   * @type {Function}
+   */
+  async update(data: AdminAboutType): Promise<void> {
+    try {
+      this.updating = true
+      await updateSettings(data)
+    } catch (error) {
+      addSnackbarsByStore(this.$store, error.snackbarErrors)
+    } finally {
+      this.updating = false
     }
   }
 }
