@@ -168,7 +168,7 @@ export default class LecturersPage extends Mixins(
    * @type {boolean}
    */
   get loading(): boolean {
-    return this.loadingCourses && this.loadingLecturers
+    return this.loadingCourses || this.loadingLecturers
   }
 
   /**

@@ -149,8 +149,8 @@ export default class ModalEdit extends Vue {
    * TODO интерфейсы для схемы
    * @type {{ fields: Array }}
    */
-  @Prop({ type: Array as () => any[], required: true })
-  readonly editSchema!: any[]
+  @Prop({ type: Object as () => { fields: any[] }, required: true })
+  readonly editSchema!: { fields: any[] }
 
   /**
    * Флаг обновления

@@ -12,7 +12,7 @@
       />
 
       <ModalEdit
-        ref="modal"
+        ref="modalEdit"
         :edit-model="editModel"
         :edit-schema="editSchema"
         :updating="updating"
@@ -27,13 +27,16 @@
   </div>
 </template>
 
-<script>
-import Event from '~/models/Event'
-import Course from '~/models/Course'
-import checkGroup from '~/mixins/checkgroup'
+<script lang="ts">
+import { Component, Mixins, Ref } from 'vue-property-decorator'
+import eventApi, { Event } from '~/api/events.ts'
+import CoursesList from '~/mixins/CoursesList.ts'
+import CheckGroup from '~/mixins/CheckGroup.ts'
+import { WeekDayItem } from '~/components/events/events.vue'
+import { addSnackbarsByStore } from '~/store/snackbars'
+import ModalEditComponent from '~/components/modal/modal-edit.vue'
 
-export default {
-  name: 'EventsPage',
+@Component({
   components: {
     Events: () =>
       import(
@@ -51,256 +54,280 @@ export default {
       import(
         '~/components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
       )
-  },
-  mixins: [checkGroup],
-  data: () => ({
-    /**
-     * Модель элемента расписания
-     * @type {Object}
-     */
-    eventEmptyTemplate: {
-      id: '',
-      course_id: '',
-      title: '',
-      description: '',
-      start_at: '',
-      end_at: '',
-      eventable_type: 'student',
-      eventable_id: '',
-      by_day: []
-    },
+  }
+})
+export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
+  /**
+   * Ссылка на экземпляр компонента ModalEdit
+   * @type {ModalEditComponent}
+   */
+  @Ref()
+  readonly modalEdit!: ModalEditComponent
 
-    /**
-     * Редактируемая модель
-     * @type {Object}
-     */
-    editModel: {},
+  /**
+   * Модель элемента расписания
+   */
+  eventEmptyTemplate: Event = {
+    id: '',
+    course_id: '',
+    title: '',
+    description: '',
+    start_at: '',
+    end_at: '',
+    eventable_type: 'student',
+    eventable_id: '',
+    by_day: [],
+    recurrence: [],
+    timezone: ''
+  }
 
-    /**
-     * Список дней недели
-     * @type {Array}
-     */
-    weekDayItems: []
-  }),
-  computed: {
-    /**
-     * Список с расписанием
-     * @type {Array}
-     */
-    events() {
-      return Event.all()
-    },
+  /**
+   * Редактируемая модель
+   */
+  editModel: Event = { ...this.eventEmptyTemplate }
 
-    /**
-     * Предметы
-     * @type {Array}
-     */
-    courses() {
-      return Course.all()
-    },
+  /**
+   * Список дней недели
+   */
+  weekDayItems: WeekDayItem[] = []
 
-    /**
-     * Флаг загрузки
-     * @type {Boolean}
-     */
-    loading() {
-      return Course.getFetchingStatus() || Event.getFetchingStatus()
-    },
+  /**
+   * Список с расписанием
+   */
+  events: Event[] = []
 
-    /**
-     * Флаг обновления
-     * @type {Boolean}
-     */
-    updating() {
-      return Event.getUpdatingStatus()
-    },
+  /**
+   * Флаг загрузки расписания
+   */
+  loadingEvents: boolean = true
 
-    /**
-     * Типы событий
-     * @type {Arrau}
-     */
-    eventableTypeOptions() {
-      const types = []
+  /**
+   * Флаг обновления
+   */
+  updating: boolean = false
 
-      if (this.$store.getters['user/IS_PRESIDENT']) {
-        types.push({ label: 'Для всей группы', value: 'group' })
-      }
+  /**
+   * Флаг загрузки
+   */
+  get loading() {
+    return this.loadingCourses || this.loadingEvents
+  }
 
-      types.push({ label: 'Собственное', value: 'student' })
+  /**
+   * Типы событий
+   */
+  get eventableTypeOptions() {
+    const types: { label: string; value: string }[] = []
 
-      return types
-    },
-
-    /**
-     * Схема на редактирование
-     * @type {Object}
-     */
-    editSchema() {
-      return {
-        fields: [
-          {
-            model: 'eventable_type',
-            type: 'v-radio-group',
-            row: true,
-            options: this.eventableTypeOptions
-          },
-          {
-            type: 'v-text-field',
-            model: 'title',
-            label: this.$t('field.title'),
-            placeholder: this.$t('field.title'),
-            rules: [this.$rules.required],
-            inputType: 'text'
-          },
-          {
-            model: 'course_id',
-            type: 'v-select',
-            multiple: false,
-            items: this.courses,
-            itemValue: 'id',
-            itemText: 'title',
-            rules: [this.$rules.required],
-            label: this.$t('lesson.lesson')
-          },
-          {
-            type: 'v-text-field',
-            model: 'description',
-            label: this.$t('field.description'),
-            placeholder: this.$t('field.description'),
-            inputType: 'text'
-          },
-          {
-            type: 'datepicker',
-            model: 'start_at',
-            label: this.$t('field.startAt'),
-            rules: [this.$rules.required]
-          },
-          {
-            type: 'datepicker',
-            model: 'end_at',
-            label: this.$t('field.endAt'),
-            rules: [this.$rules.required]
-          },
-          // Вариант с выбором даты и время отдельно
-          // {
-          //   type: 'time',
-          //   model: 'time',
-          //   label: this.$t('field.time'),
-          //   rules: [this.$rules.required]
-          // },
-          // {
-          //   type: 'date',
-          //   model: 'start_at',
-          //   label: this.$t('field.startAt'),
-          //   rules: [this.$rules.required]
-          // },
-          // {
-          //   type: 'date',
-          //   model: 'end_at',
-          //   label: this.$t('field.endAt'),
-          //   rules: [this.$rules.required]
-          // },
-          {
-            model: 'by_day',
-            type: 'v-select',
-            items: this.weekDayItems,
-            rules: [this.$rules.required],
-            multiple: true,
-            itemValue: 'value',
-            itemText: 'view',
-            label: this.$t('field.daysOfWeek')
-          }
-        ]
-      }
+    if (this.$store.getters['user/IS_PRESIDENT']) {
+      types.push({ label: 'Для всей группы', value: 'group' })
     }
-  },
+
+    types.push({ label: 'Собственное', value: 'student' })
+
+    return types
+  }
+
+  /**
+   * Схема на редактирование
+   * @type {Object}
+   */
+  get editSchema() {
+    return {
+      fields: [
+        {
+          model: 'eventable_type',
+          type: 'v-radio-group',
+          row: true,
+          options: this.eventableTypeOptions
+        },
+        {
+          type: 'v-text-field',
+          model: 'title',
+          label: this.$t('field.title'),
+          placeholder: this.$t('field.title'),
+          rules: [this.$rules.required],
+          inputType: 'text'
+        },
+        {
+          model: 'course_id',
+          type: 'v-select',
+          multiple: false,
+          items: this.courses,
+          itemValue: 'id',
+          itemText: 'title',
+          rules: [this.$rules.required],
+          label: this.$t('lesson.lesson')
+        },
+        {
+          type: 'v-text-field',
+          model: 'description',
+          label: this.$t('field.description'),
+          placeholder: this.$t('field.description'),
+          inputType: 'text'
+        },
+        {
+          type: 'datepicker',
+          model: 'start_at',
+          label: this.$t('field.startAt'),
+          rules: [this.$rules.required]
+        },
+        {
+          type: 'datepicker',
+          model: 'end_at',
+          label: this.$t('field.endAt'),
+          rules: [this.$rules.required]
+        },
+        // Вариант с выбором даты и время отдельно
+        // {
+        //   type: 'time',
+        //   model: 'time',
+        //   label: this.$t('field.time'),
+        //   rules: [this.$rules.required]
+        // },
+        // {
+        //   type: 'date',
+        //   model: 'start_at',
+        //   label: this.$t('field.startAt'),
+        //   rules: [this.$rules.required]
+        // },
+        // {
+        //   type: 'date',
+        //   model: 'end_at',
+        //   label: this.$t('field.endAt'),
+        //   rules: [this.$rules.required]
+        // },
+        {
+          model: 'by_day',
+          type: 'v-select',
+          items: this.weekDayItems,
+          rules: [this.$rules.required],
+          multiple: true,
+          itemValue: 'value',
+          itemText: 'view',
+          label: this.$t('field.daysOfWeek')
+        }
+      ]
+    }
+  }
+
   mounted() {
     if (!this.$store.getters['user/IS_ADMIN']) {
-      Event.$apiFetch()
-      Course.$apiFetch()
+      this.loadEvents()
     }
-  },
-  methods: {
-    /**
-     * Инициализируем список дней
-     * @type {Function}
-     * @param {Array} weekDayItems
-     */
-    initWeekDayItems(weekDayItems) {
-      this.weekDayItems = weekDayItems
-    },
+  }
 
-    /**
-     * Редактировать расписание
-     * @type {Function}
-     * @param {Object} model - модель редакртируемого эвента
-     */
-    edit(model) {
-      const data = { ...model }
+  /**
+   * Инициализируем список дней
+   */
+  initWeekDayItems(weekDayItems: WeekDayItem[]) {
+    this.weekDayItems = weekDayItems
+  }
 
-      if (!data.id) {
-        data.eventable_id = this.$store.state.user.userInfo.id
-      }
+  /**
+   * Редактировать расписание
+   */
+  edit(model: Event) {
+    const data = { ...model }
 
-      this.editModel = data
+    if (!data.id) {
+      data.eventable_id = this.$store.state.user.userInfo.id
+    }
 
-      this.$refs.modal.open()
-    },
+    this.editModel = data
 
-    /**
-     * Сохранить эвент
-     * @type {Function}
-     * @param {Object} data
-     */
-    save(data) {
-      data.id ? this.update(data) : this.create(data)
-    },
+    this.modalEdit.open()
+  }
 
-    /**
-     * Создать эвент
-     * @type {Function}
-     * @param {Object} data
-     */
-    async create(data) {
-      const event = await Event.$apiCreate(data)
+  /**
+   * Сохранить эвент
+   */
+  save(data: Event) {
+    data.id ? this.update(data) : this.create(data)
+  }
 
+  /**
+   * Загрузить расписание
+   */
+  async loadEvents() {
+    try {
+      this.events = await eventApi.loadData()
+      this.loadingEvents = false
+    } catch (error) {
+      addSnackbarsByStore(this.$store, error.snackbarErrors)
+    }
+  }
+
+  /**
+   * Создать эвент
+   */
+  async create(data: Event) {
+    try {
+      this.updating = true
+
+      const event = await eventApi.create(data)
+      this.events.push(event)
       this.editModel = event
-    },
+    } catch (error) {
+      addSnackbarsByStore(this.$store, error.snackbarErrors)
+    } finally {
+      this.updating = false
+    }
+  }
 
-    /**
-     * Обновить эвент
-     * @type {Function}
-     * @param {Object} data
-     */
-    update(data) {
-      Event.$apiUpdate(data)
-    },
+  /**
+   * Обновить эвент
+   */
+  async update(data: Event) {
+    if (!data.id) return
 
-    /**
-     * Удалить эвент
-     * @type {Function}
-     * @param {String} id - id предмета
-     */
-    deleteEvent(id) {
-      Event.$apiDelete(id)
-    },
+    try {
+      this.updating = true
 
-    /**
-     * Следим за изменением модели редактируемого элемента расписания
-     * (при изменение типа эвента подставляем id)
-     * @param {Object} model
-     */
-    onModelChange(model) {
-      const ids = {
-        student: this.$store.state.user.userInfo.id,
-        group: this.$store.state.group.groupId
-      }
+      const event = await eventApi.update(data, data.id)
+      this.events = this.events.map((item) =>
+        item.id === event.id ? event : item
+      )
+      this.editModel = event
+    } catch (error) {
+      addSnackbarsByStore(this.$store, error.snackbarErrors)
+    } finally {
+      this.updating = false
+    }
+  }
 
-      const eventable_id = ids[model.eventable_type]
+  /**
+   * Удалить эвент
+   * @type {Function}
+   * @param {String} id - id предмета
+   */
+  async deleteEvent(id: string) {
+    try {
+      this.updating = true
 
-      if (model.eventable_id !== eventable_id) {
-        model.eventable_id = eventable_id
-      }
+      await eventApi.deleteById(id)
+      this.events = this.events.filter((item) => item.id !== id)
+    } catch (error) {
+      addSnackbarsByStore(this.$store, error.snackbarErrors)
+    } finally {
+      this.updating = false
+    }
+  }
+
+  /**
+   * Следим за изменением модели редактируемого элемента расписания
+   * (при изменение типа эвента подставляем id)
+   */
+  onModelChange(model: Event) {
+    const ids = {
+      student: this.$store.state.user.userInfo.id,
+      group: this.$store.state.group.groupId
+    } as { student: string; group: string }
+
+    const eventable_id = ids[model.eventable_type]
+
+    if (model.eventable_id !== eventable_id) {
+      model.eventable_id = eventable_id
     }
   }
 }

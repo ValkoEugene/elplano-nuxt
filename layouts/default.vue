@@ -108,6 +108,7 @@ export default {
     }
   },
   mounted() {
+    // TODO делать запрос при логине
     this.getUserInfo()
   },
   methods: {

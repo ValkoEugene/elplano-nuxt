@@ -1,24 +1,45 @@
 import momentTz from 'moment-timezone'
 // import moment from '~/plugins/moment'
-import createApi from './createApi'
+import ApiCRUD from './ApiCRUD'
+
+type Day = 'MO' | 'TU' | 'WE' | 'TH' | 'FR' | 'SA' | 'SU'
+
+export interface Event {
+  id?: string
+  eventable_id: string
+  eventable_type: 'student' | 'group'
+  course_id: string
+  by_day: Day[]
+  title: string
+  description: string
+  start_at: string
+  end_at: string
+  recurrence: string[]
+  timezone: string
+}
 
 /**
  * Получить дни недели из формата rfc5545
- * @param {String} rfc5545 - дата в формате rfc5545
- * @return {[String]}
+ * @param {String[]} rfc5545 - дата в формате rfc5545
+ * @return {String[]]}
  */
-export function parseDaysOfWeek(recurrence) {
-  return recurrence
-    .find((item) => item.includes('RRULE'))
-    .split(';')
-    .find((item) => item.includes('BYDAY'))
-    .split('=')[1]
-    .split(',')
+export function parseDaysOfWeek(recurrence: string[]): string[] {
+  const rruleString = recurrence.find((item) => item.includes('RRULE'))
+  if (!rruleString) return []
+
+  const rruleArray = rruleString.split(';')
+  if (!rruleArray) return []
+
+  const bydayString = rruleArray.find((item) => item.includes('BYDAY'))
+  if (!bydayString) return []
+
+  const daysWeeksString = bydayString.split('=')[1]
+  return daysWeeksString.split(',')
 }
 
 const restUrl = '/events'
 
-const formatDataFromApi = (data) => {
+const formatDataFromApi = (data: any): Event => {
   const { id, attributes, relationships } = data
 
   // const { start_at, end_at } = attributes
@@ -53,7 +74,7 @@ const formatDataFromApi = (data) => {
   }
 }
 
-const formatDataForApi = (event) => {
+const formatDataForApi = (event: Event): { event: Event } => {
   event.timezone = momentTz.tz.guess()
   event.recurrence = [`RRULE:FREQ=WEEKLY;BYDAY=${event.by_day.join(',')}`]
 
@@ -73,6 +94,4 @@ const formatDataForApi = (event) => {
   return { event }
 }
 
-const lecturersApi = createApi({ restUrl, formatDataForApi, formatDataFromApi })
-
-export default lecturersApi
+export default new ApiCRUD({ restUrl, formatDataForApi, formatDataFromApi })

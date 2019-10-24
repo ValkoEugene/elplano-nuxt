@@ -86,14 +86,34 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import clonedeep from 'lodash.clonedeep'
-import { mapState } from 'vuex'
+import { Moment } from 'moment'
 import moment, { setLocale } from '~/plugins/moment'
 import { namespace as i18nNamespace } from '~/store/i18n'
+import { Event } from '~/api/events.ts'
 
-export default {
-  name: 'Events',
+export type DaysOfWeeks = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
+
+export type Day = 'MO' | 'TU' | 'WE' | 'TH' | 'FR' | 'SA' | 'SU'
+
+export type WeekDayItem = {
+  value: string
+  view: string
+}
+
+export type WeekEvents = {
+  MO: Event[]
+  TU: Event[]
+  WE: Event[]
+  TH: Event[]
+  FR: Event[]
+  SA: Event[]
+  SU: Event[]
+}
+
+@Component({
   components: {
     Card: () =>
       import(
@@ -107,306 +127,280 @@ export default {
       import(
         '~/components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
       )
-  },
-  props: {
-    /**
-     * Список эвентов
-     * @type {Array}
-     */
-    events: {
-      type: Array,
-      required: true
-    },
+  }
+})
+export default class Events extends Vue {
+  /**
+   * Список эвентов
+   */
+  @Prop({ type: Array as () => Event[], required: true })
+  readonly events!: Event[]
 
-    /**
-     * Флаг процесса обновления
-     * @type {Boolean}
-     */
-    updating: {
-      type: Boolean,
-      required: true
-    }
-  },
-  data: () => ({
-    /**
-     * Шаблон для событий по дням недели
-     * @type {Object}
-     */
-    weekEventsTemplate: {
-      MO: [],
-      TU: [],
-      WE: [],
-      TH: [],
-      FR: [],
-      SA: [],
-      SU: []
-    },
+  /**
+   * Флаг процесса обновления
+   */
+  @Prop({ type: Boolean, required: true })
+  readonly updating!: boolean
 
-    /**
-     * События недели
-     * @type {Object}
-     */
-    weekEvents: {
-      MO: [],
-      TU: [],
-      WE: [],
-      TH: [],
-      FR: [],
-      SA: [],
-      SU: []
-    },
+  /**
+   * Шаблон для событий по дням недели
+   * @type {Object}
+   */
+  weekEventsTemplate: WeekEvents = {
+    MO: [],
+    TU: [],
+    WE: [],
+    TH: [],
+    FR: [],
+    SA: [],
+    SU: []
+  }
 
-    /**
-     * Список дней недели (нужен т.к. объект не гарантирует порядок прохода по свойствам)
-     * @type {[String]}
-     */
-    daysOfWeekList: ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'],
+  /**
+   * События недели
+   * @type {Object}
+   */
+  weekEvents: WeekEvents = {
+    MO: [],
+    TU: [],
+    WE: [],
+    TH: [],
+    FR: [],
+    SA: [],
+    SU: []
+  }
 
-    /**
-     * Список с датами на неделю
-     * @type {[Date]}
-     */
-    weekDates: [],
+  /**
+   * Список дней недели (нужен т.к. объект не гарантирует порядок прохода по свойствам)
+   */
+  daysOfWeekList: DaysOfWeeks = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
 
-    /**
-     * Дата начала недели
-     * @type {import('moment').Moment}
-     */
-    startWeekDate: moment().startOf('week'),
+  /**
+   * Список с датами на неделю
+   */
+  weekDates: string[] = []
 
-    /**
-     * Дата завершения недели
-     * @type {import('moment').Moment}
-     */
-    endWeekDate: moment().endOf('week'),
+  /**
+   * Дата начала недели
+   */
+  startWeekDate: Moment = moment().startOf('week')
 
-    /**
-     *
-     */
-    weekDayItems: []
-  }),
-  computed: {
-    /**
-     * Флаг наличия событий на неделю
-     * @type {Boolen}
-     */
-    haveEvents() {
-      for (const day in this.weekEvents) {
-        if (this.weekEvents[day].length > 0) return true
-      }
+  /**
+   * Дата завершения недели
+   */
+  endWeekDate: Moment = moment().endOf('week')
 
-      return false
-    },
+  /**
+   *
+   */
+  weekDayItems: WeekDayItem[] = []
 
-    ...mapState(i18nNamespace, [
-      /**
-       * Текушая локаль
-       * @type {('ru' | 'en')}
-       */
-      'locale'
-    ]),
+  /**
+   * Флаг наличия событий на неделю
+   */
+  get haveEvents() {
+    let haveEvents: boolean = false
 
-    /**
-     * Флаг является ли студент старостой
-     * @type {Boolean}
-     */
-    isPresidents() {
-      return this.$store.getters['user/IS_PRESIDENT']
-    }
-  },
-  watch: {
-    /**
-     * При смене локали устанавливаем ее для moment.js
-     */
-    locale() {
-      setLocale(this.locale)
-      this.initWeekDayItems()
-      this.$forceUpdate()
-    },
+    const days = Object.keys(this.weekEvents) as Day[]
 
-    /**
-     * При изменениях переинициализируем расписание
-     */
-    events() {
-      this.initWeekData({
-        startWeekDate: this.startWeekDate,
-        endWeekDate: this.endWeekDate
-      })
-    }
-  },
+    days.forEach((day) => {
+      if (this.weekEvents[day] && this.weekEvents[day].length > 0)
+        haveEvents = true
+    })
+
+    return haveEvents
+  }
+
+  /**
+   * Текушая локаль
+   */
+  get locale(): string {
+    return this.$store.getters[`${i18nNamespace}/locale`]
+  }
+
+  /**
+   * Флаг является ли студент старостой
+   */
+  get isPresidents(): boolean {
+    return this.$store.getters['user/IS_PRESIDENT']
+  }
+
+  @Watch('locale')
+  onLocaleChange() {
+    setLocale(this.locale)
+    this.initWeekDayItems()
+    this.$forceUpdate()
+  }
+
+  /**
+   * При изменениях переинициализируем расписание
+   */
+  @Watch('events')
+  onEventsChange() {
+    this.initWeekData({
+      startWeekDate: this.startWeekDate,
+      endWeekDate: this.endWeekDate
+    })
+  }
+
   mounted() {
     this.initWeekDayItems()
     this.initWeekData({
       startWeekDate: this.startWeekDate,
       endWeekDate: this.endWeekDate
     })
-  },
-  methods: {
-    /**
-     * Инициализация элментов выбора для дней недели
-     * @type {Function}
-     */
-    initWeekDayItems() {
-      const weekDayItems = []
+  }
 
-      for (let i = 1; i < 7; i++) {
-        weekDayItems.push({
-          view: moment()
-            .isoWeekday(i)
-            .format('dddd'),
-          value: this.daysOfWeekList[i - 1]
-        })
-      }
+  /**
+   * Инициализация элментов выбора для дней недели
+   * @type {Function}
+   */
+  initWeekDayItems() {
+    const weekDayItems: WeekDayItem[] = []
 
-      this.weekDayItems = weekDayItems
-      this.$emit('initWeekDayItems', this.weekDayItems)
-    },
-
-    /**
-     * Получить список дат для недели
-     * @param {import('moment').Moment} startWeekDate - начальная дата
-     * @return {[String]}
-     */
-    getWeekDates(startWeekDate) {
-      let weekDates = [startWeekDate]
-
-      for (let i = 1; i < 7; i++) {
-        weekDates.push(weekDates[weekDates.length - 1].clone().add(1, 'days'))
-      }
-
-      weekDates = weekDates.map((date) => date.format('DD.MM.YYYY'))
-
-      return weekDates
-    },
-
-    /**
-     * Инициализация данных по недели
-     * @param {Object} config
-     * @param {moment} config.startWeekDate
-     * @param {moment} config.endWeekDate
-     */
-    initWeekData({ startWeekDate, endWeekDate }) {
-      // При каждой инициализации сбрасываем weekEvents
-      const weekEvents = clonedeep(this.weekEventsTemplate)
-
-      // Пробегаем по событиям и ищем актуальные
-      this.events.forEach((event) => {
-        const { start_at, end_at, by_day } = event
-
-        // Проверяем актуальность событий
-        if (
-          moment(start_at).isAfter(endWeekDate) ||
-          moment(end_at).isBefore(startWeekDate)
-        ) {
-          return
-        }
-
-        by_day.forEach((day) => {
-          weekEvents[day].push(event)
-        })
+    for (let i = 1; i < 7; i++) {
+      weekDayItems.push({
+        view: moment()
+          .isoWeekday(i)
+          .format('dddd'),
+        value: this.daysOfWeekList[i - 1]
       })
-
-      // Сортируем по времени
-      this.daysOfWeekList.forEach((day) => {
-        weekEvents[day] = this.sortByTime(weekEvents[day])
-      })
-
-      const weekDates = this.getWeekDates(startWeekDate)
-
-      this.endWeekDate = endWeekDate
-      this.startWeekDate = startWeekDate
-      this.weekEvents = weekEvents
-      this.weekDates = weekDates
-
-      window.scrollTo(0, 0)
-    },
-
-    /**
-     * Сортировать события по времени
-     * @param {Array} event
-     * @return {Array}
-     */
-    sortByTime(events) {
-      return [...events].sort((a, b) => {
-        return (
-          this.getTimeInMinutes(this.getTime(a.start_at)) -
-          this.getTimeInMinutes(this.getTime(b.start_at))
-        )
-      })
-    },
-
-    /**
-     * Перейти на неделю назад
-     * @type {Funciotn}
-     */
-    prevWeek() {
-      this.setNewWeek(this.startWeekDate.clone().subtract(7, 'days'))
-    },
-
-    /**
-     * Перейти на неделю вперёд
-     * @type {Funciotn}
-     */
-    nextWeek() {
-      this.setNewWeek(this.startWeekDate.clone().add(7, 'days'))
-    },
-
-    /**
-     * Вычеслить расписание для заданной недели
-     * @type {Funciotn}
-     */
-    setNewWeek(startWeekDate) {
-      const endWeekDate = startWeekDate.clone().endOf('week')
-
-      this.initWeekData({ startWeekDate, endWeekDate })
-    },
-
-    /**
-     * Получить отображение дня
-     * @param {Date} date - дата
-     * @param {String} foramt - желаемый формат отображения даты
-     * @return {String}
-     */
-    getDayView(date, format = 'dddd') {
-      return moment(date, 'DD.MM.YYYY').format(format)
-    },
-
-    /**
-     * Получить время
-     * @param {Date} date - дата
-     * @returns {String}
-     */
-    getTime(date) {
-      return moment(date).format('HH:mm')
-    },
-
-    /**
-     * Получить время в минутах
-     * @param {String} time
-     * @returns {Number}
-     */
-    getTimeInMinutes(time) {
-      const times = time.split(':').map((item) => Number(item))
-      return times[0] * 60 + time[1]
-    },
-
-    /**
-     * Редактировать эвент
-     * @type {Function}
-     * @param {Object} event
-     */
-    edit(event) {
-      this.$emit('edit', event)
-    },
-
-    /**
-     * Удалить эвент
-     * @type {Function}
-     * @param {String} id
-     */
-    deleteEvent(id) {
-      this.$emit('deleteEvent', id)
     }
+
+    this.weekDayItems = weekDayItems
+    this.$emit('initWeekDayItems', this.weekDayItems)
+  }
+
+  /**
+   * Получить список дат для недели
+   */
+  getWeekDates(startWeekDate: Moment): string[] {
+    const weekDates: Moment[] = [startWeekDate]
+
+    for (let i = 1; i < 7; i++) {
+      weekDates.push(weekDates[weekDates.length - 1].clone().add(1, 'days'))
+    }
+
+    return weekDates.map((date) => date.format('DD.MM.YYYY'))
+  }
+
+  /**
+   * Инициализация данных по недели
+   */
+  initWeekData({
+    startWeekDate,
+    endWeekDate
+  }: {
+    startWeekDate: Moment
+    endWeekDate: Moment
+  }) {
+    // При каждой инициализации сбрасываем weekEvents
+    const weekEvents = clonedeep(this.weekEventsTemplate)
+
+    // Пробегаем по событиям и ищем актуальные
+    this.events.forEach((event) => {
+      const { start_at, end_at, by_day } = event
+
+      // Проверяем актуальность событий
+      if (
+        moment(start_at).isAfter(endWeekDate) ||
+        moment(end_at).isBefore(startWeekDate)
+      ) {
+        return
+      }
+
+      by_day.forEach((day) => {
+        weekEvents[day].push(event)
+      })
+    })
+
+    // Сортируем по времени
+    this.daysOfWeekList.forEach((day) => {
+      weekEvents[day] = this.sortByTime(weekEvents[day])
+    })
+
+    const weekDates = this.getWeekDates(startWeekDate)
+
+    this.endWeekDate = endWeekDate
+    this.startWeekDate = startWeekDate
+    this.weekEvents = weekEvents
+    this.weekDates = weekDates
+
+    window.scrollTo(0, 0)
+  }
+
+  /**
+   * Сортировать события по времени
+   */
+  sortByTime(events: Event[]): Event[] {
+    return [...events].sort((a, b) => {
+      return (
+        this.getTimeInMinutes(this.getTime(a.start_at)) -
+        this.getTimeInMinutes(this.getTime(b.start_at))
+      )
+    })
+  }
+
+  /**
+   * Перейти на неделю назад
+   * @type {Funciotn}
+   */
+  prevWeek() {
+    this.setNewWeek(this.startWeekDate.clone().subtract(7, 'days'))
+  }
+
+  /**
+   * Перейти на неделю вперёд
+   * @type {Funciotn}
+   */
+  nextWeek() {
+    this.setNewWeek(this.startWeekDate.clone().add(7, 'days'))
+  }
+
+  /**
+   * Вычеслить расписание для заданной недели
+   * @type {Funciotn}
+   */
+  setNewWeek(startWeekDate: Moment) {
+    const endWeekDate = startWeekDate.clone().endOf('week')
+
+    this.initWeekData({ startWeekDate, endWeekDate })
+  }
+
+  /**
+   * Получить отображение дня
+   */
+  getDayView(date: string, format = 'dddd'): string {
+    return moment(date, 'DD.MM.YYYY').format(format)
+  }
+
+  /**
+   * Получить время
+   */
+  getTime(date: string): string {
+    return moment(date).format('HH:mm')
+  }
+
+  /**
+   * Получить время в минутах
+   */
+  getTimeInMinutes(time: string): number {
+    const times: number[] = time.split(':').map((item) => Number(item))
+    return Number(times[0] * 60 + time[1])
+  }
+
+  /**
+   * Редактировать эвент
+   */
+  edit(event: Event) {
+    this.$emit('edit', event)
+  }
+
+  /**
+   * Удалить эвент
+   */
+  deleteEvent(id: string) {
+    this.$emit('deleteEvent', id)
   }
 }
 </script>
