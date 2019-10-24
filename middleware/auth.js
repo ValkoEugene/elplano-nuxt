@@ -3,7 +3,10 @@ import {
   getRefreshTokenFromCookie
 } from '~/utils/auth'
 import { namespace, Types } from '~/store/user'
-import { namespace as groupNamespace, Types as groupTypes } from '~/store/group'
+import {
+  namespace as groupNamespace,
+  Types as groupTypes
+} from '~/store/group.ts'
 
 // Middleware для проверки авторизован ли пользователь
 export default ({ store, redirect, req, route }) => {

@@ -37,47 +37,49 @@
   </Card>
 </template>
 
-<script>
-import { mapActions } from 'vuex'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 import { Types, namespace } from '~/store/user'
 
-export default {
-  name: 'Login',
+interface User {
+  login: string
+  password: string
+}
+
+@Component({
   components: {
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  },
-  data: () => ({
-    /**
-     * Информация о пользователе
-     * @type {{
-     *  login: String,
-     *  password: String
-     * }}
-     */
-    user: {
-      login: '',
-      password: ''
-    }
-  }),
-  computed: {
-    /**
-     * Флаг процесса логина
-     * @type {Boolean}
-     */
-    loginFetching() {
-      return this.$store.state.user.loginFetching
-    }
-  },
-  methods: {
-    ...mapActions(namespace, {
-      /**
-       * Вход
-       */
-      login: Types.actions.LOGIN
-    })
+  }
+})
+export default class Login extends Vue {
+  /**
+   * Информация о пользователе
+   * @type {{
+   *  login: String,
+   *  password: String
+   * }}
+   */
+  user: User = {
+    login: '',
+    password: ''
+  }
+
+  /**
+   * Флаг процесса логина
+   * @type {Boolean}
+   */
+  get loginFetching() {
+    return this.$store.state.user.loginFetching
+  }
+
+  /**
+   * Вход
+   */
+  login(user: User) {
+    this.$store.dispatch(`${namespace}/${Types.actions.LOGIN}`, user)
   }
 }
 </script>

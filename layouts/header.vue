@@ -38,7 +38,10 @@
 import { mapMutations, mapState, mapGetters } from 'vuex'
 import { namespace, Types } from '~/store/i18n'
 import { namespace as userNamespace, Types as userTypes } from '~/store/user'
-import { namespace as groupNamespace, Types as groupTypes } from '~/store/group'
+import {
+  namespace as groupNamespace,
+  Types as groupTypes
+} from '~/store/group.ts'
 import { TOGGLE_SIDEBAR_ROOT_LISTENER } from '~/layouts/sidebar.vue'
 
 export default {

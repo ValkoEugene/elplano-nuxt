@@ -34,92 +34,92 @@
   </v-card>
 </template>
 
-<script>
-import { mapState, mapActions } from 'vuex'
-import { namespace, Types } from '~/store/group'
+<script lang="ts">
+import { Component, Vue, Watch, Prop, Ref } from 'vue-property-decorator'
+import { GroupState } from '~/store/group.ts'
+import { GroupI } from '~/api/group.ts'
 
-export default {
-  name: 'CreateGroup',
+@Component({
   components: {
     Loader: () =>
       import(
         '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
       )
-  },
-  props: {
-    /**
-     * Загружать ли данные при монтирование компонента
-     * @type {Boolean}
-     */
-    loadInMounted: {
-      type: Boolean,
-      required: true
-    }
-  },
-  data: () => ({
-    /**
-     * Группа
-     * @type {Object}
-     */
-    localGroup: {
-      id: '',
-      title: '',
-      group: ''
-    }
-  }),
-  computed: {
-    ...mapState(namespace, [
-      /**
-       * Флаг загрузки
-       * @type {Boolean}
-       */
-      'loading',
-      /**
-       * Флаг обновления
-       * @type {Boolean}
-       */
-      'updating',
-      /**
-       * Группа
-       * @type {Object}
-       */
-      'group'
-    ])
-  },
-  watch: {
-    group() {
-      this.localGroup = { ...this.group }
-    }
-  },
+  }
+})
+export default class EditGroup extends Vue {
+  /**
+   * Ссылка на компонент формы из vuetify
+   */
+  @Ref()
+  readonly form: { validate: () => boolean }
+
+  /**
+   * Загружать ли данные при монтирование компонента
+   */
+  @Prop({ type: Boolean, required: true })
+  readonly loadInMounted!: boolean
+
+  /**
+   * Группа
+   */
+  localGroup: GroupI = {
+    id: '',
+    title: '',
+    number: ''
+  }
+
+  /**
+   * Модуль vuex с группами
+   */
+  groupState = new GroupState(this.$store)
+
+  /**
+   * Флаг загрузки
+   */
+  get loading(): boolean {
+    return this.groupState.state.loading
+  }
+
+  /**
+   * Флаг обновления
+   */
+  get updating(): boolean {
+    return this.groupState.state.updating
+  }
+
+  /**
+   * Группа
+   */
+  get group(): GroupI {
+    return this.groupState.state.group
+  }
+
+  @Watch('group')
+  onGroupChange() {
+    this.localGroup = { ...this.group }
+  }
+
   mounted() {
     if (this.loadInMounted) this.loadGroup()
-  },
-  methods: {
-    ...mapActions(namespace, {
-      /**
-       * Загрузить группу
-       */
-      loadGroup: Types.actions.GET_GROUP,
-      /**
-       * Создать группу
-       */
-      create: Types.actions.CREATE_GROUP,
-      /**
-       * Обновить ифнормацию о группе
-       */
-      update: Types.actions.UPDATE_GROUP
-    }),
+  }
 
-    /**
-     * Сохранить группу
-     */
-    save() {
-      if (!this.$refs.form.validate()) return
+  /**
+   * Загрузить группу
+   */
+  loadGroup() {
+    this.groupState.getGroupAction()
+  }
 
-      this.localGroup.id
-        ? this.update(this.localGroup)
-        : this.create(this.localGroup)
-    }
+  /**
+   * Сохранить группу
+   */
+  save() {
+    if (!this.form.validate()) return
+
+    this.localGroup.id
+      ? this.groupState.updateGroupAction(this.localGroup)
+      : this.groupState.createGroupAction(this.localGroup)
   }
 }
 </script>

@@ -1,9 +1,19 @@
+import { VuexHelper } from '~/utils/VuexHelper'
+import { ActionContext, Store } from 'vuex'
 import getRouter from '~/plugins/getRouter'
-import groupApi from '~/api/group'
+import groupApi, { GroupI } from '~/api/group.ts'
 import {
   namespace as snackbarNamespace,
   Types as snackbarTypes
 } from '~/store/snackbars'
+import { Getters } from '@vuex-orm/core'
+
+interface GroupStateI {
+  groupId: string
+  loading: boolean
+  updating: boolean
+  group: GroupI
+}
 
 export const namespace = 'group'
 export const Types = {
@@ -24,7 +34,7 @@ export const Types = {
   }
 }
 
-export const state = () => ({
+export const state = (): GroupStateI => ({
   /**
    * Id группы
    * @type {String}
@@ -60,7 +70,7 @@ export const mutations = {
    * @param {Object} state
    * @param {String} id
    */
-  [Types.mutations.SET_GROUP_ID](state, id) {
+  [Types.mutations.SET_GROUP_ID](state: GroupStateI, id: string) {
     state.groupId = id
   },
 
@@ -69,7 +79,7 @@ export const mutations = {
    * @param {Object} state
    * @param {Boolean} value
    */
-  [Types.mutations.SET_LOADING](state, value) {
+  [Types.mutations.SET_LOADING](state: GroupStateI, value: boolean) {
     state.loading = value
   },
 
@@ -78,7 +88,7 @@ export const mutations = {
    * @param {Object} state
    * @param {Boolean} value
    */
-  [Types.mutations.SET_UPDATING](state, value) {
+  [Types.mutations.SET_UPDATING](state: GroupStateI, value: boolean) {
     state.updating = value
   },
 
@@ -87,7 +97,7 @@ export const mutations = {
    * @param {Object} state
    * @param {Object} group
    */
-  [Types.mutations.SET_GROUP](state, group) {
+  [Types.mutations.SET_GROUP](state: GroupStateI, group: GroupI) {
     state.group = group
   }
 }
@@ -97,7 +107,7 @@ export const getters = {
    * Флаг наличия группы
    * @param {Object} state
    */
-  [Types.getters.HAVE_GROUP](state) {
+  [Types.getters.HAVE_GROUP](state: GroupStateI) {
     return Boolean(state.groupId)
   }
 }
@@ -108,7 +118,10 @@ export const actions = {
    * @param {{ commit: Function }}
    * @param {String} id
    */
-  [Types.actions.SET_GROUP_ID]({ commit }, id) {
+  [Types.actions.SET_GROUP_ID](
+    { commit }: ActionContext<GroupStateI, any>,
+    id: string
+  ) {
     console.log('SET_GROUP_ID')
     const router = getRouter()
     if (!id && router.currentRoute.path !== '/group/ungrouped') {
@@ -122,7 +135,10 @@ export const actions = {
    * Загрузить группу
    * @param {{ commit: Function }}
    */
-  async [Types.actions.GET_GROUP]({ commit }) {
+  async [Types.actions.GET_GROUP]({
+    commit,
+    state
+  }: ActionContext<GroupStateI, any>) {
     try {
       commit(Types.mutations.SET_LOADING, true)
 
@@ -144,9 +160,12 @@ export const actions = {
   /**
    * Создать информацию о группе
    * @param {{ commit: Function }}
-   * @param {Object} data
+   * @param {GroupI} data
    */
-  async [Types.actions.CREATE_GROUP]({ commit }, data) {
+  async [Types.actions.CREATE_GROUP](
+    { commit }: ActionContext<GroupStateI, any>,
+    data: GroupI
+  ) {
     try {
       commit(Types.mutations.SET_UPDATING, true)
 
@@ -173,7 +192,12 @@ export const actions = {
    * @param {{ commit: Function }}
    * @param {Object} data
    */
-  async [Types.actions.UPDATE_GROUP]({ commit }, data) {
+  async [Types.actions.UPDATE_GROUP](
+    { commit }: ActionContext<GroupStateI, any>,
+    data: GroupI
+  ) {
+    if (!data.id) return
+
     try {
       commit(Types.mutations.SET_UPDATING, true)
 
@@ -190,5 +214,52 @@ export const actions = {
     } finally {
       commit(Types.mutations.SET_UPDATING, false)
     }
+  }
+}
+
+/**
+ * Класс для работы с модулем vuex - группы
+ */
+export class GroupState extends VuexHelper<GroupStateI> {
+  constructor(store: any) {
+    super(store, namespace)
+  }
+
+  /**
+   * Флаг наличия группы
+   */
+  get haveGroup(): boolean {
+    return this.store.getters[this.namespace][Types.getters.HAVE_GROUP]
+  }
+
+  /**
+   * Установить id группы
+   * @param id
+   */
+  async setGroupIdAction(id: string): Promise<void> {
+    return await this.dispatchWithNamespace(Types.actions.SET_GROUP_ID, id)
+  }
+
+  /**
+   * Загрузить группу
+   */
+  async getGroupAction(): Promise<void> {
+    return await this.dispatchWithNamespace(Types.actions.GET_GROUP)
+  }
+
+  /**
+   * Создать информацию о группе
+   * @param {GroupI} group
+   */
+  async createGroupAction(group: GroupI): Promise<void> {
+    return await this.dispatchWithNamespace(Types.actions.CREATE_GROUP, group)
+  }
+
+  /**
+   * Обновить информацию о группе
+   * @param {GroupI} group
+   */
+  async updateGroupAction(group: GroupI): Promise<void> {
+    return await this.dispatchWithNamespace(Types.actions.UPDATE_GROUP, group)
   }
 }

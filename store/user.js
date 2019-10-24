@@ -8,7 +8,10 @@ import {
   namespace as snackbarNamespace,
   Types as snackbarTypes
 } from '~/store/snackbars'
-import { namespace as groupNamespace, Types as groupTypes } from '~/store/group'
+import {
+  namespace as groupNamespace,
+  Types as groupTypes
+} from '~/store/group.ts'
 
 export const namespace = 'user'
 

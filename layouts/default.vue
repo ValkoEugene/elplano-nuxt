@@ -32,7 +32,10 @@
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { namespace as userNamespace, Types as userTypes } from '~/store/user'
-import { namespace as groupNamespace, Types as groupTypes } from '~/store/group'
+import {
+  namespace as groupNamespace,
+  Types as groupTypes
+} from '~/store/group.ts'
 
 export default {
   name: 'DefaultLayout',

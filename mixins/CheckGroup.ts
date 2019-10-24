@@ -1,5 +1,8 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { namespace as groupNamespace, Types as groupTypes } from '~/store/group'
+import {
+  namespace as groupNamespace,
+  Types as groupTypes
+} from '~/store/group.ts'
 
 @Component
 export default class CheckGroup extends Vue {
