@@ -6,7 +6,6 @@ import {
   namespace as snackbarNamespace,
   Types as snackbarTypes
 } from '~/store/snackbars'
-import { Getters } from '@vuex-orm/core'
 
 interface GroupStateI {
   groupId: string
