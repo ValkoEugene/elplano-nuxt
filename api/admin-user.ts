@@ -1,4 +1,5 @@
 import ApiCRUD from './ApiCRUD'
+import { Student } from '~/api/group-users'
 
 export interface User {
   admin: boolean
@@ -11,17 +12,6 @@ export interface User {
   locked: boolean
   updated_at: string
   username: string
-}
-
-export interface Student {
-  about: string | null
-  created_at: string
-  email: string
-  full_name: string | null
-  phone: string | null
-  president: boolean
-  social_networks: { [key: string]: string }
-  updated_at: string
 }
 
 export interface UserInfo extends User {

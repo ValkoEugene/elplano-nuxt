@@ -23,9 +23,6 @@ export interface GroupInviteI {
 
 /**
  * Получить список отправленных приглашений
- * @async
- * @type {Function}
- * @returns {Promise}
  */
 export async function getInvites(): Promise<GroupInviteI[]> {
   try {
@@ -41,10 +38,7 @@ export async function getInvites(): Promise<GroupInviteI[]> {
 
 /**
  * Отправить приглашение
- * @async
- * @type {Function}
- * @param {inviteI} invite - приглашение
- * @returns {Promise}
+ * @param invite - приглашение
  */
 export async function sendInvite(invite: inviteI): Promise<void> {
   try {

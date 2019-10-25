@@ -11,13 +11,18 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Ungrouped',
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+/**
+ * Компонент выбора/создания группы если пользователь еще не состоит ни в одной
+ */
+@Component({
   middleware: ['auth'],
   components: {
     EditGroup: () => import('~/components/group/edit-group.vue'),
     InvitesList: () => import('~/components/group/invites-list.vue')
   }
-}
+})
+export default class Ungrouped extends Vue {}
 </script>
