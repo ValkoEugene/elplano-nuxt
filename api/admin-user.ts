@@ -2,6 +2,7 @@ import ApiCRUD from './ApiCRUD'
 import { Student } from '~/api/group-users'
 
 export interface User {
+  id: string
   admin: boolean
   avatar: string
   banned: boolean
@@ -15,7 +16,6 @@ export interface User {
 }
 
 export interface UserInfo extends User {
-  id: string
   student: Student | null
 }
 

@@ -1,6 +1,4 @@
-import vuexOrm from '~/plugins/vuexOrm'
-
-export const plugins = [vuexOrm]
+export const plugins = []
 
 export const state = () => ({})
 

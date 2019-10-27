@@ -9,16 +9,16 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { mapMutations, mapActions } from 'vuex'
 import {
   Types as snackbarsTypes,
   namespace as snackbarsNamespace
 } from '~/store/snackbars'
-import { Types as userTypes, namespace as userNamespace } from '~/store/user'
+import { Types as userTypes, namespace as userNamespace } from '~/store/user.ts'
 import { getRegistrationInfo } from '~/utils/auth'
+import { confirmAccount } from '~/api/user.ts'
 
-export default {
+export const a = {
   name: 'ConfirmAccount',
   layout: 'empty',
   computed: {
@@ -56,17 +56,7 @@ export default {
      */
     async confirm() {
       try {
-        const params = { confirmation_token: this.token }
-
-        await axios({
-          method: 'get',
-          url: `${process.env.baseUrl}/api/v1/users/confirmation`,
-          params,
-          data: {},
-          headers: {
-            'Content-Type': 'application/vnd.api+json'
-          }
-        })
+        await confirmAccount(this.token)
 
         this.addSnackbars([{ text: 'Аккаунт подтвержден', color: 'success' }])
 

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { namespace, Types } from '~/store/user'
+import { namespace, Types } from '~/store/user.ts'
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.baseUrl}/api/v1`,

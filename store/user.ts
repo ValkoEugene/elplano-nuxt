@@ -1,7 +1,11 @@
 // Информация о пользователе
 
 import axios from 'axios'
-import userApi from '~/api/user'
+import { VuexHelper } from '~/utils/VuexHelper'
+import { ActionContext, Store } from 'vuex'
+import { UserDetail, getUserInfo, updateStudentInfo } from '~/api/user.ts'
+import { User } from '~/api/admin-user.ts'
+import { Student } from '~/api/group-users.ts'
 import getRouter from '~/plugins/getRouter'
 import { setTokensInCookie, resetTokensInCookie } from '~/utils/auth'
 import {
@@ -41,62 +45,90 @@ export const Types = {
   }
 }
 
+export interface Login {
+  login: string
+  password: string
+}
+
+export interface Tokens {
+  access_token: string
+  refresh_token: string
+}
+
+export interface UserStateI {
+  loginFetching: boolean
+  loading: boolean
+  updating: boolean
+  userInfo: User
+  studentInfo: Student
+  access_token: string
+  refresh_token: string
+  showA2hsButton: boolean
+}
+
 const userTemplate = {
+  id: '',
   email: '',
   username: '',
   admin: false,
   created_at: '',
   updated_at: '',
   avatar_url: '',
-  confirmed: false
-}
+  confirmed: false,
+  avatar: '',
+  banned: false,
+  locale: '',
+  locked: false
+} as User
 
-export const state = () => ({
+export const state = (): UserStateI => ({
   /**
    * Флаг процесса авторизации
-   * @type {Boolean}
    */
   loginFetching: false,
 
   /**
    * Флаг загрузки
-   * @type {Boolean}
    */
   loading: true,
 
   /**
    * Флаг обновления
-   * @type {Boolean}
    */
   updating: false,
 
   /**
    * Информация о пользователе
-   * @type {Object | null}
    */
-  userInfo: {},
+  userInfo: { ...userTemplate },
 
   /**
    * Информация о студенте
-   * @type {Object}
    */
-  studentInfo: {},
+  studentInfo: {
+    id: '',
+    about: '',
+    created_at: '',
+    email: '',
+    full_name: '',
+    phone: '',
+    president: false,
+    social_networks: {},
+    updated_at: ''
+  },
 
   /**
    * Токен
-   * @type {string}
    */
   access_token: '',
 
   /**
    * Рефреш токен
-   * @type {String}
    */
   refresh_token: '',
 
   /**
    * Флаг показа кнопки Добавить на главный экран
-   * @type {Boolean}
    */
   showA2hsButton: false
 })
@@ -104,73 +136,60 @@ export const state = () => ({
 export const mutations = {
   /**
    * Установить флаг процесса авторизации
-   * @param {Object} state
-   * @param {Boolean} value
    */
-  [Types.mutations.SET_LOGIN_FETCHING](state, value) {
+  [Types.mutations.SET_LOGIN_FETCHING](state: UserStateI, value: boolean) {
     state.loginFetching = value
   },
 
   /**
    * Установить инцформацию о пользоавтеле
-   * @param {Object} state
-   * @param {Object} userInfo
    */
-  [Types.mutations.SET_USER](state, userInfo) {
+  [Types.mutations.SET_USER](state: UserStateI, userInfo: User) {
     state.userInfo = { ...state.userInfo, ...userInfo }
   },
 
   /**
    * Установить инцформацию о студенте
-   * @param {Object} state
-   * @param {Object} student
    */
-  [Types.mutations.SET_STUDENT](state, student) {
+  [Types.mutations.SET_STUDENT](state: UserStateI, student: Student) {
     state.studentInfo = { ...state.studentInfo, ...student }
   },
 
   /**
    * Установить access_token
-   * @param {Object} state
-   * @param {String} access_token
    */
-  [Types.mutations.SET_ACCESS_TOKEN](state, access_token) {
+  [Types.mutations.SET_ACCESS_TOKEN](state: UserStateI, access_token: string) {
     state.access_token = access_token
   },
 
   /**
    * Установить refresh_token
-   * @param {Object} state
-   * @param {String} refresh_token
    */
-  [Types.mutations.SET_REFRESH_TOKEN](state, refresh_token) {
+  [Types.mutations.SET_REFRESH_TOKEN](
+    state: UserStateI,
+    refresh_token: string
+  ) {
     state.refresh_token = refresh_token
   },
 
   /**
    * Установить флаг загрузки
-   * @param {Object} state
-   * @param {String} loading
    */
-  [Types.mutations.SET_LOADING](state, loading) {
+  [Types.mutations.SET_LOADING](state: UserStateI, loading: boolean) {
     state.loading = loading
   },
 
   /**
    * Установить флаг обновления
-   * @param {Object} state
-   * @param {String} updating
    */
-  [Types.mutations.SET_UPDATING](state, updating) {
+  [Types.mutations.SET_UPDATING](state: UserStateI, updating: boolean) {
     state.updating = updating
   },
 
   /**
    * Установить флаг показа кнопки Добавить на главный экран
-   * @param {Object} state
-   * @param {Boolean} value
    */
-  [Types.mutations.SET_SHOW_A2HS_BUTTON](state, value) {
+  [Types.mutations.SET_SHOW_A2HS_BUTTON](state: UserStateI, value: boolean) {
     state.showA2hsButton = value
   }
 }
@@ -178,10 +197,13 @@ export const mutations = {
 export const actions = {
   /**
    * Установить токены
-   * @param {{ commit: Function }}
-   * @param {{ access_token: String, refresh_token: String }} tokens
+   * @param {ActionContext} context
+   * @param {Tokens} tokens
    */
-  [Types.actions.SET_TOKENS]({ commit }, tokens) {
+  [Types.actions.SET_TOKENS](
+    { commit }: ActionContext<UserStateI, any>,
+    tokens: Tokens
+  ) {
     const { access_token, refresh_token } = tokens
 
     commit(Types.mutations.SET_ACCESS_TOKEN, access_token)
@@ -191,9 +213,9 @@ export const actions = {
 
   /**
    * Сбросить пользователя
-   * @param {{ commit: Function }}
+   * @param {ActionContext} context
    */
-  [Types.actions.RESET_USER]({ commit }) {
+  [Types.actions.RESET_USER]({ commit }: ActionContext<UserStateI, any>) {
     commit(Types.mutations.SET_ACCESS_TOKEN, '')
     commit(Types.mutations.SET_REFRESH_TOKEN, '')
     commit(Types.mutations.SET_USER, { ...userTemplate })
@@ -203,10 +225,13 @@ export const actions = {
 
   /**
    * Вход
-   * @param {Object} context
-   * @param {{ login: String, password: String }}
+   * @param {ActionContext} context
+   * @param {Login} login
    */
-  async [Types.actions.LOGIN](context, { login, password }) {
+  async [Types.actions.LOGIN](
+    context: ActionContext<UserStateI, any>,
+    { login, password }: Login
+  ) {
     context.commit(Types.mutations.SET_LOGIN_FETCHING, true)
 
     try {
@@ -227,7 +252,7 @@ export const actions = {
     } catch (error) {
       context.commit(
         `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
-        error.response.data.errors.map(({ detail }) => ({
+        error.response.data.errors.map(({ detail }: { detail: string }) => ({
           text: detail,
           color: 'error'
         })),
@@ -240,14 +265,14 @@ export const actions = {
 
   /**
    * Загрузить информацию о пользователе
-   * @param {*} context
+   * @param {ActionContext} context
    */
-  async [Types.actions.GET_USER_INFO](context) {
+  async [Types.actions.GET_USER_INFO](context: ActionContext<UserStateI, any>) {
     console.log('getUserInfo')
     try {
       context.commit(Types.mutations.SET_LOADING, true)
 
-      const { user, student, groupId } = await userApi.getUserInfo()
+      const { user, student, groupId } = await getUserInfo()
 
       context.commit(Types.mutations.SET_USER, user)
       context.commit(Types.mutations.SET_STUDENT, student)
@@ -271,16 +296,17 @@ export const actions = {
 
   /**
    * Обновить информацию о студенте
-   * @param {Object} context
-   * @param {Object} student_attributes
+   * @param {ActionContext} context
+   * @param {Student} student_attributes
    */
-  async [Types.actions.UPDATE_STUDENT](context, student_attributes) {
+  async [Types.actions.UPDATE_STUDENT](
+    context: ActionContext<UserStateI, any>,
+    student_attributes: Student
+  ) {
     try {
       context.commit(Types.mutations.SET_UPDATING, true)
 
-      const { user, student } = await userApi.updateStudentInfo(
-        student_attributes
-      )
+      const { user, student } = await updateStudentInfo(student_attributes)
 
       context.commit(Types.mutations.SET_USER, user)
       context.commit(Types.mutations.SET_STUDENT, student)
@@ -299,33 +325,106 @@ export const getters = {
   /**
    * Флаг что пользователь авторизован
    * TODO переработать
-   * @type {Boolean}
    */
-  [Types.getters.IS_AUTH]({ access_token, refresh_token }) {
+  [Types.getters.IS_AUTH]({
+    access_token,
+    refresh_token
+  }: UserStateI): boolean {
     return Boolean(access_token && refresh_token)
   },
 
   /**
    * Флаг что пользователь админ
-   * @type {Boolean}
    */
-  [Types.getters.IS_ADMIN](state) {
+  [Types.getters.IS_ADMIN](state: UserStateI): boolean {
     return state.userInfo.admin
   },
 
   /**
    * Флаг что пользователь староста
-   * @type {Boolean}
    */
-  [Types.getters.IS_PRESIDENT](state) {
-    return state.studentInfo.president
+  [Types.getters.IS_PRESIDENT](state: UserStateI): boolean {
+    return Boolean(state.studentInfo && state.studentInfo.president)
   },
 
   /**
    * Флаг что пользователь подтвердил учётную запись
-   * @type {Boolean}
    */
-  [Types.getters.IS_CONFIRMED](state) {
+  [Types.getters.IS_CONFIRMED](state: UserStateI): boolean {
     return state.userInfo.confirmed
+  }
+}
+
+/**
+ * Класс для работы с модулем vuex - пользователь
+ */
+export class UserState extends VuexHelper<UserStateI> {
+  constructor(store: any) {
+    super(store, namespace)
+  }
+
+  /**
+   * Флаг что пользователь админ
+   */
+  get isAdmin(): boolean {
+    return this.store.getters[this.namespace][Types.getters.IS_ADMIN]
+  }
+
+  /**
+   * Флаг что пользователь авторизован
+   */
+  get isAuth(): boolean {
+    return this.store.getters[this.namespace][Types.getters.IS_AUTH]
+  }
+
+  /**
+   * Флаг что пользователь подтвердил учётную запись
+   */
+  get isConfirmed(): boolean {
+    return this.store.getters[this.namespace][Types.getters.IS_CONFIRMED]
+  }
+
+  /**
+   * Флаг что пользователь староста
+   */
+  get isPresident(): boolean {
+    return this.store.getters[this.namespace][Types.getters.IS_PRESIDENT]
+  }
+
+  /**
+   * Установить токены
+   */
+  async setTokensAction(tokens: Tokens): Promise<void> {
+    return await this.dispatchWithNamespace(Types.actions.SET_TOKENS, tokens)
+  }
+
+  /**
+   * Сбросить пользователя
+   */
+  async resetUserAction(): Promise<void> {
+    return await this.dispatchWithNamespace(Types.actions.RESET_USER)
+  }
+
+  /**
+   * Вход
+   * @param login
+   */
+  async loginAction(login: Login): Promise<void> {
+    return await this.dispatchWithNamespace(Types.actions.LOGIN, login)
+  }
+
+  /**
+   * Загрузить информацию о пользователе
+   */
+  async getUserInfoAction(): Promise<void> {
+    return await this.dispatchWithNamespace(Types.actions.GET_USER_INFO)
+  }
+
+  /**
+   * Обновить информацию о студенте
+   * @param student
+   */
+  async updateStudentAction(student: Student) {
+    return this.dispatchWithNamespace(Types.actions.UPDATE_STUDENT, student)
   }
 }
