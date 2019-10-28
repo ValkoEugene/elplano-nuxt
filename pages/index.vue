@@ -33,7 +33,7 @@ import eventApi, { Event } from '~/api/events.ts'
 import CoursesList from '~/mixins/CoursesList.ts'
 import CheckGroup from '~/mixins/CheckGroup.ts'
 import { WeekDayItem } from '~/components/events/events.vue'
-import { addSnackbarsByStore } from '~/store/snackbars'
+import { SnackbarsModule } from '~/store/snackbars.ts'
 import ModalEditComponent from '~/components/modal/modal-edit.vue'
 
 @Component({
@@ -254,7 +254,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
       this.events = await eventApi.loadData()
       this.loadingEvents = false
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 
@@ -269,7 +269,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
       this.events.push(event)
       this.editModel = event
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
       this.updating = false
     }
@@ -290,7 +290,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
       )
       this.editModel = event
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
       this.updating = false
     }
@@ -308,7 +308,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
       await eventApi.deleteById(id)
       this.events = this.events.filter((item) => item.id !== id)
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
       this.updating = false
     }

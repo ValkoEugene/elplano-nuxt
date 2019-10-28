@@ -25,7 +25,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { getInvites, acceptInvite, GroupInviteI } from '~/api/user-invites.ts'
 import moment from '~/plugins/moment'
-import { addSnackbarsByStore } from '~/store/snackbars'
+import { SnackbarsModule } from '~/store/snackbars.ts'
 
 interface TableHeader {
   text?: string
@@ -83,7 +83,7 @@ export default class InvitesList extends Vue {
       this.invites = await getInvites()
       this.loading = false
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 
@@ -101,7 +101,7 @@ export default class InvitesList extends Vue {
       // TODO делать запрос на получение информацие о группе тут
       this.$router.push('/')
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
       this.updating = false
     }
   }

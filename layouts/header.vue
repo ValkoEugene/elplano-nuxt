@@ -34,158 +34,133 @@
   </v-app-bar>
 </template>
 
-<script>
-import { mapMutations, mapState, mapGetters } from 'vuex'
-import { namespace, Types } from '~/store/i18n'
-import { namespace as userNamespace, Types as userTypes } from '~/store/user'
-import {
-  namespace as groupNamespace,
-  Types as groupTypes
-} from '~/store/group.ts'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { I18nModule, Locales } from '~/store/i18n.ts'
+import { UserModule } from '~/store/user.ts'
+import { GroupModule } from '~/store/group.ts'
 import { TOGGLE_SIDEBAR_ROOT_LISTENER } from '~/layouts/sidebar.vue'
 
-export default {
-  name: 'Header',
-  data: () => ({
-    /**
-     * Загодовки страниц в i18n
-     * @type {String}
-     */
-    pageTitlesI18n: {
-      '/': 'schedule',
-      '/courses': 'lessons',
-      '/lecturers': 'teachers',
-      '/group': 'group',
-      '/tasks': 'tasks',
-      '/measure': 'measure',
-      '/ratings': 'ratings',
-      '/attachments': 'attachments',
-      '/student': 'student',
-      '/group/settings': 'groupSettings'
+@Component
+export default class Header extends Vue {
+  /**
+   * Заголовки страниц в i18n
+   */
+  pageTitlesI18n: { [key: string]: string } = {
+    '/': 'schedule',
+    '/courses': 'lessons',
+    '/lecturers': 'teachers',
+    '/group': 'group',
+    '/tasks': 'tasks',
+    '/measure': 'measure',
+    '/ratings': 'ratings',
+    '/attachments': 'attachments',
+    '/student': 'student',
+    '/group/settings': 'groupSettings'
+  }
+
+  /**
+   * Текущая локаль
+   */
+  get locale(): Locales {
+    return I18nModule.locale
+  }
+
+  /**
+   * Флаг показа кнопки Добавить на главный экран
+   */
+  get showA2hsButton(): boolean {
+    return UserModule.showA2hsButton
+  }
+
+  /**
+   * Флаг что пользователь староста
+   */
+  get isPresident(): boolean {
+    return UserModule.isPresident
+  }
+
+  /**
+   * Флаг наличия группы
+   */
+  get haveGroup(): boolean {
+    return GroupModule.haveGroup
+  }
+
+  /**
+   * Ссылки для меню
+   */
+  get links() {
+    const links = []
+
+    if (this.haveGroup) {
+      links.push({ url: '/student', text: this.$t('header.profile') })
     }
-  }),
-  computed: {
-    ...mapState(namespace, [
-      /**
-       * Текущая локаль
-       * @type {String}
-       */
-      'locale'
-    ]),
 
-    ...mapState(userNamespace, [
-      /**
-       * Флаг показа кнопки Добавить на главный экран
-       * @type {Boolean}
-       */
-      'showA2hsButton'
-    ]),
+    if (this.isPresident)
+      links.push({
+        url: '/group/settings',
+        text: this.$t('header.groupSettings')
+      })
 
-    ...mapGetters(userNamespace, {
-      /**
-       * Флаг что пользователь староста
-       * @type {Boolean}
-       */
-      isPresident: userTypes.getters.IS_PRESIDENT
-    }),
+    links.push({ url: '/log-off', text: this.$t('header.logout') })
 
-    ...mapGetters(groupNamespace, {
-      /**
-       * Флаг наличия группы
-       * @type {Boolean}
-       */
-      haveGroup: groupTypes.getters.HAVE_GROUP
-    }),
+    return links
+  }
 
-    /**
-     * Ссылки для меню
-     * @type {[ { url: String, text: String } ]}
-     */
-    links() {
-      const links = [
-        // { url: '/settings', text: this.$t('header.settings') }
-      ]
+  /**
+   * Текущий путь
+   */
+  get currentPath(): string {
+    return this.$route.path
+  }
 
-      if (this.haveGroup) {
-        links.push({ url: '/student', text: this.$t('header.profile') })
-      }
+  /**
+   * Текущий заголовок страницы
+   */
+  get currentPageTitle() {
+    if (!this.pageTitlesI18n[this.currentPath]) return 'unkwnown page'
 
-      if (this.isPresident)
-        links.push({
-          url: '/group/settings',
-          text: this.$t('header.groupSettings')
-        })
+    return this.$t(`sidebar.${this.pageTitlesI18n[this.currentPath]}`)
+  }
 
-      links.push({ url: '/log-off', text: this.$t('header.logout') })
+  /**
+   * Сменить локаль
+   */
+  switchLocale() {
+    const newLocale = this.locale === 'en' ? 'ru' : 'en'
+    I18nModule.setLang(newLocale)
+  }
 
-      return links
-    },
+  /**
+   * Открыть/закрыть боковую панель
+   */
+  toggleSidebar() {
+    this.$root.$emit(TOGGLE_SIDEBAR_ROOT_LISTENER)
+  }
 
-    /**
-     * Текущий путь
-     * @type {String}
-     */
-    currentPath() {
-      return this.$route.path
-    },
+  /**
+   * Добавить приложение на главный экран
+   */
+  addToHomeScreen() {
+    const { deferredPrompt } = window as any
 
-    /**
-     * Текущий заголовок страницы
-     * @type {String}
-     */
-    currentPageTitle() {
-      return this.$t(`sidebar.${this.pageTitlesI18n[this.currentPath]}`)
-    }
-  },
-  methods: {
-    ...mapMutations(namespace, {
-      /**
-       * Установить локаль
-       */
-      setLang: Types.mutations.SET_LANG
-    }),
+    if (!deferredPrompt) return
 
-    /**
-     * Сменить локаль
-     */
-    switchLocale() {
-      const newLocale = this.locale === 'en' ? 'ru' : 'en'
-      this.setLang(newLocale)
-    },
-
-    /**
-     * Открыть/закрыть боковую панель
-     */
-    toggleSidebar() {
-      this.$root.$emit(TOGGLE_SIDEBAR_ROOT_LISTENER)
-    },
-
-    /**
-     * Добавить приложение на главный экран
-     */
-    addToHomeScreen() {
-      const deferredPrompt = window.deferredPrompt
-
-      if (!deferredPrompt) return
-
-      // Show the prompt
-      deferredPrompt.prompt()
-      // Wait for the user to respond to the prompt
-      deferredPrompt.userChoice
-        .then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            this.$store.commit(
-              `${userNamespace}/${userTypes.mutations.SET_SHOW_A2HS_BUTTON}`,
-              false
-            )
-          } else {
-            console.log('User dismissed the A2HS prompt')
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    }
+    // Show the prompt
+    deferredPrompt.prompt()
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice
+      .then((choiceResult: { outcome: string }) => {
+        if (choiceResult.outcome === 'accepted') {
+          UserModule.SET_SHOW_A2HS_BUTTON(false)
+        } else {
+          console.log('User dismissed the A2HS prompt')
+        }
+      })
+      .catch((err: any) => {
+        console.log(err)
+      })
   }
 }
 </script>

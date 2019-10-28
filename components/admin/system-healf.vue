@@ -41,7 +41,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { getSystemHealth, SystemHealth } from '~/api/admin.ts'
-import { addSnackbarsByStore } from '~/store/snackbars'
+import { SnackbarsModule } from '~/store/snackbars.ts'
 
 @Component({
   components: {
@@ -111,7 +111,7 @@ export default class AdminSystemHealf extends Vue {
 
       this.loading = false
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 }

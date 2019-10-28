@@ -30,7 +30,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import moment from '~/plugins/moment'
 import { getInvites, GroupInviteI } from '~/api/admin-invites.ts'
-import { addSnackbarsByStore } from '~/store/snackbars'
+import { SnackbarsModule } from '~/store/snackbars.ts'
 
 export interface TableHeader {
   value: string
@@ -94,7 +94,7 @@ export default class InvitesList extends Vue {
       this.invites = await getInvites()
       this.loading = false
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 

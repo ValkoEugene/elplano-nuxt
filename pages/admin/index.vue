@@ -28,11 +28,11 @@
   </v-content>
 </template>
 
-<script>
-import { namespace, Types } from '~/store/user'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { UserModule } from '~/store/user.ts'
 
-export default {
-  name: 'AdminPage',
+@Component({
   components: {
     About: () => import('~/components/admin/about.vue'),
     SystemHealf: () => import('~/components/admin/system-healf.vue'),
@@ -40,35 +40,32 @@ export default {
       import('~/components/admin/system-information.vue'),
     Users: () => import('~/components/admin/users.vue')
   },
-  layout: 'empty',
-  data: () => ({
-    /**
-     * Активный таб
-     * @type {Number}
-     */
-    tab: 0
-  }),
-  computed: {
-    /**
-     * Флаг что пользователь является админом
-     * @type {Boolean}
-     */
-    isAdmin() {
-      return this.$store.getters[`${namespace}/${Types.getters.IS_ADMIN}`]
-    }
-  },
+  layout: 'empty'
+})
+export default class AdminPage extends Vue {
+  /**
+   * Активный таб
+   */
+  tab: number | null = 0
+
+  /**
+   * Флаг что пользователь является админом
+   */
+  get isAdmin(): boolean {
+    return UserModule.isAdmin
+  }
+
   mounted() {
     if (!this.isAdmin) {
       this.$router.push('/')
     }
-  },
-  methods: {
-    /**
-     * Выход
-     */
-    logout() {
-      this.$router.replace('/log-off')
-    }
+  }
+
+  /**
+   * Выход
+   */
+  logout() {
+    this.$router.replace('/log-off')
   }
 }
 </script>

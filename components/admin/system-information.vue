@@ -54,7 +54,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { getSystemInformation, DisksUsage, MemoryUsage } from '~/api/admin.ts'
-import { addSnackbarsByStore } from '~/store/snackbars'
+import { SnackbarsModule } from '~/store/snackbars.ts'
 
 @Component({
   components: {
@@ -136,7 +136,7 @@ export default class AdminSystemInformation extends Vue {
 
       this.loading = false
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 }

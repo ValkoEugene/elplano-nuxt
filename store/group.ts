@@ -1,264 +1,121 @@
-import { VuexHelper } from '~/utils/VuexHelper'
-import { ActionContext, Store } from 'vuex'
+import {
+  VuexModule,
+  Module,
+  Action,
+  Mutation,
+  getModule
+} from 'vuex-module-decorators'
 import getRouter from '~/plugins/getRouter'
 import groupApi, { GroupI } from '~/api/group.ts'
-import {
-  namespace as snackbarNamespace,
-  Types as snackbarTypes
-} from '~/store/snackbars'
+import { SnackbarsModule } from './snackbars'
+import store from '~/store'
 
-interface GroupStateI {
+export interface GroupStateI {
   groupId: string
   loading: boolean
   updating: boolean
   group: GroupI
+  haveGroup: boolean
 }
 
-export const namespace = 'group'
-export const Types = {
-  mutations: {
-    SET_LOADING: 'SET_LOADING',
-    SET_UPDATING: 'SET_UPDATING',
-    SET_GROUP_ID: 'SET_GROUP_ID',
-    SET_GROUP: 'SET_GROUP'
-  },
-  actions: {
-    SET_GROUP_ID: 'SET_GROUP_ID',
-    GET_GROUP: 'GET_GROUP',
-    UPDATE_GROUP: 'UPDATE_GROUP',
-    CREATE_GROUP: 'CREATE_GROUP'
-  },
-  getters: {
-    HAVE_GROUP: 'HAVE_GROUP'
-  }
-}
-
-export const state = (): GroupStateI => ({
-  /**
-   * Id группы
-   * @type {String}
-   */
-  groupId: '',
-
-  /**
-   * Флаг загрузки
-   * @type {Boolean}
-   */
-  loading: true,
-
-  /**
-   * Флаг процесса обновления
-   * @type {Boolean}
-   */
-  updating: false,
-
-  /**
-   * Группа
-   * @type {Object}
-   */
-  group: {
+@Module({ dynamic: true, store: store(), name: 'group' })
+class Group extends VuexModule implements GroupStateI {
+  public groupId: string = ''
+  public loading: boolean = true
+  public updating: boolean = true
+  public group: GroupI = {
     id: '',
     title: '',
     number: ''
   }
-})
 
-export const mutations = {
-  /**
-   * установить id группы
-   * @param {Object} state
-   * @param {String} id
-   */
-  [Types.mutations.SET_GROUP_ID](state: GroupStateI, id: string) {
-    state.groupId = id
-  },
-
-  /**
-   * Установить флаг процесса загрузки
-   * @param {Object} state
-   * @param {Boolean} value
-   */
-  [Types.mutations.SET_LOADING](state: GroupStateI, value: boolean) {
-    state.loading = value
-  },
-
-  /**
-   * Установить флаг процесса обновления
-   * @param {Object} state
-   * @param {Boolean} value
-   */
-  [Types.mutations.SET_UPDATING](state: GroupStateI, value: boolean) {
-    state.updating = value
-  },
-
-  /**
-   * Установить инфорамию о группе
-   * @param {Object} state
-   * @param {Object} group
-   */
-  [Types.mutations.SET_GROUP](state: GroupStateI, group: GroupI) {
-    state.group = group
+  get haveGroup(): boolean {
+    return Boolean(this.groupId)
   }
-}
 
-export const getters = {
-  /**
-   * Флаг наличия группы
-   * @param {Object} state
-   */
-  [Types.getters.HAVE_GROUP](state: GroupStateI) {
-    return Boolean(state.groupId)
+  @Mutation
+  private SET_GROUP_ID(id: string) {
+    this.groupId = id
   }
-}
 
-export const actions = {
-  /**
-   * Установить id группы
-   * @param {{ commit: Function }}
-   * @param {String} id
-   */
-  [Types.actions.SET_GROUP_ID](
-    { commit }: ActionContext<GroupStateI, any>,
-    id: string
-  ) {
-    console.log('SET_GROUP_ID')
+  @Mutation
+  private SET_LOADING(loading: boolean) {
+    this.loading = loading
+  }
+
+  @Mutation
+  private SET_UPDATING(updating: boolean) {
+    this.updating = updating
+  }
+
+  @Mutation
+  private SET_GROUP(group: GroupI) {
+    this.group = group
+  }
+
+  @Action
+  public setGroupId(id: string) {
     const router = getRouter()
+
     if (!id && router.currentRoute.path !== '/group/ungrouped') {
       router.push('/group/ungrouped')
     }
 
-    commit(Types.mutations.SET_GROUP_ID, id)
-  },
+    this.setGroupId(id)
+  }
 
-  /**
-   * Загрузить группу
-   * @param {{ commit: Function }}
-   */
-  async [Types.actions.GET_GROUP]({
-    commit,
-    state
-  }: ActionContext<GroupStateI, any>) {
+  @Action
+  public async getGroup() {
     try {
-      commit(Types.mutations.SET_LOADING, true)
+      this.SET_LOADING(true)
 
       const group = await groupApi.show()
 
-      commit(Types.mutations.SET_GROUP, group)
-      commit(Types.mutations.SET_GROUP_ID, group.id)
+      this.SET_GROUP(group)
+      if (group.id) this.SET_GROUP_ID(group.id)
     } catch (error) {
-      commit(
-        `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
-        error.snackbarErrors,
-        { root: true }
-      )
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
-      commit(Types.mutations.SET_LOADING, false)
+      this.SET_LOADING(false)
     }
-  },
+  }
 
-  /**
-   * Создать информацию о группе
-   * @param {{ commit: Function }}
-   * @param {GroupI} data
-   */
-  async [Types.actions.CREATE_GROUP](
-    { commit }: ActionContext<GroupStateI, any>,
-    data: GroupI
-  ) {
+  @Action
+  public async createGroup(data: GroupI) {
     try {
-      commit(Types.mutations.SET_UPDATING, true)
+      this.SET_UPDATING(true)
 
       const group = await groupApi.create(data)
 
-      commit(Types.mutations.SET_GROUP, group)
-      commit(Types.mutations.SET_GROUP_ID, group.id)
+      this.SET_GROUP(group)
+      if (group.id) this.SET_GROUP_ID(group.id)
 
       // Используем location чтобы страница перезагрузилась и все состояние vuex сбросилось
       window.location.replace('/')
     } catch (error) {
-      commit(
-        `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
-        error.snackbarErrors,
-        { root: true }
-      )
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
-      commit(Types.mutations.SET_UPDATING, false)
+      this.SET_UPDATING(false)
     }
-  },
+  }
 
-  /**
-   * Обновить информацию о группе
-   * @param {{ commit: Function }}
-   * @param {Object} data
-   */
-  async [Types.actions.UPDATE_GROUP](
-    { commit }: ActionContext<GroupStateI, any>,
-    data: GroupI
-  ) {
+  @Action
+  public async updateGroup(data: GroupI) {
     if (!data.id) return
 
     try {
-      commit(Types.mutations.SET_UPDATING, true)
+      this.SET_UPDATING(true)
 
       const group = await groupApi.update(data)
 
-      commit(Types.mutations.SET_GROUP, group)
-      commit(Types.mutations.SET_GROUP_ID, group.id)
+      this.SET_GROUP(group)
+      if (group.id) this.SET_GROUP_ID(group.id)
     } catch (error) {
-      commit(
-        `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
-        error.snackbarErrors,
-        { root: true }
-      )
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
-      commit(Types.mutations.SET_UPDATING, false)
+      this.SET_UPDATING(false)
     }
   }
 }
 
-/**
- * Класс для работы с модулем vuex - группы
- */
-export class GroupState extends VuexHelper<GroupStateI> {
-  constructor(store: any) {
-    super(store, namespace)
-  }
-
-  /**
-   * Флаг наличия группы
-   */
-  get haveGroup(): boolean {
-    return this.store.getters[this.namespace][Types.getters.HAVE_GROUP]
-  }
-
-  /**
-   * Установить id группы
-   * @param id
-   */
-  async setGroupIdAction(id: string): Promise<void> {
-    return await this.dispatchWithNamespace(Types.actions.SET_GROUP_ID, id)
-  }
-
-  /**
-   * Загрузить группу
-   */
-  async getGroupAction(): Promise<void> {
-    return await this.dispatchWithNamespace(Types.actions.GET_GROUP)
-  }
-
-  /**
-   * Создать информацию о группе
-   * @param {GroupI} group
-   */
-  async createGroupAction(group: GroupI): Promise<void> {
-    return await this.dispatchWithNamespace(Types.actions.CREATE_GROUP, group)
-  }
-
-  /**
-   * Обновить информацию о группе
-   * @param {GroupI} group
-   */
-  async updateGroupAction(group: GroupI): Promise<void> {
-    return await this.dispatchWithNamespace(Types.actions.UPDATE_GROUP, group)
-  }
-}
+export const GroupModule = getModule(Group)

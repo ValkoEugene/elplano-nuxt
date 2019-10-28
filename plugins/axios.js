@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { namespace, Types } from '~/store/user.ts'
+import { UserModule } from '~/store/user.ts'
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.baseUrl}/api/v1`,
@@ -58,14 +58,7 @@ const updateToken = (error) => {
       .then((data) => {
         const { access_token, refresh_token } = data
 
-        window.$nuxt.$store.commit(
-          `${namespace}/${Types.mutations.SET_ACCESS_TOKEN}`,
-          access_token
-        )
-        window.$nuxt.$store.commit(
-          `${namespace}/${Types.mutations.SET_REFRESH_TOKEN}`,
-          refresh_token
-        )
+        UserModule.setTokens({ access_token, refresh_token })
 
         // Обновляем заголовки для повторного запроса
         axios.defaults.headers.common.Authorization = `Bearer ${access_token}`

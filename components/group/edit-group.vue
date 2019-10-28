@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop, Ref } from 'vue-property-decorator'
-import { GroupState } from '~/store/group.ts'
+import { GroupModule } from '~/store/group.ts'
 import { GroupI } from '~/api/group.ts'
 
 @Component({
@@ -70,29 +70,24 @@ export default class EditGroup extends Vue {
   }
 
   /**
-   * Модуль vuex с группами
-   */
-  groupState = new GroupState(this.$store)
-
-  /**
    * Флаг загрузки
    */
   get loading(): boolean {
-    return this.groupState.state.loading
+    return GroupModule.loading
   }
 
   /**
    * Флаг обновления
    */
   get updating(): boolean {
-    return this.groupState.state.updating
+    return GroupModule.updating
   }
 
   /**
    * Группа
    */
   get group(): GroupI {
-    return this.groupState.state.group
+    return GroupModule.group
   }
 
   @Watch('group')
@@ -101,14 +96,7 @@ export default class EditGroup extends Vue {
   }
 
   mounted() {
-    if (this.loadInMounted) this.loadGroup()
-  }
-
-  /**
-   * Загрузить группу
-   */
-  loadGroup() {
-    this.groupState.getGroupAction()
+    if (this.loadInMounted) GroupModule.getGroup()
   }
 
   /**
@@ -118,8 +106,8 @@ export default class EditGroup extends Vue {
     if (!this.form.validate()) return
 
     this.localGroup.id
-      ? this.groupState.updateGroupAction(this.localGroup)
-      : this.groupState.createGroupAction(this.localGroup)
+      ? GroupModule.updateGroup(this.localGroup)
+      : GroupModule.createGroup(this.localGroup)
   }
 }
 </script>

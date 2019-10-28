@@ -91,7 +91,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import clonedeep from 'lodash.clonedeep'
 import { Moment } from 'moment'
 import moment, { setLocale } from '~/plugins/moment'
-import { namespace as i18nNamespace } from '~/store/i18n'
+import { I18nModule } from '~/store/i18n.ts'
 import { Event } from '~/api/events.ts'
 
 export type DaysOfWeeks = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
@@ -215,7 +215,7 @@ export default class Events extends Vue {
    * Текушая локаль
    */
   get locale(): string {
-    return this.$store.getters[`${i18nNamespace}/locale`]
+    return I18nModule.locale
   }
 
   /**

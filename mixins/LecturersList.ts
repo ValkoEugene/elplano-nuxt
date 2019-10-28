@@ -1,6 +1,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Lecturer, lecturersApi } from '~/api/lecturers.ts'
-import { addSnackbarsByStore } from '~/store/snackbars'
+import { SnackbarsModule } from '~/store/snackbars.ts'
 
 /**
  * Миксин загрузки списка преподавателей
@@ -34,7 +34,7 @@ export default class LecturersList extends Vue {
       this.lecturers = lecturers
       this.loadingLecturers = false
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 }

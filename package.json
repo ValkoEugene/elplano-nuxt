@@ -60,6 +60,7 @@
     "moment-locales-webpack-plugin": "^1.1.0",
     "prettier": "^1.16.4",
     "vue-class-component": "^7.1.0",
-    "vue-jest": "^4.0.0-0"
+    "vue-jest": "^4.0.0-0",
+    "vuex-module-decorators": "^0.10.1"
   }
 }

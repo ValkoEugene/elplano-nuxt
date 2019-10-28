@@ -54,7 +54,7 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { getGroupUsers, Student } from '~/api/group-users.ts'
 import CheckGroup from '~/mixins/CheckGroup.ts'
-import { addSnackbarsByStore } from '~/store/snackbars'
+import { SnackbarsModule } from '~/store/snackbars.ts'
 
 /**
  * Компонент вывода списка студентов группы
@@ -103,7 +103,7 @@ export default class GroupPage extends Mixins(CheckGroup) {
       this.students = await getGroupUsers()
       this.loading = false
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 }

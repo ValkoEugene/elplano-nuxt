@@ -75,7 +75,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import infiniteScroll from 'vue-infinite-scroll'
 import { adminUserApi, UserInfo } from '~/api/admin-user.ts'
 import { ApiCRUDParams } from '~/api/ApiCRUD.ts'
-import { addSnackbarsByStore } from '~/store/snackbars'
+import { SnackbarsModule } from '~/store/snackbars.ts'
 
 enum ActionTypes {
   ban = 'ban',
@@ -190,7 +190,7 @@ export default class AdminUsers extends Vue {
       await this.$nextTick()
       this.loading = false
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 
@@ -220,7 +220,7 @@ export default class AdminUsers extends Vue {
           break
       }
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
       this.updating = false
     }

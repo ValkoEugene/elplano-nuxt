@@ -46,7 +46,7 @@ import {
   updateSettings,
   AdminAbout as AdminAboutType
 } from '~/api/admin.ts'
-import { addSnackbarsByStore } from '~/store/snackbars'
+import { SnackbarsModule } from '~/store/snackbars.ts'
 
 type FormText = {
   model: string
@@ -179,7 +179,7 @@ export default class AdminAbout extends Vue {
       this.about = await getAboutInfo()
       this.loading = false
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 
@@ -192,7 +192,7 @@ export default class AdminAbout extends Vue {
       this.updating = true
       await updateSettings(data)
     } catch (error) {
-      addSnackbarsByStore(this.$store, error.snackbarErrors)
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
       this.updating = false
     }

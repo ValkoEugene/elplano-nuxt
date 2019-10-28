@@ -1,49 +1,23 @@
-// Информация о пользователе
-
 import axios from 'axios'
-import { VuexHelper } from '~/utils/VuexHelper'
-import { ActionContext, Store } from 'vuex'
+import {
+  VuexModule,
+  Module,
+  Action,
+  Mutation,
+  getModule
+} from 'vuex-module-decorators'
 import { UserDetail, getUserInfo, updateStudentInfo } from '~/api/user.ts'
-import { User } from '~/api/admin-user.ts'
+import { User as UserI } from '~/api/admin-user.ts'
 import { Student } from '~/api/group-users.ts'
 import getRouter from '~/plugins/getRouter'
 import { setTokensInCookie, resetTokensInCookie } from '~/utils/auth'
-import {
-  namespace as snackbarNamespace,
-  Types as snackbarTypes
-} from '~/store/snackbars'
-import {
-  namespace as groupNamespace,
-  Types as groupTypes
-} from '~/store/group.ts'
-
-export const namespace = 'user'
-
-export const Types = {
-  mutations: {
-    SET_LOGIN_FETCHING: 'SET_LOGIN_FETCHING',
-    SET_USER: 'SET_USER',
-    SET_STUDENT: 'SET_STUDENT',
-    SET_LOADING: 'SET_LOADING',
-    SET_UPDATING: 'SET_UPDATING',
-    SET_ACCESS_TOKEN: 'SET_ACCESS_TOKEN',
-    SET_REFRESH_TOKEN: 'SET_REFRESH_TOKEN',
-    SET_SHOW_A2HS_BUTTON: 'SET_SHOW_A2HS_BUTTON'
-  },
-  actions: {
-    SET_TOKENS: 'SET_TOKENS',
-    RESET_USER: 'RESET_USER',
-    GET_USER_INFO: 'GET_USER_INFO',
-    UPDATE_STUDENT: 'UPDATE_STUDENT',
-    LOGIN: 'LOGIN'
-  },
-  getters: {
-    IS_AUTH: 'IS_AUTH',
-    IS_ADMIN: 'IS_ADMIN',
-    IS_CONFIRMED: 'IS_CONFIRMED',
-    IS_PRESIDENT: 'IS_PRESIDENT'
-  }
-}
+// import {
+//   namespace as snackbarNamespace,
+//   Types as snackbarTypes
+// } from '~/store/snackbars'
+import { SnackbarsModule } from './snackbars'
+import { GroupModule } from './group'
+import store from '~/store'
 
 export interface Login {
   login: string
@@ -59,7 +33,7 @@ export interface UserStateI {
   loginFetching: boolean
   loading: boolean
   updating: boolean
-  userInfo: User
+  userInfo: UserI
   studentInfo: Student
   access_token: string
   refresh_token: string
@@ -79,33 +53,34 @@ const userTemplate = {
   banned: false,
   locale: '',
   locked: false
-} as User
+} as UserI
 
-export const state = (): UserStateI => ({
+@Module({ dynamic: true, store: store(), name: 'user' })
+class User extends VuexModule implements UserStateI {
   /**
    * Флаг процесса авторизации
    */
-  loginFetching: false,
+  loginFetching: boolean = false
 
   /**
    * Флаг загрузки
    */
-  loading: true,
+  loading: boolean = true
 
   /**
    * Флаг обновления
    */
-  updating: false,
+  updating: boolean = false
 
   /**
    * Информация о пользователе
    */
-  userInfo: { ...userTemplate },
+  userInfo: UserI = { ...userTemplate }
 
   /**
    * Информация о студенте
    */
-  studentInfo: {
+  studentInfo: Student = {
     id: '',
     about: '',
     created_at: '',
@@ -115,124 +90,138 @@ export const state = (): UserStateI => ({
     president: false,
     social_networks: {},
     updated_at: ''
-  },
+  }
 
   /**
    * Токен
    */
-  access_token: '',
+  access_token: string = ''
 
   /**
    * Рефреш токен
    */
-  refresh_token: '',
+  refresh_token: string = ''
 
   /**
    * Флаг показа кнопки Добавить на главный экран
    */
-  showA2hsButton: false
-})
+  showA2hsButton: boolean = false
 
-export const mutations = {
+  get isAuth(): boolean {
+    return Boolean(this.access_token && this.refresh_token)
+  }
+
+  get isAdmin(): boolean {
+    return this.userInfo.admin
+  }
+
+  get isPresident(): boolean {
+    return Boolean(this.studentInfo && this.studentInfo.president)
+  }
+
+  get isConfirmed(): boolean {
+    return this.userInfo.confirmed
+  }
+
   /**
    * Установить флаг процесса авторизации
    */
-  [Types.mutations.SET_LOGIN_FETCHING](state: UserStateI, value: boolean) {
-    state.loginFetching = value
-  },
+  @Mutation
+  SET_LOGIN_FETCHING(value: boolean) {
+    this.loginFetching = value
+  }
 
   /**
    * Установить инцформацию о пользоавтеле
    */
-  [Types.mutations.SET_USER](state: UserStateI, userInfo: User) {
-    state.userInfo = { ...state.userInfo, ...userInfo }
-  },
+  @Mutation
+  SET_USER(userInfo: UserI) {
+    this.userInfo = { ...this.userInfo, ...userInfo }
+  }
 
   /**
    * Установить инцформацию о студенте
    */
-  [Types.mutations.SET_STUDENT](state: UserStateI, student: Student) {
-    state.studentInfo = { ...state.studentInfo, ...student }
-  },
+  @Mutation
+  SET_STUDENT(student: Student) {
+    this.studentInfo = { ...this.studentInfo, ...student }
+  }
 
   /**
    * Установить access_token
    */
-  [Types.mutations.SET_ACCESS_TOKEN](state: UserStateI, access_token: string) {
-    state.access_token = access_token
-  },
+  @Mutation
+  SET_ACCESS_TOKEN(access_token: string) {
+    this.access_token = access_token
+  }
 
   /**
    * Установить refresh_token
    */
-  [Types.mutations.SET_REFRESH_TOKEN](
-    state: UserStateI,
-    refresh_token: string
-  ) {
-    state.refresh_token = refresh_token
-  },
+  @Mutation
+  SET_REFRESH_TOKEN(refresh_token: string) {
+    this.refresh_token = refresh_token
+  }
 
   /**
    * Установить флаг загрузки
    */
-  [Types.mutations.SET_LOADING](state: UserStateI, loading: boolean) {
-    state.loading = loading
-  },
+  @Mutation
+  SET_LOADING(loading: boolean) {
+    this.loading = loading
+  }
 
   /**
    * Установить флаг обновления
    */
-  [Types.mutations.SET_UPDATING](state: UserStateI, updating: boolean) {
-    state.updating = updating
-  },
+  @Mutation
+  SET_UPDATING(updating: boolean) {
+    this.updating = updating
+  }
 
   /**
    * Установить флаг показа кнопки Добавить на главный экран
    */
-  [Types.mutations.SET_SHOW_A2HS_BUTTON](state: UserStateI, value: boolean) {
-    state.showA2hsButton = value
+  @Mutation
+  SET_SHOW_A2HS_BUTTON(value: boolean) {
+    this.showA2hsButton = value
   }
-}
 
-export const actions = {
   /**
    * Установить токены
    * @param {ActionContext} context
    * @param {Tokens} tokens
    */
-  [Types.actions.SET_TOKENS](
-    { commit }: ActionContext<UserStateI, any>,
-    tokens: Tokens
-  ) {
+  @Action
+  setTokens(tokens: Tokens) {
     const { access_token, refresh_token } = tokens
 
-    commit(Types.mutations.SET_ACCESS_TOKEN, access_token)
-    commit(Types.mutations.SET_REFRESH_TOKEN, refresh_token)
+    this.SET_ACCESS_TOKEN(access_token)
+    this.SET_REFRESH_TOKEN(refresh_token)
     setTokensInCookie(tokens)
-  },
+  }
 
   /**
    * Сбросить пользователя
    * @param {ActionContext} context
    */
-  [Types.actions.RESET_USER]({ commit }: ActionContext<UserStateI, any>) {
-    commit(Types.mutations.SET_ACCESS_TOKEN, '')
-    commit(Types.mutations.SET_REFRESH_TOKEN, '')
-    commit(Types.mutations.SET_USER, { ...userTemplate })
-    commit(Types.mutations.SET_LOADING, true)
+  @Action
+  resetUser() {
+    this.SET_ACCESS_TOKEN('')
+    this.SET_REFRESH_TOKEN('')
+    this.SET_USER({ ...userTemplate })
+    this.SET_LOADING(true)
     resetTokensInCookie()
-  },
+  }
 
   /**
    * Вход
    * @param {ActionContext} context
    * @param {Login} login
    */
-  async [Types.actions.LOGIN](
-    context: ActionContext<UserStateI, any>,
-    { login, password }: Login
-  ) {
-    context.commit(Types.mutations.SET_LOGIN_FETCHING, true)
+  @Action
+  async login({ login, password }: Login) {
+    this.SET_LOGIN_FETCHING(true)
 
     try {
       const data = { login, password, grant_type: 'password' }
@@ -243,188 +232,64 @@ export const actions = {
       )
       const { access_token, refresh_token } = response.data
 
-      context.dispatch(Types.actions.SET_TOKENS, {
+      this.setTokens({
         access_token,
         refresh_token
       })
 
       getRouter().push('/')
     } catch (error) {
-      context.commit(
-        `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
+      SnackbarsModule.ADD_SNACKBARS(
         error.response.data.errors.map(({ detail }: { detail: string }) => ({
           text: detail,
           color: 'error'
-        })),
-        { root: true }
+        }))
       )
     } finally {
-      context.commit(Types.mutations.SET_LOGIN_FETCHING, false)
+      this.SET_LOGIN_FETCHING(false)
     }
-  },
+  }
 
   /**
    * Загрузить информацию о пользователе
    * @param {ActionContext} context
    */
-  async [Types.actions.GET_USER_INFO](context: ActionContext<UserStateI, any>) {
+  @Action
+  async getUserInfo() {
     console.log('getUserInfo')
     try {
-      context.commit(Types.mutations.SET_LOADING, true)
+      this.SET_LOADING(true)
 
       const { user, student, groupId } = await getUserInfo()
 
-      context.commit(Types.mutations.SET_USER, user)
-      context.commit(Types.mutations.SET_STUDENT, student)
-      context.dispatch(
-        `${groupNamespace}/${groupTypes.actions.SET_GROUP_ID}`,
-        groupId,
-        { root: true }
-      )
-
-      context.commit(Types.mutations.SET_LOADING, false)
+      this.SET_USER(user)
+      if (student) this.SET_STUDENT(student)
+      if (groupId) GroupModule.setGroupId(groupId)
+      this.SET_LOADING(false)
     } catch (error) {
-      context.commit(
-        `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
-        error.snackbarErrors,
-        { root: true }
-      )
-
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
       getRouter().push('/log-off')
     }
-  },
+  }
 
   /**
    * Обновить информацию о студенте
-   * @param {ActionContext} context
    * @param {Student} student_attributes
    */
-  async [Types.actions.UPDATE_STUDENT](
-    context: ActionContext<UserStateI, any>,
-    student_attributes: Student
-  ) {
+  @Action
+  async updateStudent(student_attributes: Student) {
     try {
-      context.commit(Types.mutations.SET_UPDATING, true)
+      this.SET_UPDATING(true)
 
       const { user, student } = await updateStudentInfo(student_attributes)
 
-      context.commit(Types.mutations.SET_USER, user)
-      context.commit(Types.mutations.SET_STUDENT, student)
-      context.commit(Types.mutations.SET_UPDATING, false)
+      this.SET_USER(user)
+      if (student) this.SET_STUDENT(student)
+      this.SET_UPDATING(false)
     } catch (error) {
-      context.commit(
-        `${snackbarNamespace}/${snackbarTypes.mutations.ADD_SNACKBARS}`,
-        error.snackbarErrors,
-        { root: true }
-      )
+      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 }
 
-export const getters = {
-  /**
-   * Флаг что пользователь авторизован
-   * TODO переработать
-   */
-  [Types.getters.IS_AUTH]({
-    access_token,
-    refresh_token
-  }: UserStateI): boolean {
-    return Boolean(access_token && refresh_token)
-  },
-
-  /**
-   * Флаг что пользователь админ
-   */
-  [Types.getters.IS_ADMIN](state: UserStateI): boolean {
-    return state.userInfo.admin
-  },
-
-  /**
-   * Флаг что пользователь староста
-   */
-  [Types.getters.IS_PRESIDENT](state: UserStateI): boolean {
-    return Boolean(state.studentInfo && state.studentInfo.president)
-  },
-
-  /**
-   * Флаг что пользователь подтвердил учётную запись
-   */
-  [Types.getters.IS_CONFIRMED](state: UserStateI): boolean {
-    return state.userInfo.confirmed
-  }
-}
-
-/**
- * Класс для работы с модулем vuex - пользователь
- */
-export class UserState extends VuexHelper<UserStateI> {
-  constructor(store: any) {
-    super(store, namespace)
-  }
-
-  /**
-   * Флаг что пользователь админ
-   */
-  get isAdmin(): boolean {
-    return this.store.getters[this.namespace][Types.getters.IS_ADMIN]
-  }
-
-  /**
-   * Флаг что пользователь авторизован
-   */
-  get isAuth(): boolean {
-    return this.store.getters[this.namespace][Types.getters.IS_AUTH]
-  }
-
-  /**
-   * Флаг что пользователь подтвердил учётную запись
-   */
-  get isConfirmed(): boolean {
-    return this.store.getters[this.namespace][Types.getters.IS_CONFIRMED]
-  }
-
-  /**
-   * Флаг что пользователь староста
-   */
-  get isPresident(): boolean {
-    return this.store.getters[this.namespace][Types.getters.IS_PRESIDENT]
-  }
-
-  /**
-   * Установить токены
-   */
-  async setTokensAction(tokens: Tokens): Promise<void> {
-    return await this.dispatchWithNamespace(Types.actions.SET_TOKENS, tokens)
-  }
-
-  /**
-   * Сбросить пользователя
-   */
-  async resetUserAction(): Promise<void> {
-    return await this.dispatchWithNamespace(Types.actions.RESET_USER)
-  }
-
-  /**
-   * Вход
-   * @param login
-   */
-  async loginAction(login: Login): Promise<void> {
-    return await this.dispatchWithNamespace(Types.actions.LOGIN, login)
-  }
-
-  /**
-   * Загрузить информацию о пользователе
-   */
-  async getUserInfoAction(): Promise<void> {
-    return await this.dispatchWithNamespace(Types.actions.GET_USER_INFO)
-  }
-
-  /**
-   * Обновить информацию о студенте
-   * @param student
-   */
-  async updateStudentAction(student: Student) {
-    return this.dispatchWithNamespace(Types.actions.UPDATE_STUDENT, student)
-  }
-}
+export const UserModule = getModule(User)

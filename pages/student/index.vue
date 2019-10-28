@@ -63,7 +63,7 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import clonedeep from 'lodash.clonedeep'
-import { UserState } from '~/store/user.ts'
+import { UserModule } from '~/store/user.ts'
 import CheckGroup from '~/mixins/CheckGroup.ts'
 import { Student } from '~/api/group-users.ts'
 
@@ -91,20 +91,18 @@ export default class StudentPage extends Mixins(CheckGroup) {
     updated_at: ''
   }
 
-  userState = new UserState(this.$store)
-
   /**
    * Флаг обновления
    */
   get updating() {
-    return this.userState.state.updating
+    return UserModule.updating
   }
 
   /**
    * Информация о студенте
    */
   get studentInfo(): Student {
-    return this.userState.state.studentInfo
+    return UserModule.studentInfo
   }
 
   @Watch('studentInfo')
@@ -120,7 +118,7 @@ export default class StudentPage extends Mixins(CheckGroup) {
    * Обновить информацию о пользователе
    */
   updateStudent() {
-    this.userState.updateStudentAction(this.localStudent)
+    UserModule.updateStudent(this.localStudent)
   }
 }
 </script>
