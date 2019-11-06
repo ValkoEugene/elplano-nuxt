@@ -4,7 +4,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { UserModule } from '~/store/user.ts'
 
 /**
  * Страница для разлогина
@@ -14,7 +13,7 @@ import { UserModule } from '~/store/user.ts'
 })
 export default class LogOff extends Vue {
   async mounted() {
-    await UserModule.resetUser()
+    await this.$vuexModules.User.resetUser()
 
     // Используем location чтобы страница перезагрузилась и все состояние vuex сбросилось
     window.location.replace('/login')

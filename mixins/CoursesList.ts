@@ -1,6 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Course, courseApi } from '~/api/courses.ts'
-import { SnackbarsModule } from '~/store/snackbars.ts'
 
 /**
  * Миксин загрузки списка предметов
@@ -34,7 +33,7 @@ export default class CoursesList extends Vue {
       this.courses = courses
       this.loadingCourses = false
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 }

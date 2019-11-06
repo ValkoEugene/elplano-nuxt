@@ -1,5 +1,16 @@
-import axios from 'axios'
-import { UserModule } from '~/store/user.ts'
+import axios, { AxiosRequestConfig, AxiosError } from 'axios'
+import { User } from '~/store/user.ts'
+import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow'
+import { SnackbarI, SnackbarColor } from '~/store/snackbars'
+
+interface CustomAxiosRequestConfig {
+  _retry?: boolean
+}
+
+interface CustomError {
+  messages: string[]
+  snackbarErrors: SnackbarI[]
+}
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.baseUrl}/api/v1`,
@@ -19,10 +30,10 @@ const baseAxiosIntance = axios.create({
 
 /**
  * Добавляем токены к каждому запросу
- * @param {import('axios').AxiosRequestConfig} config
  */
-const addToken = (config) => {
-  const token = window.$nuxt.$store.state.user.access_token
+const addToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
+  const UserModule = getVuexDecaratorModuleByWindow(User)
+  const token = UserModule.access_token
 
   if (token) {
     config.headers.common.Authorization = `Bearer ${token}`
@@ -33,11 +44,13 @@ const addToken = (config) => {
 
 /**
  * Обновляем токен при 401 статусе
- * @param {import('axios').AxiosError} error
  */
-const updateToken = (error) => {
+const updateToken = (error: AxiosError) => {
+  if (!error.response) return
+
   console.log('updateToken', error)
-  const originalRequest = error.config
+  const originalRequest: CustomAxiosRequestConfig & AxiosRequestConfig =
+    error.config
 
   if (error.response.status !== 401) {
     return Promise.reject(error)
@@ -46,10 +59,11 @@ const updateToken = (error) => {
   // Проверяем статус и что это не повторный запрос
   if (error.response.status === 401 && !originalRequest._retry) {
     originalRequest._retry = true
+    const UserModule = getVuexDecaratorModuleByWindow(User)
 
     const data = {
       grant_type: 'refresh_token',
-      refresh_token: window.$nuxt.$store.state.user.refresh_token
+      refresh_token: UserModule.refresh_token
     }
 
     return axios
@@ -75,9 +89,8 @@ const updateToken = (error) => {
 
 /**
  * Обработка ошибок
- * @param {AxiosError} error
  */
-const handlingErrors = (error) => {
+const handlingErrors = (error: AxiosError & CustomError) => {
   console.log('axios errorHandker', error)
   // Обрабатываем ошибки сети
   // в них нет ответа и соответственно status, data что нужны
@@ -94,7 +107,7 @@ const handlingErrors = (error) => {
   } else if (status === 404) {
     error.messages = ['Запись не найдена']
   } else if (status >= 400 && status < 500 && data.errors) {
-    error.messages = data.errors.map(({ detail }) => detail)
+    error.messages = data.errors.map(({ detail }: { detail: string }) => detail)
   } else if (status >= 500) {
     error.messages = ['Извините, возникла ошибка на сервере']
   }
@@ -102,7 +115,7 @@ const handlingErrors = (error) => {
   console.log('before axios reject', error.messages)
   error.snackbarErrors = error.messages.map((text) => ({
     text,
-    color: 'error'
+    color: SnackbarColor.error
   }))
   return Promise.reject(error)
 }

@@ -30,7 +30,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { UserModule } from '~/store/user.ts'
 
 @Component({
   components: {
@@ -52,7 +51,7 @@ export default class AdminPage extends Vue {
    * Флаг что пользователь является админом
    */
   get isAdmin(): boolean {
-    return UserModule.isAdmin
+    return this.$vuexModules.User.isAdmin
   }
 
   mounted() {

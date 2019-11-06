@@ -1,9 +1,6 @@
 import { VuexModule, Module, Mutation, getModule } from 'vuex-module-decorators'
-// import {
-//   namespace as snackbarNamespace,
-//   Types as snackbarTypes
-// } from '~/store/snackbars'
-import store from '~/store'
+
+export const name = 'snackbars'
 
 export enum SnackbarColor {
   success = 'success',
@@ -11,28 +8,26 @@ export enum SnackbarColor {
   error = 'error'
 }
 
-export interface Snackbar {
+export interface SnackbarI {
   text: string
   color: SnackbarColor
 }
 
 export interface SnackbarsStateI {
-  snackbars: Snackbar[]
+  snackbars: SnackbarI[]
 }
 
-@Module({ dynamic: true, store: store(), name: 'snackbars' })
-class Snackbars extends VuexModule implements SnackbarsStateI {
-  snackbars: Snackbar[] = []
+@Module({ namespaced: true, name })
+export class Snackbars extends VuexModule implements SnackbarsStateI {
+  snackbars: SnackbarI[] = []
 
   @Mutation
-  public SET_SNACKBARS(snackbars: Snackbar[]) {
+  public SET_SNACKBARS(snackbars: SnackbarI[]) {
     this.snackbars = [...snackbars]
   }
 
   @Mutation
-  public ADD_SNACKBARS(snackbars: Snackbar[]) {
+  public ADD_SNACKBARS(snackbars: SnackbarI[]) {
     this.snackbars = [...this.snackbars, ...snackbars]
   }
 }
-
-export const SnackbarsModule = getModule(Snackbars)

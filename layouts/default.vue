@@ -31,8 +31,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { UserModule } from '~/store/user.ts'
-import { GroupModule } from '~/store/group.ts'
 import { User as UserI } from '~/api/admin-user.ts'
 
 @Component({
@@ -62,21 +60,21 @@ export default class DefaultLayout extends Vue {
    * Флаг загрузки
    */
   get loading(): boolean {
-    return UserModule.loading
+    return this.$vuexModules.User.loading
   }
 
   /**
    * Пользователь
    */
   get userInfo(): UserI {
-    return UserModule.userInfo
+    return this.$vuexModules.User.userInfo
   }
 
   /**
    * Флаг наличия группы
    */
   get haveGroup(): boolean {
-    return GroupModule.haveGroup
+    return this.$vuexModules.Group.haveGroup
   }
 
   /**
@@ -106,7 +104,7 @@ export default class DefaultLayout extends Vue {
   }
 
   mounted() {
-    UserModule.getUserInfo()
+    this.$vuexModules.User.getUserInfo()
   }
 }
 </script>

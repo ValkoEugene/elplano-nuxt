@@ -63,7 +63,6 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import clonedeep from 'lodash.clonedeep'
-import { UserModule } from '~/store/user.ts'
 import CheckGroup from '~/mixins/CheckGroup.ts'
 import { Student } from '~/api/group-users.ts'
 
@@ -95,14 +94,14 @@ export default class StudentPage extends Mixins(CheckGroup) {
    * Флаг обновления
    */
   get updating() {
-    return UserModule.updating
+    return this.$vuexModules.User.updating
   }
 
   /**
    * Информация о студенте
    */
   get studentInfo(): Student {
-    return UserModule.studentInfo
+    return this.$vuexModules.User.studentInfo
   }
 
   @Watch('studentInfo')
@@ -118,7 +117,7 @@ export default class StudentPage extends Mixins(CheckGroup) {
    * Обновить информацию о пользователе
    */
   updateStudent() {
-    UserModule.updateStudent(this.localStudent)
+    this.$vuexModules.User.updateStudent(this.localStudent)
   }
 }
 </script>

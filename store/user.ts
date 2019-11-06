@@ -11,13 +11,11 @@ import { User as UserI } from '~/api/admin-user.ts'
 import { Student } from '~/api/group-users.ts'
 import getRouter from '~/plugins/getRouter'
 import { setTokensInCookie, resetTokensInCookie } from '~/utils/auth'
-// import {
-//   namespace as snackbarNamespace,
-//   Types as snackbarTypes
-// } from '~/store/snackbars'
-import { SnackbarsModule } from './snackbars'
-import { GroupModule } from './group'
-import store from '~/store'
+import { Snackbars } from './snackbars'
+import { Group } from './group'
+import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow'
+
+export const name = 'user'
 
 export interface Login {
   login: string
@@ -55,8 +53,8 @@ const userTemplate = {
   locked: false
 } as UserI
 
-@Module({ dynamic: true, store: store(), name: 'user' })
-class User extends VuexModule implements UserStateI {
+@Module({ namespaced: true, name })
+export class User extends VuexModule implements UserStateI {
   /**
    * Флаг процесса авторизации
    */
@@ -239,7 +237,7 @@ class User extends VuexModule implements UserStateI {
 
       getRouter().push('/')
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(
+      getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.response.data.errors.map(({ detail }: { detail: string }) => ({
           text: detail,
           color: 'error'
@@ -264,10 +262,12 @@ class User extends VuexModule implements UserStateI {
 
       this.SET_USER(user)
       if (student) this.SET_STUDENT(student)
-      if (groupId) GroupModule.setGroupId(groupId)
+      if (groupId) getVuexDecaratorModuleByWindow(Group).setGroupId(groupId)
       this.SET_LOADING(false)
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
+      getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
+        error.snackbarErrors
+      )
       getRouter().push('/log-off')
     }
   }
@@ -287,9 +287,9 @@ class User extends VuexModule implements UserStateI {
       if (student) this.SET_STUDENT(student)
       this.SET_UPDATING(false)
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
+      getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
+        error.snackbarErrors
+      )
     }
   }
 }
-
-export const UserModule = getModule(User)

@@ -1,7 +1,9 @@
-import { namespace, Types } from '~/store/i18n'
+import { Context } from '@nuxt/types'
+import { Locales } from '~/store/i18n'
 
-export default function({ isHMR, app, store, route, error }) {
+export default function({ isHMR, app, store, route, error }: Context) {
   const defaultLocale = app.i18n.fallbackLocale
+  const I18nModule = app.$vuexModules.I18n
 
   // Игнорируем hotreload
   if (isHMR) return
@@ -14,9 +16,7 @@ export default function({ isHMR, app, store, route, error }) {
     return error({ message: 'This page could not be found.', statusCode: 404 })
   }
 
-  store.commit(`${namespace}/${Types.mutations.SET_LANG}`, locale, {
-    root: true
-  })
+  I18nModule.SET_LANG(locale as Locales)
 
   console.log('store.state.i18n.locale', store.state.i18n.locale)
 

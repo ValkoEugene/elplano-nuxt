@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    v-show="!presidentAccess || $store.getters['user/IS_PRESIDENT']"
+    v-show="!presidentAccess || isPresident"
     fixed
     dark
     fab
@@ -33,5 +33,12 @@ export default class AddNew extends Vue {
    * @type {Boolean}
    */
   @Prop({ type: Boolean, default: true }) readonly presidentAccess!: boolean
+
+  /**
+   * Флаг является ли пользователь старостой
+   */
+  get isPresident(): boolean {
+    return this.$vuexModules.User.isPresident
+  }
 }
 </script>

@@ -2,11 +2,13 @@ import {
   getAccessTokenFromCookie,
   getRefreshTokenFromCookie
 } from '~/utils/auth'
-import { UserModule } from '~/store/user.ts'
-import { GroupModule } from '~/store/group.ts'
+import { Context } from '@nuxt/types'
 
 // Middleware для проверки авторизован ли пользователь
-export default ({ redirect, req, route }) => {
+export default ({ redirect, req, route, store, app }: Context) => {
+  const UserModule = app.$vuexModules.User
+  const GroupModule = app.$vuexModules.Group
+
   console.log('auth middleware')
   // Флаг что выполняется серверная генерация
   const isServer = process.server

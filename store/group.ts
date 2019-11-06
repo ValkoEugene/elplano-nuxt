@@ -7,8 +7,10 @@ import {
 } from 'vuex-module-decorators'
 import getRouter from '~/plugins/getRouter'
 import groupApi, { GroupI } from '~/api/group.ts'
-import { SnackbarsModule } from './snackbars'
-import store from '~/store'
+import { Snackbars } from './snackbars'
+import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow'
+
+export const name = 'groupe'
 
 export interface GroupStateI {
   groupId: string
@@ -18,8 +20,8 @@ export interface GroupStateI {
   haveGroup: boolean
 }
 
-@Module({ dynamic: true, store: store(), name: 'group' })
-class Group extends VuexModule implements GroupStateI {
+@Module({ namespaced: true, name })
+export class Group extends VuexModule implements GroupStateI {
   public groupId: string = ''
   public loading: boolean = true
   public updating: boolean = true
@@ -61,7 +63,7 @@ class Group extends VuexModule implements GroupStateI {
       router.push('/group/ungrouped')
     }
 
-    this.setGroupId(id)
+    this.SET_GROUP_ID(id)
   }
 
   @Action
@@ -74,7 +76,9 @@ class Group extends VuexModule implements GroupStateI {
       this.SET_GROUP(group)
       if (group.id) this.SET_GROUP_ID(group.id)
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
+      getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
+        error.snackbarErrors
+      )
     } finally {
       this.SET_LOADING(false)
     }
@@ -93,7 +97,9 @@ class Group extends VuexModule implements GroupStateI {
       // Используем location чтобы страница перезагрузилась и все состояние vuex сбросилось
       window.location.replace('/')
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
+      getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
+        error.snackbarErrors
+      )
     } finally {
       this.SET_UPDATING(false)
     }
@@ -111,11 +117,11 @@ class Group extends VuexModule implements GroupStateI {
       this.SET_GROUP(group)
       if (group.id) this.SET_GROUP_ID(group.id)
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
+      getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
+        error.snackbarErrors
+      )
     } finally {
       this.SET_UPDATING(false)
     }
   }
 }
-
-export const GroupModule = getModule(Group)

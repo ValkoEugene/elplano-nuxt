@@ -36,9 +36,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { I18nModule, Locales } from '~/store/i18n.ts'
-import { UserModule } from '~/store/user.ts'
-import { GroupModule } from '~/store/group.ts'
+import { Locales } from '~/store/i18n.ts'
 import { TOGGLE_SIDEBAR_ROOT_LISTENER } from '~/layouts/sidebar.vue'
 
 @Component
@@ -63,28 +61,28 @@ export default class Header extends Vue {
    * Текущая локаль
    */
   get locale(): Locales {
-    return I18nModule.locale
+    return this.$vuexModules.I18n.locale
   }
 
   /**
    * Флаг показа кнопки Добавить на главный экран
    */
   get showA2hsButton(): boolean {
-    return UserModule.showA2hsButton
+    return this.$vuexModules.User.showA2hsButton
   }
 
   /**
    * Флаг что пользователь староста
    */
   get isPresident(): boolean {
-    return UserModule.isPresident
+    return this.$vuexModules.User.isPresident
   }
 
   /**
    * Флаг наличия группы
    */
   get haveGroup(): boolean {
-    return GroupModule.haveGroup
+    return this.$vuexModules.Group.haveGroup
   }
 
   /**
@@ -129,7 +127,7 @@ export default class Header extends Vue {
    */
   switchLocale() {
     const newLocale = this.locale === 'en' ? 'ru' : 'en'
-    I18nModule.setLang(newLocale)
+    this.$vuexModules.I18n.setLang(newLocale)
   }
 
   /**
@@ -153,7 +151,7 @@ export default class Header extends Vue {
     deferredPrompt.userChoice
       .then((choiceResult: { outcome: string }) => {
         if (choiceResult.outcome === 'accepted') {
-          UserModule.SET_SHOW_A2HS_BUTTON(false)
+          this.$vuexModules.User.SET_SHOW_A2HS_BUTTON(false)
         } else {
           console.log('User dismissed the A2HS prompt')
         }

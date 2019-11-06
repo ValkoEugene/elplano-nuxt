@@ -10,8 +10,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { SnackbarsModule, SnackbarColor } from '~/store/snackbars.ts'
-import { UserModule } from '~/store/user.ts'
+import { SnackbarColor } from '~/store/snackbars.ts'
 import { getRegistrationInfo } from '~/utils/auth'
 import { confirmAccount } from '~/api/user.ts'
 
@@ -40,7 +39,7 @@ export default class ConfirmAccount extends Vue {
     try {
       await confirmAccount(this.token)
 
-      SnackbarsModule.ADD_SNACKBARS([
+      this.$vuexModules.Snackbars.ADD_SNACKBARS([
         { text: 'Аккаунт подтвержден', color: SnackbarColor.success }
       ])
 
@@ -49,10 +48,10 @@ export default class ConfirmAccount extends Vue {
 
       // Проверить наличие в localStorage пароль-логин если есть то логиним
       registrationInfo
-        ? UserModule.login(registrationInfo)
+        ? this.$vuexModules.User.login(registrationInfo)
         : this.$router.push('/login')
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(
         error.response.data.errors.map(({ detail }: { detail: string }) => ({
           text: detail,
           color: 'error'

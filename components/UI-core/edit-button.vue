@@ -1,6 +1,6 @@
 <template>
   <v-list-item
-    v-show="!presidentAccess || $store.getters['user/IS_PRESIDENT']"
+    v-show="!presidentAccess || isPresident"
     icon
     class="text-primary"
     :disabled="disabled"
@@ -29,5 +29,12 @@ export default class EditButton extends Vue {
    */
   @Prop({ type: Boolean, default: true })
   readonly presidentAccess!: boolean
+
+  /**
+   * Флаг является ли пользователь старостой
+   */
+  get isPresident(): boolean {
+    return this.$vuexModules.User.isPresident
+  }
 }
 </script>

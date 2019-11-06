@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { SnackbarsModule, Snackbar } from '~/store/snackbars.ts'
+import { SnackbarI } from '~/store/snackbars.ts'
 
 @Component
 export default class Snackbars extends Vue {
@@ -43,8 +43,8 @@ export default class Snackbars extends Vue {
   /**
    * Список сообщений
    */
-  get snackbars(): Snackbar[] {
-    return SnackbarsModule.snackbars
+  get snackbars(): SnackbarI[] {
+    return this.$vuexModules.Snackbars.snackbars
   }
 
   /**
@@ -88,8 +88,8 @@ export default class Snackbars extends Vue {
   /**
    * Установить сообщения
    */
-  setSnackbars(snackbars: Snackbar[]) {
-    SnackbarsModule.SET_SNACKBARS(snackbars)
+  setSnackbars(snackbars: SnackbarI[]) {
+    this.$vuexModules.Snackbars.SET_SNACKBARS(snackbars)
   }
 
   /**

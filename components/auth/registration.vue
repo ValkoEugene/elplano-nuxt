@@ -64,7 +64,6 @@
 <script lang="ts">
 import axios from 'axios'
 import { Component, Vue } from 'vue-property-decorator'
-import { SnackbarsModule } from '~/store/snackbars.ts'
 import { setRegistrationInfo } from '~/utils/auth'
 
 @Component({
@@ -122,7 +121,7 @@ export default class Registration extends Vue {
 
       this.successMessage = meta.message
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(
         error.response.data.errors.map(({ detail }: { detail: string }) => ({
           text: detail,
           color: 'error'

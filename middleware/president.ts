@@ -1,8 +1,9 @@
-import { UserModule } from '~/store/user.ts'
-
 // Middleware для проверки является ли пользователь старостой
-export default ({ redirect }) => {
-  if (!UserModule.isPresident) {
+
+import { Context } from '@nuxt/types'
+
+export default ({ redirect, app }: Context) => {
+  if (app.$vuexModules.User.isPresident) {
     return redirect('/')
   }
 }

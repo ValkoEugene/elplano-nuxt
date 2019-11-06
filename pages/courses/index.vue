@@ -50,7 +50,6 @@ import { Course, courseApi } from '~/api/courses.ts'
 import CoursesList from '~/mixins/CoursesList.ts'
 import LecturersList from '~/mixins/LecturersList.ts'
 import CheckGroup from '~/mixins/CheckGroup.ts'
-import { SnackbarsModule } from '~/store/snackbars.ts'
 import ModalEditComponent from '~/components/modal/modal-edit.vue'
 
 @Component({
@@ -194,7 +193,7 @@ export default class LessonsPage extends Mixins(
 
       this.editModel = course
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
       this.updating = false
     }
@@ -215,7 +214,7 @@ export default class LessonsPage extends Mixins(
         item.id === course.id ? course : item
       )
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
       this.updating = false
     }
@@ -233,7 +232,7 @@ export default class LessonsPage extends Mixins(
       await courseApi.deleteById(id)
       this.courses = this.courses.filter((item) => item.id !== id)
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
       this.updating = false
     }

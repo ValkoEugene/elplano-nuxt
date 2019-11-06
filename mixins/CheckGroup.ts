@@ -1,5 +1,4 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { GroupModule } from '~/store/group'
 
 @Component
 export default class CheckGroup extends Vue {
@@ -7,7 +6,7 @@ export default class CheckGroup extends Vue {
    * Флаг наличия группы
    */
   get haveGroup(): boolean {
-    return GroupModule.haveGroup
+    return this.$vuexModules.Group.haveGroup
   }
 
   mounted() {

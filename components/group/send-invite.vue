@@ -28,7 +28,6 @@
 <script lang="ts">
 import { Component, Vue, Ref } from 'vue-property-decorator'
 import { sendInvite, inviteI } from '~/api/admin-invites.ts'
-import { SnackbarsModule } from '~/store/snackbars.ts'
 
 @Component({
   components: {
@@ -70,7 +69,7 @@ export default class SendInvite extends Vue {
       this.invite = { email: '' }
       this.$emit('sendInvite')
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(error.snackbarErrors)
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     } finally {
       this.updating = false
     }

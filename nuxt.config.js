@@ -33,10 +33,11 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
+    '~/plugins/VuexDecaratorsModules',
     '~/plugins/rules',
     '~/plugins/i18n',
     '~/plugins/helpers',
-    { src: '~/plugins/a2hs.js', mode: 'client' }
+    { src: '~/plugins/a2hs.ts', mode: 'client' }
   ],
   /*
    ** Nuxt.js dev-modules

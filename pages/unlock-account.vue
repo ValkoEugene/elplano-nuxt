@@ -11,7 +11,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import axios from 'axios'
-import { SnackbarsModule, SnackbarColor } from '~/store/snackbars.ts'
+import { SnackbarColor } from '~/store/snackbars.ts'
 
 @Component({
   layout: 'empty'
@@ -45,12 +45,12 @@ export default class ConfirmAccount extends Vue {
         }
       })
 
-      SnackbarsModule.ADD_SNACKBARS([
+      this.$vuexModules.Snackbars.ADD_SNACKBARS([
         { text: 'Аккаунт разблокирован', color: SnackbarColor.success }
       ])
       this.$router.push('/login')
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(
         error.response.data.errors.map(({ detail }: { detail: string }) => ({
           text: detail,
           color: SnackbarColor.error

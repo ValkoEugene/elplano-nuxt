@@ -1,6 +1,6 @@
 <template>
   <v-list-item
-    v-show="!presidentAccess || $store.getters['user/IS_PRESIDENT']"
+    v-show="!presidentAccess || isPresident"
     icon
     color="error"
     :disabled="disabled"
@@ -47,6 +47,13 @@ export default class DeleteButton extends Vue {
    */
   @Prop({ type: String, required: true })
   readonly confirmText!: string
+
+  /**
+   * Флаг является ли пользователь старостой
+   */
+  get isPresident(): boolean {
+    return this.$vuexModules.User.isPresident
+  }
 
   /**
    * Показать окно подтверждения

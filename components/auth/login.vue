@@ -30,7 +30,7 @@
         rounded
         :disabled="loginFetching"
         class="login__btn elevation-10"
-        @click="$refs.form.validate() && UserModule.login(user)"
+        @click="$refs.form.validate() && login()"
         >{{ $t('auth.loginBtn') }}</v-btn
       >
     </template>
@@ -39,9 +39,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { UserModule } from '~/store/user.ts'
 
-interface User {
+interface UserI {
   login: string
   password: string
 }
@@ -57,22 +56,24 @@ interface User {
 export default class Login extends Vue {
   /**
    * Информация о пользователе
-   * @type {{
-   *  login: String,
-   *  password: String
-   * }}
    */
-  user: User = {
+  user: UserI = {
     login: '',
     password: ''
   }
 
   /**
    * Флаг процесса логина
-   * @type {Boolean}
    */
-  get loginFetching() {
-    return UserModule.loginFetching
+  get loginFetching(): boolean {
+    return this.$vuexModules.User.loginFetching
+  }
+
+  /**
+   * Логин
+   */
+  login() {
+    this.$vuexModules.User.login(this.user)
   }
 }
 </script>

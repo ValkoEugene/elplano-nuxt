@@ -34,7 +34,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import axios from 'axios'
-import { SnackbarsModule } from '~/store/snackbars.ts'
 
 @Component({
   components: {
@@ -80,7 +79,7 @@ export default class ResetPassword extends Vue {
 
       this.successMessage = meta.message
     } catch (error) {
-      SnackbarsModule.ADD_SNACKBARS(
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(
         error.response.data.errors.map(({ detail }: { detail: string }) => ({
           text: detail,
           color: 'error'

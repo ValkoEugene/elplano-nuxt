@@ -1,15 +1,6 @@
-import {
-  VuexModule,
-  Module,
-  Action,
-  Mutation,
-  getModule
-} from 'vuex-module-decorators'
-// import {
-//   namespace as snackbarNamespace,
-//   Types as snackbarTypes
-// } from '~/store/snackbars'
-import store from '~/store'
+import { VuexModule, Module, Action, Mutation } from 'vuex-module-decorators'
+
+export const name = 'i18n'
 
 export type Locales = 'en' | 'ru'
 export type LocalesList = ['en', 'ru']
@@ -19,8 +10,8 @@ export interface I18nStateI {
   locale: Locales
 }
 
-@Module({ dynamic: true, store: store(), name: 'i18n' })
-class I18n extends VuexModule implements I18nStateI {
+@Module({ namespaced: true, name })
+export class I18n extends VuexModule implements I18nStateI {
   /**
    * Список локалей
    */
@@ -32,7 +23,7 @@ class I18n extends VuexModule implements I18nStateI {
   public locale: Locales = 'ru'
 
   @Mutation
-  private SET_LANG(locale: Locales) {
+  SET_LANG(locale: Locales) {
     this.locale = locale
   }
 
@@ -54,5 +45,3 @@ class I18n extends VuexModule implements I18nStateI {
     }
   }
 }
-
-export const I18nModule = getModule(I18n)

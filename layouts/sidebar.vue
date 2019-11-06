@@ -9,8 +9,8 @@
     <v-list-item>
       <v-list-item-content>
         <img
-          v-if="user && user.avatar_url"
-          :src="user.avatar_url"
+          v-if="user && user.avatar"
+          :src="user.avatar"
           class="user__avatar"
         />
         <v-list-item-title class="title">{{
@@ -40,7 +40,6 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { UserModule } from '~/store/user.ts'
 import { User as UserI } from '~/api/admin-user.ts'
 import { Student } from '~/api/group-users.ts'
 
@@ -64,17 +63,65 @@ export default class Sidebar extends Vue {
   sidebarStatus: boolean = false
 
   /**
+   * Пункты меню
+   */
+  get items() {
+    return [
+      {
+        title: this.$t('sidebar.schedule'),
+        icon: 'mdi-view-dashboard',
+        url: '/'
+      },
+      {
+        title: this.$t('sidebar.lessons'),
+        icon: 'mdi-library-books',
+        url: '/courses'
+      },
+      {
+        title: this.$t('sidebar.teachers'),
+        icon: 'mdi-account-supervisor',
+        url: '/lecturers'
+      },
+      {
+        title: this.$t('sidebar.group'),
+        icon: 'mdi-account-group',
+        url: '/group'
+      },
+      {
+        title: this.$t('sidebar.tasks'),
+        icon: 'mdi-briefcase',
+        url: '/tasks'
+      },
+      {
+        title: this.$t('sidebar.measure'),
+        icon: 'mdi-help-box',
+        url: '/measure'
+      },
+      {
+        title: this.$t('sidebar.ratings'),
+        icon: 'mdi-star-half',
+        url: '/ratings'
+      },
+      {
+        title: this.$t('sidebar.attachments'),
+        icon: 'mdi-briefcase-download',
+        url: '/attachments'
+      }
+    ]
+  }
+
+  /**
    * Информация о пользователе
    */
-  get userInfo(): UserI {
-    return UserModule.userInfo
+  get user(): UserI {
+    return this.$vuexModules.User.userInfo
   }
 
   /**
    * Информация о студенте
    */
-  get studentInfo(): Student {
-    return UserModule.studentInfo
+  get student(): Student {
+    return this.$vuexModules.User.studentInfo
   }
 
   mounted() {

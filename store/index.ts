@@ -1,10 +1,9 @@
+import Vue from 'vue'
 import Vuex from 'vuex'
-import { GroupStateI } from './group'
-import { I18nStateI } from './i18n'
-import { SnackbarsStateI } from './snackbars'
-import { UserStateI } from './user'
-
-// Vue.use(Vuex)
+import { GroupStateI, Group, name as GroupName } from './group'
+import { I18nStateI, I18n, name as I18nName } from './i18n'
+import { SnackbarsStateI, Snackbars, name as SnackbarsName } from './snackbars'
+import { UserStateI, User, name as UserName } from './user'
 
 export interface RootStateI {
   group: GroupStateI
@@ -13,12 +12,17 @@ export interface RootStateI {
   user: UserStateI
 }
 
-// // Declare empty store first, dynamically register all modules later.
-// export default () => new Vuex.Store<RootStateI>({})
+Vue.use(Vuex)
 
-// import Vuex from 'vuex'
+const store = () =>
+  new Vuex.Store({
+    state: {},
+    modules: {
+      [I18nName]: I18n,
+      [GroupName]: Group,
+      [SnackbarsName]: Snackbars,
+      [UserName]: User
+    }
+  })
 
-// Declare empty store first, dynamically register all modules later.
-const createStore = () => new Vuex.Store<RootStateI>({})
-
-export default createStore
+export default store
