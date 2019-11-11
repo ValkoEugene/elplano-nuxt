@@ -53,7 +53,7 @@ export interface TableHeader {
       )
   }
 })
-export default class InvitesList extends Vue {
+export default class InvitesAdmin extends Vue {
   /**
    * Заголовки таблицы
    */
@@ -66,8 +66,8 @@ export default class InvitesList extends Vue {
   /**
    * Цвета статусов
    */
-  colors: {
-    pending: 'warning'
+  colors = {
+    pending: 'warning',
     accepted: 'success'
   }
 
