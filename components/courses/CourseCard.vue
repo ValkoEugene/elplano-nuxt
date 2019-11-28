@@ -48,9 +48,11 @@
   </Card>
 </template>
 
-<script>
-export default {
-  name: 'CourseCard',
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Course } from '~/api/courses.ts'
+
+@Component({
   components: {
     DeleteButton: () =>
       import(
@@ -64,52 +66,41 @@ export default {
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  },
-  props: {
-    /**
-     * Предмет
-     * @type {Object}
-     */
-    course: {
-      type: Object,
-      required: true
-    },
+  }
+})
+export default class CourseCard extends Vue {
+  /**
+   * Предмет
+   */
+  @Prop({ type: Object as () => Course, required: true })
+  readonly course!: Course
 
-    /**
-     * Функиция для получения отображения преподователя по Id
-     * @type {Function}
-     */
-    getLecturerView: {
-      type: Function,
-      required: true
-    },
+  /**
+   * Флаг процесса обновления
+   * (При обновление какого либа предмета блокируем кнопки)
+   */
+  @Prop({ type: Boolean, required: true })
+  readonly updating!: boolean
 
-    /**
-     * Флаг процесса обновления
-     * (При обновление какого либа предмета блокируем кнопки)
-     * @type {Boolean}
-     */
-    updating: {
-      type: Boolean,
-      required: true
-    }
-  },
-  methods: {
-    /**
-     * Удалить Предмет
-     * @param {String} id -Id предмета
-     */
-    deleteCourse(id) {
-      this.$emit('deleteCourse', id)
-    },
+  /**
+   * Функиция для получения отображения преподователя по Id
+   * @type {Function}
+   */
+  @Prop({ type: Function, required: true })
+  readonly getLecturerView!: (id: string) => string
 
-    /**
-     * Редактировать предмет
-     * @param {Object} course - предмет
-     */
-    edit(course) {
-      this.$emit('editCourse', course)
-    }
+  /**
+   * Удалить Предмет
+   */
+  deleteCourse(id: string) {
+    this.$emit('deleteCourse', id)
+  }
+
+  /**
+   * Редактировать предметт
+   */
+  edit(course: Course) {
+    this.$emit('editCourse', course)
   }
 }
 </script>

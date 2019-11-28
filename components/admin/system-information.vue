@@ -51,12 +51,11 @@
   </div>
 </template>
 
-<script>
-import { getSystemInformation } from '~/api/admin'
-import { addSnackbarsByStore } from '~/store/snackbars'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { getSystemInformation, DisksUsage, MemoryUsage } from '~/api/admin.ts'
 
-export default {
-  name: 'AdminSystemInformation',
+@Component({
   components: {
     Loader: () =>
       import(
@@ -73,78 +72,70 @@ export default {
      * @param {number}
      * @returns {string}
      */
-    convertBytesToGb(value) {
+    convertBytesToGb(value: any): string {
       return !value || typeof value !== 'number'
         ? '-'
         : Math.round((value / 1e9) * 10) / 10 + ' Gb'
     }
-  },
-  data: () => ({
-    /**
-     * Флаг загрузки
-     * @type {boolean}
-     */
-    loading: true,
+  }
+})
+export default class AdminSystemInformation extends Vue {
+  /**
+   * Флаг загрузки
+   * @type {boolean}
+   */
+  loading: boolean = true
 
-    /**
-     * Количетсво ядер
-     * @type {number}
-     */
-    cpu_cores: 0,
+  /**
+   * Количетсво ядер
+   * @type {number}
+   */
+  cpu_cores: number = 0
 
-    /**
-     * Память
-     * @type {{ active_bytes: number, total_bytes: number }}
-     */
-    memory_usage: {
-      active_bytes: 0,
-      total_bytes: 0
-    },
+  /**
+   * Память
+   * @type {MemoryUsage}
+   */
+  memory_usage: MemoryUsage = {
+    active_bytes: 0,
+    total_bytes: 0
+  }
 
-    /**
-     * @type {[{
-     *  total_bytes: number,
-     *  active_bytes: number,
-     *  disk_name: string,
-     *  mount_path: string
-     * }]}
-     */
-    disks_usage: [],
+  /**
+   * @type {DisksUsage[]}
+   */
+  disks_usage: DisksUsage[] = []
 
-    /**
-     * Флаг наличия информации
-     * @type {boolean}
-     */
-    haveInfo: false
-  }),
+  /**
+   * Флаг наличия информации
+   * @type {boolean}
+   */
+  haveInfo: boolean = false
+
   mounted() {
     this.loadData()
-  },
-  methods: {
-    /**
-     * Загрузить данные
-     * @type {Function}
-     */
-    async loadData() {
-      try {
-        const response = await getSystemInformation()
-        if (
-          response === null ||
-          (Array.isArray(response) && !response.length)
-        ) {
-          this.haveInfo = false
-        } else {
-          const { cpu_cores, memory_usage, disks_usage } = response
-          this.cpu_cores = cpu_cores
-          this.memory_usage = memory_usage
-          this.disks_usage = disks_usage
-          this.haveInfo = true
-        }
+  }
 
-        this.loading = false
-      } catch (error) {
-        addSnackbarsByStore(this.$store, error.snackbarErrors)
+  /**
+   * Загрузить данные
+   * @type {Function}
+   */
+  async loadData(): Promise<void> {
+    try {
+      const response = await getSystemInformation()
+      if (response === null || (Array.isArray(response) && !response.length)) {
+        this.haveInfo = false
+      } else {
+        const { cpu_cores, memory_usage, disks_usage } = response
+        this.cpu_cores = cpu_cores
+        this.memory_usage = memory_usage
+        this.disks_usage = disks_usage
+        this.haveInfo = true
       }
+
+      this.loading = false
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 }

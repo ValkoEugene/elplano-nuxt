@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    v-show="!presidentAccess || $store.getters['user/IS_PRESIDENT']"
+    v-show="!presidentAccess || isPresident"
     fixed
     dark
     fab
@@ -14,27 +14,31 @@
   </v-btn>
 </template>
 
-<script>
-export default {
-  name: 'AddNew',
-  props: {
-    /**
-     * Флаг отключения кнопки
-     * @type {Boolean}
-     */
-    disabled: {
-      type: Boolean,
-      default: false
-    },
+<script lang="ts">
+import { Vue, Prop, Component } from 'vue-property-decorator'
 
-    /**
-     * Флаг доступа только старосте
-     * @type {Boolean}
-     */
-    presidentAccess: {
-      type: Boolean,
-      default: true
-    }
+/**
+ * Компонент кнопки добавления новой сущности
+ */
+@Component
+export default class AddNew extends Vue {
+  /**
+   * Флаг отключения кнопки
+   * @type {Boolean}
+   */
+  @Prop({ type: Boolean, default: false }) readonly disabled!: boolean
+
+  /**
+   * Флаг доступа только старосте
+   * @type {Boolean}
+   */
+  @Prop({ type: Boolean, default: true }) readonly presidentAccess!: boolean
+
+  /**
+   * Флаг является ли пользователь старостой
+   */
+  get isPresident(): boolean {
+    return this.$vuexModules.User.isPresident
   }
 }
 </script>

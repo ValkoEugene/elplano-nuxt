@@ -12,56 +12,58 @@
   />
 </template>
 
-<script>
+<script lang="ts">
+import { Vue, Component, Model, Watch } from 'vue-property-decorator'
 import throttle from '~/utils/throttle'
 
-export default {
-  name: 'Search',
-  model: {
-    prop: 'value'
-  },
-  props: {
-    /**
-     * Значение для v-model
-     * @type {String}
-     */
-    value: {
-      type: String,
-      default: ''
-    }
-  },
-  data: () => ({
-    /**
-     * Локальная копия значения
-     * @type {String}
-     */
-    localValue: ''
-  }),
-  computed: {
-    /**
-     * Обновляем значение с задержкой
-     * @type {Functoin}
-     */
-    throttleEmitValue() {
-      return throttle(this.emitValue, 300)
-    }
-  },
-  watch: {
-    localValue() {
-      this.throttleEmitValue()
-    }
-  },
+/**
+ * Компонент строки поиска
+ * Паботает через v-model с задержкой, чтобы значения не обновлялось часто
+ */
+@Component
+export default class Search extends Vue {
+  /**
+   * Значение для v-model
+   * @type {string}
+   */
+  @Model('input', { type: String }) private readonly value!: string
+
+  /**
+   * Локальная копия значения
+   * @type {string}
+   */
+  localValue: string = ''
+
+  /**
+   * Функция для обновления значения с задержкой
+   * @type {Functoin}
+   */
+  get throttleEmitValue(): (value: string) => void {
+    return throttle(this.emitValue, 300)
+  }
+
+  /**
+   * Обновляем значение для v-model
+   * @type {Function}
+   */
+  emitValue(): void {
+    this.$emit('input', this.localValue)
+  }
+
+  /**
+   * Инициализация значения
+   */
   mounted() {
     this.localValue = this.value
-  },
-  methods: {
-    /**
-     * Обновляем значение для v-model
-     * @type {Function}
-     */
-    emitValue() {
-      this.$emit('input', this.localValue)
-    }
+  }
+
+  /**
+   * Следим за изменением локального значения
+   * @param {string} val - новое локальное значение
+   */
+  @Watch('localValue')
+  onLocalValueChange(val: string) {
+    this.throttleEmitValue(val)
   }
 }
 </script>

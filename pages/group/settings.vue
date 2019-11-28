@@ -6,9 +6,13 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'GroupSettings',
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+/**
+ * Компонент с настройками группы
+ */
+@Component({
   middleware: ['auth', 'president'],
   components: {
     EditGroup: () =>
@@ -20,5 +24,6 @@ export default {
         '~/components/group/invites-admin.vue' /*  webpackChunkName: 'components/group' */
       )
   }
-}
+})
+export default class GroupSettings extends Vue {}
 </script>

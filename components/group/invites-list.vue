@@ -21,73 +21,96 @@
   </Card>
 </template>
 
-<script>
-import { mapState, mapActions } from 'vuex'
-import { namespace, Types } from '~/store/invites/user-invites'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { getInvites, acceptInvite, GroupInviteI } from '~/api/user-invites.ts'
 import moment from '~/plugins/moment'
 
-export default {
-  name: 'InvitesList',
+interface TableHeader {
+  text?: string
+  sortable?: boolean
+  value: string
+  width?: string
+}
+
+/**
+ * Компонент с списком приглашений в группы
+ */
+@Component({
   components: {
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  },
-  data: () => ({
-    /**
-     * Заголовки таблицы
-     * @type {Array}
-     */
-    headers: [
-      { text: 'Группа', sortable: false, value: 'group_title' },
-      { text: 'Номер', sortable: false, value: 'group_number' },
-      { text: 'Отправлено', sortable: false, value: 'sent_at' },
-      { value: 'invitation_token', width: '150px' }
-    ]
-  }),
-  computed: {
-    ...mapState(namespace, [
-      /**
-       * Флаг загрузки
-       * @type {Boolean}
-       */
-      'loading',
-      /**
-       * Флаг обновления
-       * @type {Boolean}
-       */
-      'updating',
-      /**
-       * Список приглашений
-       * @type {Array}
-       */
-      'invites'
-    ])
-  },
+  }
+})
+export default class InvitesList extends Vue {
+  /**
+   * Заголовки таблицы
+   */
+  headers: TableHeader[] = [
+    { text: 'Группа', sortable: false, value: 'group_title' },
+    { text: 'Номер', sortable: false, value: 'group_number' },
+    { text: 'Отправлено', sortable: false, value: 'sent_at' },
+    { value: 'invitation_token', width: '150px' }
+  ]
+
+  /**
+   * Флаг загрузки
+   */
+  loading: boolean = true
+
+  /**
+   * Флаг обновления
+   */
+  updating: boolean = false
+
+  /**
+   * Список приглашений
+   */
+  invites: GroupInviteI[] = []
+
   mounted() {
     this.loadData()
-  },
-  methods: {
-    ...mapActions(namespace, {
-      /**
-       * Загрузить список приглашения
-       */
-      loadData: Types.actions.LOAD_INVITES,
-      /**
-       * Принять приглашение
-       */
-      accept: Types.actions.ACCEPT_INVITE
-    }),
+  }
 
-    /**
-     * Форматировать дату
-     * @param {String} date - дата
-     * @returns {String}
-     */
-    formatDate(date) {
-      return date ? moment(date).format('DD.MM.YYYY') : '-'
+  /**
+   * Загрузить список приглашений
+   */
+  async loadData() {
+    try {
+      this.invites = await getInvites()
+      this.loading = false
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     }
+  }
+
+  /**
+   * Принять приглашение
+   */
+  async accept(token: string) {
+    try {
+      this.updating = true
+
+      await acceptInvite(token)
+
+      // После принятия прглашения редиректим на главную страницу
+      // Там в layout идет запрос на получение информации о группе
+      // TODO делать запрос на получение информацие о группе тут
+      this.$router.push('/')
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+      this.updating = false
+    }
+  }
+
+  /**
+   * Форматировать дату
+   * @param {String} date - дата
+   */
+  formatDate(date: string): string {
+    return date ? moment(date).format('DD.MM.YYYY') : '-'
   }
 }
 </script>

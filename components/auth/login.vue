@@ -30,54 +30,50 @@
         rounded
         :disabled="loginFetching"
         class="login__btn elevation-10"
-        @click="$refs.form.validate() && login(user)"
+        @click="$refs.form.validate() && login()"
         >{{ $t('auth.loginBtn') }}</v-btn
       >
     </template>
   </Card>
 </template>
 
-<script>
-import { mapActions } from 'vuex'
-import { Types, namespace } from '~/store/user'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 
-export default {
-  name: 'Login',
+interface UserI {
+  login: string
+  password: string
+}
+
+@Component({
   components: {
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  },
-  data: () => ({
-    /**
-     * Информация о пользователе
-     * @type {{
-     *  login: String,
-     *  password: String
-     * }}
-     */
-    user: {
-      login: '',
-      password: ''
-    }
-  }),
-  computed: {
-    /**
-     * Флаг процесса логина
-     * @type {Boolean}
-     */
-    loginFetching() {
-      return this.$store.state.user.loginFetching
-    }
-  },
-  methods: {
-    ...mapActions(namespace, {
-      /**
-       * Вход
-       */
-      login: Types.actions.LOGIN
-    })
+  }
+})
+export default class Login extends Vue {
+  /**
+   * Информация о пользователе
+   */
+  user: UserI = {
+    login: '',
+    password: ''
+  }
+
+  /**
+   * Флаг процесса логина
+   */
+  get loginFetching(): boolean {
+    return this.$vuexModules.User.loginFetching
+  }
+
+  /**
+   * Логин
+   */
+  login() {
+    this.$vuexModules.User.login(this.user)
   }
 }
 </script>

@@ -19,109 +19,93 @@
   </div>
 </template>
 
-<script>
-import { mapMutations } from 'vuex'
-import {
-  Types as snackbarsTypes,
-  namespace as snackbarsNamespace
-} from '~/store/snackbars'
+<script lang="ts">
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { SnackbarI } from '~/store/snackbars.ts'
 
-export default {
-  name: 'Snackbars',
-  data: () => ({
-    /**
-     * Флаг активности
-     * @type {Boolean}
-     */
-    active: false,
+@Component
+export default class Snackbars extends Vue {
+  /**
+   * Флаг активности
+   */
+  active: boolean = false
 
-    /**
-     * Id таймера
-     * @type {Number}
-     */
-    timer: null,
+  /**
+   * Id таймера
+   */
+  timer: NodeJS.Timeout | null = null
 
-    /**
-     * Время до авто-закрытия
-     * @type {Number}
-     */
-    timeout: 3000
-  }),
-  computed: {
-    /**
-     * Список сообщений
-     * @type {[
-     *  {
-     *    text: String,
-     *    color: ('success'|'info' | 'error')
-     *  }
-     * ]}
-     */
-    snackbars() {
-      return this.$store.state.snackbars.snackbars
-    },
+  /**
+   * Время до авто-закрытия
+   */
+  timeout: number = 3000
 
-    /**
-     * Флаг наличия сообщений
-     * @type {Boolean}
-     */
-    haveSnackbars() {
-      return Boolean(this.snackbars.length)
+  /**
+   * Список сообщений
+   */
+  get snackbars(): SnackbarI[] {
+    return this.$vuexModules.Snackbars.snackbars
+  }
+
+  /**
+   * Флаг наличия сообщений
+   */
+  get haveSnackbars(): boolean {
+    return Boolean(this.snackbars.length)
+  }
+
+  /**
+   * При изменении флага активности на false удаляем первое сообщение
+   */
+  @Watch('active')
+  onActiveChange(value: boolean) {
+    if (value) return
+    if (this.timer) clearTimeout(this.timer)
+
+    const snackbars = [...this.snackbars]
+    snackbars.shift()
+
+    this.setSnackbars(snackbars)
+
+    // Если еще есть сообщения - проставляем флаг активности для следующего сообщения
+    // И устанавливаем для него закрытие по таймеру
+    if (snackbars.length) {
+      this.active = true
+      this.closeSnackbarByTimeout()
     }
-  },
-  watch: {
-    /**
-     * При изменении флага активности на false удаляем первое сообщение
-     */
-    active(value) {
-      if (value) return
-      if (this.timer) clearTimeout(this.timer)
+  }
 
-      const snackbars = [...this.snackbars]
-      snackbars.shift()
+  /**
+   * При повлении сообщений устанавливаем закрытие по таймауту
+   */
+  @Watch('haveSnackbars')
+  onHaveSnackbarsChange() {
+    this.active = this.haveSnackbars
 
-      this.setSnackbars(snackbars)
+    if (this.haveSnackbars) this.closeSnackbarByTimeout()
+  }
 
-      // Если еще есть сообщения - проставляем флаг активности для следующего сообщения
-      // И устанавливаем для него закрытие по таймеру
-      if (snackbars.length) {
-        this.active = true
-        this.closeSnackbarByTimeout()
-      }
-    },
+  /**
+   * Установить сообщения
+   */
+  setSnackbars(snackbars: SnackbarI[]) {
+    this.$vuexModules.Snackbars.SET_SNACKBARS(snackbars)
+  }
 
-    /**
-     * При повлении сообщений устанавливаем закрытие по таймауту
-     */
-    haveSnackbars() {
-      this.active = this.haveSnackbars
+  /**
+   * Закрыть сообщение
+   */
+  close() {
+    this.active = false
+  }
 
-      if (this.haveSnackbars) this.closeSnackbarByTimeout()
-    }
-  },
-  methods: {
-    ...mapMutations({
-      /**
-       * Установить сообщения
-       */
-      setSnackbars: `${snackbarsNamespace}/${snackbarsTypes.mutations.SET_SNACKBARS}`
-    }),
-
-    /**
-     * Закрыть сообщение
-     */
-    close() {
+  /**
+   * Закрыть сообщение по таймауте
+   */
+  closeSnackbarByTimeout() {
+    this.timer = setTimeout(() => {
       this.active = false
-    },
-
-    /**
-     * Закрыть сообщение по таймауте
-     */
-    closeSnackbarByTimeout() {
-      this.timer = setTimeout(() => {
-        this.active = false
-      }, this.timeout)
-    }
+    }, this.timeout)
   }
 }
 </script>

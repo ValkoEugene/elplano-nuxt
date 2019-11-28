@@ -6,11 +6,10 @@
   </div>
 </template>
 
-<script>
-import checkGroup from '~/mixins/checkgroup'
+<script lang="ts">
+import { Component, Mixins } from 'vue-property-decorator'
+import CheckGroup from '~/mixins/CheckGroup.ts'
 
-export default {
-  name: 'TasksPage',
-  mixins: [checkGroup]
-}
+@Component({})
+export default class TasksPage extends Mixins(CheckGroup) {}
 </script>

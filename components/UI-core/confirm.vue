@@ -18,66 +18,83 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: 'Confirm',
+<script lang="ts">
+import { Vue, Prop, Watch, Component } from 'vue-property-decorator'
+import Card from './card.vue'
+
+/**
+ * Слоты компонента
+ */
+export enum ConfirmSlots {
+  title = 'title',
+  content = 'content',
+  actions = 'actions'
+}
+
+/**
+ * Компонент с окном подтверждения
+ */
+@Component({
   components: {
-    Card: () =>
-      import('./card.vue' /* webpackChunkName: 'components/UI-core/card' */)
-  },
-  props: {
-    /**
-     * Флаг показа окна подтверждения
-     * @type {Boolean}
-     */
-    active: {
-      type: Boolean,
-      required: true
-    }
-  },
-  data: () => ({
-    /**
-     * Локальное значение показа окна
-     * @type {Boolean}
-     */
-    localActive: false
-  }),
-  computed: {
-    /**
-     * Флаг наличия слота с контентом
-     * @type {Boolean}
-     */
-    haveContentSlot() {
-      return Boolean(this.$slots.content)
-    }
-  },
-  watch: {
-    active() {
-      if (this.active === this.localActive) return
+    Card
+    // Card: () =>
+    //   import(
+    //     '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+    //   )
+  }
+})
+export default class Confirm extends Vue {
+  /**
+   * Флаг показа окна подтверждения
+   * @type {boolean}
+   */
+  @Prop({ type: Boolean, required: true })
+  private readonly active!: boolean
 
-      this.localActive = this.active
-    },
+  /**
+   * Локальное значение показа окна
+   * @type {boolean}
+   */
+  localActive: boolean = false
 
-    localActive() {
-      if (!this.localActive) this.cancel()
-    }
-  },
-  methods: {
-    /**
-     * Отмена
-     * @type {Function}
-     */
-    cancel() {
-      this.$emit('cancel')
-    },
+  /**
+   * Флаг наличия слота с контентом
+   * @type {boolean}
+   */
+  get haveContentSlot(): boolean {
+    return this.$slots[ConfirmSlots.content] !== undefined
+  }
 
-    /**
-     * Подтверждение
-     * @type {Function}
-     */
-    confirm() {
-      this.$emit('confirm')
-    }
+  /**
+   * Событие на закрытие окна подтверждения
+   */
+  cancel() {
+    this.$emit('cancel')
+  }
+
+  /**
+   * Событие на подтверждение
+   */
+  confirm() {
+    this.$emit('confirm')
+  }
+
+  /**
+   * Обработчик изменения флага показа окна подтверждения
+   */
+  @Watch('active')
+  onActiveChange() {
+    if (this.active === this.localActive) return
+
+    this.localActive = this.active
+  }
+
+  /**
+   * Обработчик изменения локального значения флага показа окна
+   */
+  @Watch('localActive')
+  onLocalActiveChange() {
+    if (!this.localActive) this.cancel()
   }
 }
 </script>

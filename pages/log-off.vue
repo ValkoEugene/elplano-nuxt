@@ -2,14 +2,18 @@
   <div>log-off</div>
 </template>
 
-<script>
-import { Types, namespace } from '~/store/user'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 
-export default {
-  name: 'LogOff',
-  layout: 'empty',
-  mounted() {
-    this.$store.dispatch(`${namespace}/${Types.actions.RESET_USER}`)
+/**
+ * Страница для разлогина
+ */
+@Component({
+  layout: 'empty'
+})
+export default class LogOff extends Vue {
+  async mounted() {
+    await this.$vuexModules.User.resetUser()
 
     // Используем location чтобы страница перезагрузилась и все состояние vuex сбросилось
     window.location.replace('/login')

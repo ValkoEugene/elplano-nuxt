@@ -22,71 +22,67 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Date',
-  model: {
-    prop: 'value'
-  },
-  props: {
-    /**
-     * Текущее значение
-     * @type {String}
-     */
-    value: {
-      type: String,
-      default: ''
-    },
+<script lang="ts">
+import { Vue, Component, Model, Prop } from 'vue-property-decorator'
+import { Rule } from '~/plugins/rules.ts'
 
-    /**
-     * Описание поля
-     * @type {String}
-     */
-    label: {
-      type: String,
-      required: true
-    },
+/**
+ * Компонент выбора даты
+ */
+@Component
+export default class Date extends Vue {
+  /**
+   * Текущее значение
+   * @type {string}
+   */
+  @Model('input', { type: String, default: '' }) readonly value!: string
 
-    /**
-     * Правила валидации
-     * @type {Array}
-     */
-    rules: {
-      type: Array,
-      default: () => []
-    }
-  },
-  data: () => ({
-    /**
-     * Локальная дата
-     * @type {String}
-     */
-    localDate: '',
+  /**
+   * Описание поля
+   * @type {string}
+   */
+  @Prop({ type: String, required: true }) readonly label!: string
 
-    /**
-     * Флаг показа выбора
-     * @type {Boolean}
-     */
-    active: false
-  }),
+  /**
+   * Правила валидации
+   * @type {Array}
+   */
+  @Prop({ type: Array as () => Rule[], default: () => [] })
+  readonly rules!: Rule[]
+
+  /**
+   * Локальная дата
+   * @type {String}
+   */
+  localDate: string = ''
+
+  /**
+   * Флаг показа выбора
+   * @type {Boolean}
+   */
+  active: boolean = false
+
   mounted() {
     this.localDate = this.value
-  },
-  methods: {
-    /**
-     * Отменить выбор
-     */
-    cancel() {
-      this.active = false
-    },
+  }
 
-    /**
-     * Сохранить выбор
-     */
-    save() {
-      this.$emit('input', this.localDate)
-      this.active = false
-    }
+  /**
+   * Отменить выбор
+   * @function
+   * @return {void}
+   */
+  cancel(): void {
+    this.active = false
+  }
+
+  /**
+   * Сохранить выбор
+   * @function
+   * @return {void}
+   */
+  save() {
+    this.$emit('input', this.localDate)
+    this.active = false
   }
 }
 </script>

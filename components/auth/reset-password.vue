@@ -31,81 +31,62 @@
   </Card>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 import axios from 'axios'
-import { mapMutations } from 'vuex'
-import {
-  Types as snackbarsTypes,
-  namespace as snackbarsNamespace
-} from '~/store/snackbars'
 
-export default {
-  name: 'ResetPassword',
+@Component({
   components: {
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  },
-  data: () => ({
-    /**
-     * Логин для сброса
-     * @type {String}
-     */
-    login: '',
+  }
+})
+export default class ResetPassword extends Vue {
+  /**
+   * Логин для сброса
+   */
+  login: string = ''
 
-    /**
-     * Сообщение при успешном сбросе
-     * @type {String}
-     */
-    successMessage: '',
+  /**
+   * Сообщение при успешном сбросе
+   */
+  successMessage: string = ''
 
-    /**
-     * Флаг блокировки кнопки
-     * @type {Boolean}
-     */
-    unactive: false
-  }),
-  methods: {
-    ...mapMutations(snackbarsNamespace, {
-      /**
-       * Показать сообщение
-       */
-      addSnackbars: snackbarsTypes.mutations.ADD_SNACKBARS
-    }),
+  /**
+   * Флаг блокировки кнопки
+   */
+  unactive: boolean = false
 
-    /**
-     * Сбросить пароль
-     * @async
-     * @type {Function}
-     * @returns {Void}
-     */
-    async resetPassword() {
-      this.unactive = true
+  /**
+   * Сбросить пароль
+   */
+  async resetPassword() {
+    this.unactive = true
 
-      try {
-        const {
-          data: { meta }
-        } = await axios({
-          method: 'post',
-          url: `${process.env.baseUrl}/api/v1/users/password`,
-          data: { user: { login: this.login } },
-          headers: {
-            'Content-Type': 'application/vnd.api+json'
-          }
-        })
+    try {
+      const {
+        data: { meta }
+      } = await axios({
+        method: 'post',
+        url: `${process.env.baseUrl}/api/v1/users/password`,
+        data: { user: { login: this.login } },
+        headers: {
+          'Content-Type': 'application/vnd.api+json'
+        }
+      })
 
-        this.successMessage = meta.message
-      } catch (error) {
-        this.addSnackbars(
-          error.response.data.errors.map(({ detail }) => ({
-            text: detail,
-            color: 'error'
-          }))
-        )
-      } finally {
-        this.unactive = false
-      }
+      this.successMessage = meta.message
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(
+        error.response.data.errors.map(({ detail }: { detail: string }) => ({
+          text: detail,
+          color: 'error'
+        }))
+      )
+    } finally {
+      this.unactive = false
     }
   }
 }

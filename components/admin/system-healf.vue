@@ -38,12 +38,11 @@
   </div>
 </template>
 
-<script>
-import { getSystemHealth } from '~/api/admin'
-import { addSnackbarsByStore } from '~/store/snackbars'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { getSystemHealth, SystemHealth } from '~/api/admin.ts'
 
-export default {
-  name: 'AdminSystemHealf',
+@Component({
   components: {
     Loader: () =>
       import(
@@ -53,66 +52,65 @@ export default {
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  },
-  data: () => ({
-    /**
-     * Флаг загрузки
-     * @type {Boolean}
-     */
-    loading: true,
+  }
+})
+export default class AdminSystemHealf extends Vue {
+  /**
+   * Флаг загрузки
+   * @type {Boolean}
+   */
+  loading: boolean = true
 
-    /**
-     * Информация о состояние системы
-     * @type {Object}
-     */
-    info: {
-      db_check: {
-        status: null,
-        message: null,
-        labels: null
-      },
-      redis_check: {
-        status: null,
-        message: null,
-        labels: null
-      },
-      cache_check: {
-        status: null,
-        message: null,
-        labels: null
-      },
-      queues_check: {
-        status: null,
-        message: null,
-        labels: null
-      }
+  /**
+   * Информация о состояние системы
+   * @type {SystemHealth}
+   */
+  info: SystemHealth = {
+    db_check: {
+      status: null,
+      message: null,
+      labels: null
+    },
+    redis_check: {
+      status: null,
+      message: null,
+      labels: null
+    },
+    cache_check: {
+      status: null,
+      message: null,
+      labels: null
+    },
+    queues_check: {
+      status: null,
+      message: null,
+      labels: null
     }
-  }),
-  computed: {
-    /**
-     * Флаг наличия информации
-     * @type {Boolean}
-     */
-    haveInfo() {
-      return this.info && Object.keys(this.info).length > 0
-    }
-  },
+  }
+
+  /**
+   * Флаг наличия информации
+   * @type {Boolean}
+   */
+  get haveInfo(): boolean {
+    return this.info && Object.keys(this.info).length > 0
+  }
+
   mounted() {
     this.loadData()
-  },
-  methods: {
-    /**
-     * Загрузить данные
-     * @type {Function}
-     */
-    async loadData() {
-      try {
-        this.info = await getSystemHealth()
+  }
 
-        this.loading = false
-      } catch (error) {
-        addSnackbarsByStore(this.$store, error.snackbarErrors)
-      }
+  /**
+   * Загрузить данные
+   * @type {Function}
+   */
+  async loadData(): Promise<void> {
+    try {
+      this.info = await getSystemHealth()
+
+      this.loading = false
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 }

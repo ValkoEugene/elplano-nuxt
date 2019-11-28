@@ -41,112 +41,102 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Vue, Component, Model, Prop, Watch } from 'vue-property-decorator'
 import moment from '~/plugins/moment'
 
-export default {
-  name: 'Datepicker',
-  model: {
-    prop: 'value'
-  },
-  props: {
-    /**
-     * Текущее значение
-     * @type {String}
-     */
-    value: {
-      type: String,
-      default: ''
-    },
+/**
+ * Компонент выбора даты и время
+ */
+@Component
+export default class Datepicker extends Vue {
+  /**
+   * Текущее значение
+   * @type {string}
+   */
+  @Model('input', { type: String, default: '' }) readonly value!: string
 
-    /**
-     * Описание поля
-     * @type {String}
-     */
-    label: {
-      type: String,
-      required: true
-    },
+  /**
+   * Описание поля
+   * @type {string}
+   */
+  @Prop({ type: String, required: true }) readonly label!: string
 
-    /**
-     * Правила валидации
-     * @type {Array}
-     */
-    rules: {
-      type: Array,
-      default: () => []
-    }
-  },
-  data: () => ({
-    /**
-     * Флаг активности выбора
-     * @type {Boolean}
-     */
-    active: false,
+  /**
+   * Правила валидации
+   * TODO Типы для правил валидации
+   * @type {Array}
+   */
+  @Prop({ type: Array, default: () => [] }) readonly rules!: any[]
+  // rules: { type: Array, default: () => [] }
 
-    /**
-     * Активный таб
-     * @type {Number | Null}
-     */
-    tab: null,
+  /**
+   * Флаг активности выбора
+   * @type {Boolean}
+   */
+  active: boolean = false
 
-    /**
-     * Локальная дата
-     * @type {String}
-     */
-    localDate: '',
+  /**
+   * Активный таб
+   * @type {Number | Null}
+   */
+  tab: number | null = null
 
-    /**
-     * Локальное время
-     * @type {String}
-     */
-    localTime: ''
-  }),
-  computed: {
-    /**
-     * Дата на отображение
-     * @type {String}
-     */
-    formatedDate() {
-      return this.value ? moment(this.value).format('YYYY-MM-DD HH:mm') : ''
-    }
-  },
-  watch: {
-    value() {
-      if (this.value) {
-        this.localTime = moment(this.value).format('HH:mm')
-        this.localDate = moment(this.value).format('YYYY-MM-DD')
-      }
-    }
-  },
+  /**
+   * Локальная дата
+   * @type {String}
+   */
+  localDate: string = ''
+
+  /**
+   * Локальное время
+   * @type {String}
+   */
+  localTime: string = ''
+
+  /**
+   * Дата на отображение
+   * @type {String}
+   */
+  get formatedDate(): string {
+    return this.value ? moment(this.value).format('YYYY-MM-DD HH:mm') : ''
+  }
+
   mounted() {
     if (this.value) {
       this.localTime = moment(this.value).format('HH:mm')
       this.localDate = moment(this.value).format('YYYY-MM-DD')
     }
-  },
-  methods: {
-    /**
-     * Закрыть выбор
-     * @type {Function}
-     */
-    close() {
-      this.active = false
-      this.tab = null
-    },
+  }
 
-    /**
-     * Сохранение новой даты
-     * @type {Function}
-     */
-    save() {
-      const date = moment(
-        `${this.localDate} ${this.localTime}`,
-        'YYYY-MM-DD HH:mm'
-      ).toISOString()
+  /**
+   * Закрыть выбор
+   * @function
+   */
+  close(): void {
+    this.active = false
+    this.tab = null
+  }
 
-      this.active = false
-      this.$emit('input', date)
+  /**
+   * Сохранение новой даты
+   * @function
+   */
+  save(): void {
+    const date = moment(
+      `${this.localDate} ${this.localTime}`,
+      'YYYY-MM-DD HH:mm'
+    ).toISOString()
+
+    this.active = false
+    this.$emit('input', date)
+  }
+
+  @Watch('value')
+  onValueChange() {
+    if (this.value) {
+      this.localTime = moment(this.value).format('HH:mm')
+      this.localDate = moment(this.value).format('YYYY-MM-DD')
     }
   }
 }

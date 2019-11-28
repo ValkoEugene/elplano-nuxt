@@ -22,71 +22,65 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Date',
-  model: {
-    prop: 'value'
-  },
-  props: {
-    /**
-     * Текущее значение
-     * @type {String}
-     */
-    value: {
-      type: String,
-      default: ''
-    },
+<script lang="ts">
+import { Component, Vue, Model, Prop } from 'vue-property-decorator'
+import { Rule } from '~/plugins/rules.ts'
 
-    /**
-     * Описание поля
-     * @type {String}
-     */
-    label: {
-      type: String,
-      required: true
-    },
+/**
+ * Компонет для выбора время
+ */
+@Component
+export default class Time extends Vue {
+  /**
+   * Текущее значение
+   * @type {String}
+   */
+  @Model('input', { type: String })
+  readonly value!: string
 
-    /**
-     * Правила валидации
-     * @type {Array}
-     */
-    rules: {
-      type: Array,
-      default: () => []
-    }
-  },
-  data: () => ({
-    /**
-     * Локальная время
-     * @type {String}
-     */
-    localTime: '',
+  /**
+   * Описание поля
+   * @type {String}
+   */
+  @Prop({ type: String, required: true })
+  readonly label!: string
 
-    /**
-     * Флаг показа выбора
-     * @type {Boolean}
-     */
-    active: false
-  }),
+  /**
+   * Правила валидации
+   * @type {Rule[]}
+   */
+  @Prop({ type: Array as () => Rule[], default: () => [] })
+  readonly rules!: Rule[]
+
+  /**
+   * Локальная время
+   * @type {String}
+   */
+  localTime: string = ''
+
+  /**
+   * Флаг показа выбора
+   * @type {Boolean}
+   */
+  active: boolean = false
+
+  /**
+   * Отменить выбор
+   */
+  cancel() {
+    this.active = false
+  }
+
+  /**
+   * Сохранить выбор
+   */
+  save() {
+    this.$emit('input', this.localTime)
+    this.active = false
+  }
+
   mounted() {
     this.localTime = this.value
-  },
-  methods: {
-    /**
-     * Отменить выбор
-     */
-    cancel() {
-      this.active = false
-    },
-
-    /**
-     * Сохранить выбор
-     */
-    save() {
-      this.$emit('input', this.localTime)
-      this.active = false
-    }
   }
 }
 </script>

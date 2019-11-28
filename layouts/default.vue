@@ -29,13 +29,11 @@
   </v-app>
 </template>
 
-<script>
-import { mapState, mapActions, mapGetters } from 'vuex'
-import { namespace as userNamespace, Types as userTypes } from '~/store/user'
-import { namespace as groupNamespace, Types as groupTypes } from '~/store/group'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { User as UserI } from '~/api/admin-user.ts'
 
-export default {
-  name: 'DefaultLayout',
+@Component({
   // Проверяем что пользователь авторизован
   middleware: ['auth'],
   components: {
@@ -55,66 +53,58 @@ export default {
       import(
         '~/components/modal/modal-confirm.vue' /* webpackChunkName: 'components/modal/modal-confirm' */
       )
-  },
-  computed: {
-    ...mapState(userNamespace, [
-      /**
-       * Флаг загрузки
-       * @type {Boolean}
-       */
-      'loading',
+  }
+})
+export default class DefaultLayout extends Vue {
+  /**
+   * Флаг загрузки
+   */
+  get loading(): boolean {
+    return this.$vuexModules.User.loading
+  }
 
-      /**
-       * Пользователь
-       * @type {Object | null}
-       */
-      'userInfo'
-    ]),
+  /**
+   * Пользователь
+   */
+  get userInfo(): UserI {
+    return this.$vuexModules.User.userInfo
+  }
 
-    ...mapGetters(groupNamespace, {
-      /**
-       * Флаг наличия группы
-       * @type {Boolean}
-       */
-      haveGroup: groupTypes.getters.HAVE_GROUP
-    }),
+  /**
+   * Флаг наличия группы
+   */
+  get haveGroup(): boolean {
+    return this.$vuexModules.Group.haveGroup
+  }
 
-    /**
-     * Стили с css переменными из темы
-     * @type {Object}
-     */
-    cssVariblesFromTheme() {
-      return {
-        '--secondary-color': this.$vuetify.theme.currentTheme.secondary,
-        '--primary-base': this.$vuetify.theme.currentTheme.primary.base,
-        '--primary-lighten1': this.$vuetify.theme.currentTheme.primary.lighten1,
-        '--primary-lighten2': this.$vuetify.theme.currentTheme.primary.lighten2,
-        '--primary-lighten3': this.$vuetify.theme.currentTheme.primary.lighten3,
-        '--primary-lighten4': this.$vuetify.theme.currentTheme.primary.lighten4,
+  /**
+   * Стили с css переменными из темы
+   */
+  get cssVariblesFromTheme() {
+    const { currentTheme } = this.$vuetify.theme as any
 
-        '--primary-darken1': this.$vuetify.theme.currentTheme.primary.darken1,
-        '--primary-darken2': this.$vuetify.theme.currentTheme.primary.darken2,
-        '--primary-darken3': this.$vuetify.theme.currentTheme.primary.darken3,
-        '--primary-darken4': this.$vuetify.theme.currentTheme.primary.darken4,
+    return {
+      '--secondary-color': currentTheme.secondary,
+      '--primary-base': currentTheme.primary.base,
+      '--primary-lighten1': currentTheme.primary.lighten1,
+      '--primary-lighten2': currentTheme.primary.lighten2,
+      '--primary-lighten3': currentTheme.primary.lighten3,
+      '--primary-lighten4': currentTheme.primary.lighten4,
 
-        '--primary-accent1': this.$vuetify.theme.currentTheme.primary.accent1,
-        '--primary-accent2': this.$vuetify.theme.currentTheme.primary.accent2,
-        '--primary-accent3': this.$vuetify.theme.currentTheme.primary.accent3,
-        '--primary-accent4': this.$vuetify.theme.currentTheme.primary.accent4
-      }
+      '--primary-darken1': currentTheme.primary.darken1,
+      '--primary-darken2': currentTheme.primary.darken2,
+      '--primary-darken3': currentTheme.primary.darken3,
+      '--primary-darken4': currentTheme.primary.darken4,
+
+      '--primary-accent1': currentTheme.primary.accent1,
+      '--primary-accent2': currentTheme.primary.accent2,
+      '--primary-accent3': currentTheme.primary.accent3,
+      '--primary-accent4': currentTheme.primary.accent4
     }
-  },
+  }
+
   mounted() {
-    this.getUserInfo()
-  },
-  methods: {
-    ...mapActions(userNamespace, {
-      /**
-       * Загрузить информацию о пользователе
-       * @type {Function}
-       */
-      getUserInfo: userTypes.actions.GET_USER_INFO
-    })
+    this.$vuexModules.User.getUserInfo()
   }
 }
 </script>

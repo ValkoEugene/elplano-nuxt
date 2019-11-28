@@ -32,7 +32,7 @@
     </template>
 
     <ModalEdit
-      ref="modal"
+      ref="modalEdit"
       :edit-model="editModel"
       :edit-schema="editSchema"
       :updating="updating"
@@ -44,14 +44,15 @@
   </div>
 </template>
 
-<script>
-import courseApi from '~/api/courses'
-import lecturersApi from '~/api/lecturers'
-import checkGroup from '~/mixins/checkgroup'
-import { addSnackbarsByStore } from '~/store/snackbars'
+<script lang="ts">
+import { Component, Mixins, Ref } from 'vue-property-decorator'
+import { Course, courseApi } from '~/api/courses.ts'
+import CoursesList from '~/mixins/CoursesList.ts'
+import LecturersList from '~/mixins/LecturersList.ts'
+import CheckGroup from '~/mixins/CheckGroup.ts'
+import ModalEditComponent from '~/components/modal/modal-edit.vue'
 
-export default {
-  name: 'LessonsPage',
+@Component({
   components: {
     Loader: () =>
       import(
@@ -73,189 +74,167 @@ export default {
       import(
         '~/components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
       )
-  },
-  mixins: [checkGroup],
-  data: () => ({
-    /**
-     * Строка поиска
-     * @type {String}
-     */
-    search: '',
+  }
+})
+export default class LessonsPage extends Mixins(
+  CheckGroup,
+  LecturersList,
+  CoursesList
+) {
+  /**
+   * Ссылка на экземпляр компонента ModalEdit
+   * @type {ModalEditComponent}
+   */
+  @Ref()
+  readonly modalEdit!: ModalEditComponent
 
-    /**
-     * Редактируемая модель предмета
-     * @type {Object}
-     */
-    editModel: {},
+  /**
+   * Строка поиска
+   * @type {string}
+   */
+  search: string = ''
 
-    /**
-     * Шаблон модели предмета
-     * @type {Object}
-     */
-    courseEmptyModel: {
-      id: '',
-      active: true,
-      title: '',
-      lecturer_ids: []
-    },
+  /**
+   * Пустая модель предмета
+   * @type {Course}
+   */
+  courseEmptyModel: Course = {
+    id: '',
+    active: true,
+    title: '',
+    lecturer_ids: []
+  }
 
-    /**
-     * Список преподавателей
-     * @type {Array}
-     */
-    courses: [],
+  /**
+   * Редактируемый предмет
+   * @type {Course}
+   */
+  editModel: Course = { ...this.courseEmptyModel }
 
-    /**
-     * Преподаватели
-     * @type {Array}
-     */
-    lecturers: [],
+  /**
+   * Флаг обновления
+   * @type {boolean}
+   */
+  updating: boolean = false
 
-    /**
-     * Флаг загрузки
-     * @type {Boolean}
-     */
-    loading: true,
+  /**
+   * Флаг загрузки
+   * @type {boolean}
+   */
+  get loading(): boolean {
+    return this.loadingCourses || this.loadingLecturers
+  }
 
-    /**
-     * Флаг обновления
-     * @type {Boolean}
-     */
-    updating: false
-  }),
-  computed: {
-    /**
-     * Схема для редактирования
-     * @type {{ fields: Array }}
-     */
-    editSchema() {
-      return {
-        fields: [
-          {
-            model: 'active',
-            type: 'v-checkbox',
-            label: this.$t('ui.card.badges.active')
-          },
-          {
-            model: 'title',
-            type: 'v-text-field',
-            label: this.$t('field.title'),
-            placeholder: this.$t('field.title'),
-            rules: [this.$rules.required],
-            inputType: 'text'
-          },
-          {
-            model: 'lecturer_ids',
-            type: 'v-select',
-            multiple: true,
-            items: this.lecturers,
-            itemValue: 'id',
-            itemText: 'view',
-            label: this.$t('lecturers.lecturers')
-          }
-        ]
-      }
+  /**
+   * Схема для редактирования
+   * @type {any}
+   */
+  get editSchema() {
+    return {
+      fields: [
+        {
+          model: 'active',
+          type: 'v-checkbox',
+          label: this.$t('ui.card.badges.active')
+        },
+        {
+          model: 'title',
+          type: 'v-text-field',
+          label: this.$t('field.title'),
+          placeholder: this.$t('field.title'),
+          rules: [this.$rules.required],
+          inputType: 'text'
+        },
+        {
+          model: 'lecturer_ids',
+          type: 'v-select',
+          multiple: true,
+          items: this.lecturers,
+          itemValue: 'id',
+          itemText: 'view',
+          label: this.$t('lecturers.lecturers')
+        }
+      ]
     }
-  },
-  mounted() {
-    this.loadData()
-  },
-  methods: {
-    /**
-     * Получить отображение преподавателя
-     * @type {Function}
-     * @param {String} id
-     * @returns {String}
-     */
-    getLecturerView(id) {
-      const lecturer = this.lecturers.find((item) => item.id === id)
+  }
 
-      return lecturer ? lecturer.view : '-'
-    },
+  /**
+   * Получить отображение преподавателя
+   * @type {Function}
+   * @param {String} id
+   * @returns {String}
+   */
+  getLecturerView(id: string): string {
+    const lecturer = this.lecturers.find((item) => item.id === id)
 
-    /**
-     * Редактировать предмет
-     * @type {Function}
-     * @param {Object} model - модель редакртируемого предмета
-     */
-    edit(model) {
-      this.editModel = { ...model }
+    return lecturer && lecturer.view ? lecturer.view : '-'
+  }
 
-      this.$refs.modal.open()
-    },
+  /**
+   * Редактировать предмет
+   * @type {Function}
+   * @param {Course} model - модель редакртируемого предмета
+   */
+  edit(model: Course): void {
+    this.editModel = { ...model }
 
-    /**
-     * Загрузить данные
-     */
-    async loadData() {
-      try {
-        const [courses, lecturers] = await Promise.all([
-          courseApi.loadData(),
-          lecturersApi.loadData()
-        ])
+    this.modalEdit.open()
+  }
 
-        this.courses = courses
-        this.lecturers = lecturers
+  /**
+   * Создать пердмет
+   * @type {Function}
+   */
+  async create(data: Course): Promise<void> {
+    try {
+      this.updating = true
+      const course = await courseApi.create(data)
+      this.courses.push(course)
 
-        this.loading = false
-      } catch (error) {
-        addSnackbarsByStore(this.$store, error.snackbarErrors)
-      }
-    },
+      this.editModel = course
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    } finally {
+      this.updating = false
+    }
+  }
 
-    /**
-     * Создать пердмет
-     * @type {Function}
-     */
-    async create(data) {
-      try {
-        this.updating = true
-        const course = await courseApi.create(data)
-        this.courses.push(course)
+  /**
+   * Обновить предмет
+   * @type {Function}
+   */
+  async update(data: Course): Promise<void> {
+    if (!data.id) return
 
-        this.editModel = course
-      } catch (error) {
-        addSnackbarsByStore(this.$store, error.snackbarErrors)
-      } finally {
-        this.updating = false
-      }
-    },
+    try {
+      this.updating = true
 
-    /**
-     * Обновить предмет
-     * @type {Function}
-     */
-    async update(data) {
-      try {
-        this.updating = true
+      const course = await courseApi.update(data, data.id)
+      this.courses = this.courses.map((item) =>
+        item.id === course.id ? course : item
+      )
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    } finally {
+      this.updating = false
+    }
+  }
 
-        const course = await courseApi.update(data, data.id)
-        this.courses = this.courses.map((item) =>
-          item.id === course.id ? course : item
-        )
-      } catch (error) {
-        addSnackbarsByStore(this.$store, error.snackbarErrors)
-      } finally {
-        this.updating = false
-      }
-    },
+  /**
+   * Удалить предмет
+   * @type {Function}
+   * @param {String} id - id предмета
+   */
+  async deleteCourse(id: string): Promise<void> {
+    try {
+      this.updating = true
 
-    /**
-     * Удалить предмет
-     * @type {Function}
-     * @param {String} id - id предмета
-     */
-    async deleteCourse(id) {
-      try {
-        this.updating = true
-
-        await courseApi.deleteById(id)
-        this.courses = this.courses.filter((item) => item.id !== id)
-      } catch (error) {
-        addSnackbarsByStore(this.$store, error.snackbarErrors)
-      } finally {
-        this.updating = false
-      }
+      await courseApi.deleteById(id)
+      this.courses = this.courses.filter((item) => item.id !== id)
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    } finally {
+      this.updating = false
     }
   }
 }

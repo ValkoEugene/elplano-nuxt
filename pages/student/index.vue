@@ -60,56 +60,64 @@
   </Card>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import clonedeep from 'lodash.clonedeep'
-import { mapActions, mapState } from 'vuex'
-import { namespace, Types } from '~/store/user'
-import checkGroup from '~/mixins/checkgroup'
+import CheckGroup from '~/mixins/CheckGroup.ts'
+import { Student } from '~/api/group-users.ts'
 
-export default {
-  name: 'StudentPage',
+@Component({
   components: {
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  },
-  mixins: [checkGroup],
-  data: () => ({
-    /**
-     * Локальнкая копия информации о студенте
-     * @type {Object}
-     */
-    localStudent: { social_networks: {} }
-  }),
-  computed: {
-    ...mapState(namespace, [
-      /**
-       * Флаг обновления
-       */
-      'updating',
-      /**
-       * Информация о студенте
-       */
-      'studentInfo'
-    ])
-  },
-  watch: {
-    studentInfo() {
-      this.localStudent = clonedeep(this.studentInfo)
-    }
-  },
+  }
+})
+export default class StudentPage extends Mixins(CheckGroup) {
+  /**
+   * Локальнкая копия информации о студенте
+   */
+  localStudent: Student = {
+    id: '',
+    about: '',
+    created_at: '',
+    email: '',
+    full_name: '',
+    phone: '',
+    president: false,
+    social_networks: {},
+    updated_at: ''
+  }
+
+  /**
+   * Флаг обновления
+   */
+  get updating() {
+    return this.$vuexModules.User.updating
+  }
+
+  /**
+   * Информация о студенте
+   */
+  get studentInfo(): Student {
+    return this.$vuexModules.User.studentInfo
+  }
+
+  @Watch('studentInfo')
+  onStudentInfoChange() {
+    this.localStudent = clonedeep(this.studentInfo)
+  }
+
   mounted() {
     this.localStudent = clonedeep(this.studentInfo)
-  },
-  methods: {
-    ...mapActions(namespace, {
-      /**
-       * Обновить информацию о студенте
-       * @type {Funciton}
-       */
-      updateStudent: Types.actions.UPDATE_STUDENT
-    })
+  }
+
+  /**
+   * Обновить информацию о пользователе
+   */
+  updateStudent() {
+    this.$vuexModules.User.updateStudent(this.localStudent)
   }
 }
 </script>

@@ -26,13 +26,21 @@
   </div>
 </template>
 
-<script>
-import { mapState, mapActions } from 'vuex'
-import { namespace, Types } from '~/store/invites/group-invites'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 import moment from '~/plugins/moment'
+import { getInvites, GroupInviteI } from '~/api/admin-invites.ts'
 
-export default {
-  name: 'InvitesList',
+export interface TableHeader {
+  value: string
+  text: string
+  sortable: boolean
+}
+
+/**
+ * Компонент с списком приглашенных в группу
+ */
+@Component({
   components: {
     SendInvite: () => import('./send-invite.vue'),
     Loader: () =>
@@ -43,65 +51,59 @@ export default {
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  },
-  data: () => ({
-    /**
-     * Заголовки таблицы
-     * @type {Array}
-     */
-    headers: [
-      { text: 'Email', sortable: false, value: 'email' },
-      { text: 'Статус', sortable: false, value: 'status' },
-      { text: 'Отправлено', sortable: false, value: 'sent_at' }
-    ],
+  }
+})
+export default class InvitesAdmin extends Vue {
+  /**
+   * Заголовки таблицы
+   */
+  headers: TableHeader[] = [
+    { text: 'Email', sortable: false, value: 'email' },
+    { text: 'Статус', sortable: false, value: 'status' },
+    { text: 'Отправлено', sortable: false, value: 'sent_at' }
+  ]
 
-    /**
-     * Цвета статусов
-     * @type {Object}
-     */
-    colors: {
-      pending: 'warning',
-      accepted: 'success'
-    }
-  }),
-  computed: {
-    ...mapState(namespace, [
-      /**
-       * Флаг загрузки
-       * @type {Boolean}
-       */
-      'loading',
-      /**
-       * Флаг обновления
-       * @type {Boolean}
-       */
-      'updating',
-      /**
-       * Список приглашений
-       * @type {Array}
-       */
-      'invites'
-    ])
-  },
+  /**
+   * Цвета статусов
+   */
+  colors = {
+    pending: 'warning',
+    accepted: 'success'
+  }
+
+  /**
+   * Список приглашений
+   */
+  invites: GroupInviteI[] = []
+
+  /**
+   * Флаг загрузки
+   */
+  loading: boolean = true
+
   mounted() {
     this.loadData()
-  },
-  methods: {
-    ...mapActions(namespace, {
-      /**
-       * Загрузить список приглашения
-       */
-      loadData: Types.actions.LOAD_INVITES
-    }),
+  }
 
-    /**
-     * Форматировать дату
-     * @param {String} date - дата
-     * @returns {String}
-     */
-    formatDate(date) {
-      return date ? moment(date).format('DD.MM.YYYY') : '-'
+  /**
+   * Загрузить список приглашений
+   */
+  async loadData() {
+    try {
+      this.invites = await getInvites()
+      this.loading = false
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     }
+  }
+
+  /**
+   * Форматировать дату
+   * @param {String} date - дата
+   * @returns {String}
+   */
+  formatDate(date: string): string {
+    return date ? moment(date).format('DD.MM.YYYY') : '-'
   }
 }
 </script>

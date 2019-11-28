@@ -61,101 +61,74 @@
   </Card>
 </template>
 
-<script>
+<script lang="ts">
 import axios from 'axios'
-import { mapMutations } from 'vuex'
-import {
-  Types as snackbarsTypes,
-  namespace as snackbarsNamespace
-} from '~/store/snackbars'
-import { Types as userTypes, namespace as userNamespace } from '~/store/user'
+import { Component, Vue } from 'vue-property-decorator'
 import { setRegistrationInfo } from '~/utils/auth'
 
-export default {
-  name: 'Registration',
+@Component({
   components: {
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  },
-  data: () => ({
-    /**
-     * Информация о пользователе
-     * @type {Object}
-     */
-    user: {
-      username: '',
-      email: '',
-      password: '',
-      password_confirmation: ''
-    },
+  }
+})
+export default class Registration extends Vue {
+  /**
+   * Информация о пользователе
+   */
+  user = {
+    username: '',
+    email: '',
+    password: '',
+    password_confirmation: ''
+  }
 
-    /**
-     * Сообщение при успешной регистрации
-     * @type {String}
-     */
-    successMessage: '',
+  /**
+   * Сообщение при успешной регистрации
+   */
+  successMessage: string = ''
 
-    /**
-     * Флаг блокировки кнопки
-     * @type {Boolean}
-     */
-    unactive: false
-  }),
-  methods: {
-    ...mapMutations(userNamespace, {
-      /**
-       * Сохранить пользователя
-       */
-      setUser: userTypes.mutations.SET_USER
-    }),
+  /**
+   * Флаг блокировки кнопки
+   */
+  unactive: boolean = false
 
-    ...mapMutations(snackbarsNamespace, {
-      /**
-       * Показать сообщение
-       */
-      addSnackbars: snackbarsTypes.mutations.ADD_SNACKBARS
-    }),
+  /**
+   * Создать пользователя
+   */
+  async createUser() {
+    this.unactive = true
 
-    /**
-     * Создать пользователя
-     * @async
-     * @type {Function}
-     * @returns {Void}
-     */
-    async createUser() {
-      this.unactive = true
+    const registrationInfo = {
+      login: this.user.username,
+      password: this.user.password
+    }
 
-      const registrationInfo = {
-        login: this.user.username,
-        password: this.user.password
-      }
+    try {
+      const { data } = await axios({
+        method: 'post',
+        url: `${process.env.baseUrl}/api/v1/users`,
+        data: { user: this.user },
+        headers: {
+          'Content-Type': 'application/vnd.api+json'
+        }
+      })
+      const meta = data.meta
 
-      try {
-        const { data } = await axios({
-          method: 'post',
-          url: `${process.env.baseUrl}/api/v1/users`,
-          data: { user: this.user },
-          headers: {
-            'Content-Type': 'application/vnd.api+json'
-          }
-        })
-        const meta = data.meta
+      setRegistrationInfo(registrationInfo)
 
-        setRegistrationInfo(registrationInfo)
-
-        this.successMessage = meta.message
-      } catch (error) {
-        this.addSnackbars(
-          error.response.data.errors.map(({ detail }) => ({
-            text: detail,
-            color: 'error'
-          }))
-        )
-      } finally {
-        this.unactive = false
-      }
+      this.successMessage = meta.message
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(
+        error.response.data.errors.map(({ detail }: { detail: string }) => ({
+          text: detail,
+          color: 'error'
+        }))
+      )
+    } finally {
+      this.unactive = false
     }
   }
 }

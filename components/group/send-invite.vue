@@ -25,62 +25,53 @@
   </Card>
 </template>
 
-<script>
-import { mapState, mapActions } from 'vuex'
-import { namespace, Types } from '~/store/invites/group-invites'
+<script lang="ts">
+import { Component, Vue, Ref } from 'vue-property-decorator'
+import { sendInvite, inviteI } from '~/api/admin-invites.ts'
 
-export default {
-  name: 'SendInvite',
+@Component({
   components: {
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  },
-  data: () => ({
-    /**
-     * Группа
-     * @type {Object}
-     */
-    invite: {
-      email: ''
-    }
-  }),
-  computed: {
-    ...mapState(namespace, [
-      /**
-       * Флаг обновления
-       * @type {Boolean}
-       */
-      'updating'
-    ])
-  },
-  watch: {
-    /**
-     * Обновляем список приглашений
-     */
-    updating() {
-      if (!this.updating) {
-        this.invite = { email: '' }
-        this.$emit('sendInvite')
-      }
-    }
-  },
-  methods: {
-    ...mapActions(namespace, {
-      /**
-       * Отправить приглашение
-       */
-      sendInvite: Types.actions.SEND_INVITE
-    }),
+  }
+})
+export default class SendInvite extends Vue {
+  /**
+   * Ссылка на компонент формы из vuetify
+   */
+  @Ref()
+  readonly form!: { validate: () => boolean }
 
-    /**
-     * Отправить
-     */
-    send() {
-      if (!this.$refs.form.validate()) return
+  /**
+   * Группа
+   */
+  invite: inviteI = {
+    email: ''
+  }
 
-      this.sendInvite(this.invite)
+  /**
+   * Флаг обновления
+   */
+  updating: boolean = false
+
+  /**
+   * Отправить приглашение
+   */
+  async send() {
+    if (!this.form.validate()) return
+
+    try {
+      this.updating = true
+      await sendInvite(this.invite)
+
+      this.invite = { email: '' }
+      this.$emit('sendInvite')
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    } finally {
+      this.updating = false
     }
   }
 }

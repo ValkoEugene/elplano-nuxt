@@ -56,7 +56,7 @@
                   :id="lecturer.id"
                   :disabled="updating"
                   :confirm-text="$t('lecturers.confirm')"
-                  @delete="delteCourse(course.id)"
+                  @delete="deleteLecturer(lecturer.id)"
                 />
               </template>
             </Card>
@@ -66,7 +66,7 @@
     </template>
 
     <ModalEdit
-      ref="modal"
+      ref="modalEdit"
       :edit-model="editModel"
       :edit-schema="editSchema"
       :updating="updating"
@@ -78,13 +78,15 @@
   </div>
 </template>
 
-<script>
-import Course from '~/models/Course'
-import Lecturer from '~/models/Lecturer'
-import checkGroup from '~/mixins/checkgroup'
+<script lang="ts">
+import { Component, Mixins, Ref } from 'vue-property-decorator'
+import CheckGroup from '~/mixins/CheckGroup.ts'
+import CoursesList from '~/mixins/CoursesList.ts'
+import LecturersList from '~/mixins/LecturersList.ts'
+import { Lecturer, lecturersApi } from '~/api/lecturers.ts'
+import ModalEditComponent from '~/components/modal/modal-edit.vue'
 
-export default {
-  name: 'LecturersPage',
+@Component({
   components: {
     Loader: () =>
       import(
@@ -114,170 +116,186 @@ export default {
       import(
         '~/components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
       )
-  },
-  mixins: [checkGroup],
-  data: () => ({
-    /**
-     * Строка поиска
-     * @type {String}
-     */
-    search: '',
+  }
+})
+export default class LecturersPage extends Mixins(
+  CheckGroup,
+  LecturersList,
+  CoursesList
+) {
+  /**
+   * Ссылка на экземпляр компонента ModalEdit
+   * @type {ModalEditComponent}
+   */
+  @Ref()
+  readonly modalEdit!: ModalEditComponent
 
-    /**
-     * Шаблон модели преподавателя
-     * @type {Object}
-     */
-    lectureEmptyModel: {
-      id: '',
-      active: true,
-      first_name: '',
-      last_name: '',
-      patronymic: '',
-      avatar: '',
-      course_ids: []
-    },
+  /**
+   * Строка поиска
+   * @type {String}
+   */
+  search: string = ''
 
-    /**
-     * Редактируемая модель преподавателя
-     * @type {String}
-     */
-    editModel: {}
-  }),
-  computed: {
-    /**
-     * Список преподавателей
-     * @type {Array}
-     */
-    courses() {
-      return Course.all()
-    },
+  /**
+   * Шаблон модели преподавателя
+   * @type {Lecturer}
+   */
+  lectureEmptyModel: Lecturer = {
+    id: '',
+    active: true,
+    first_name: '',
+    last_name: '',
+    patronymic: '',
+    avatar: '',
+    course_ids: []
+  }
 
-    /**
-     * Флаг обновления
-     * @type {Boolean}
-     */
-    updating() {
-      return Lecturer.getUpdatingStatus()
-    },
+  /**
+   * Редактируемая модель преподавателя
+   * @type {Lecturer}
+   */
+  editModel: Lecturer = { ...this.lectureEmptyModel }
 
-    /**
-     * Преподаватели
-     * @type {Array}
-     */
-    lecturers() {
-      return Lecturer.all()
-    },
+  /**
+   * Флаг обновления
+   * @type {boolean}
+   */
+  updating: boolean = false
 
-    /**
-     * Флаг загрузки
-     * @type {Boolean}
-     */
-    loading() {
-      return Course.getFetchingStatus() || Lecturer.getFetchingStatus()
-    },
+  /**
+   * Флаг загрузки
+   * @type {boolean}
+   */
+  get loading(): boolean {
+    return this.loadingCourses || this.loadingLecturers
+  }
 
-    /**
-     * Схема для редактирования
-     * @type {{ fields: Array }}
-     */
-    editSchema() {
-      return {
-        fields: [
-          {
-            model: 'active',
-            type: 'v-checkbox',
-            label: this.$t('ui.card.badges.active')
-          },
-          {
-            model: 'last_name',
-            type: 'v-text-field',
-            label: this.$t('field.lastName'),
-            placeholder: this.$t('field.lastName'),
-            rules: [this.$rules.required],
-            inputType: 'text'
-          },
-          {
-            model: 'first_name',
-            type: 'v-text-field',
-            label: this.$t('field.firstName'),
-            placeholder: this.$t('field.firstName'),
-            rules: [this.$rules.required],
-            inputType: 'text'
-          },
-          {
-            model: 'patronymic',
-            type: 'v-text-field',
-            label: this.$t('field.patronymic'),
-            placeholder: this.$t('field.patronymic'),
-            rules: [this.$rules.required],
-            inputType: 'text'
-          },
-          {
-            model: 'course_ids',
-            type: 'v-select',
-            multiple: true,
-            items: this.courses,
-            itemValue: 'id',
-            itemText: 'title',
-            label: this.$t('lesson.lessons')
-          }
-        ]
-      }
+  /**
+   * Схема для редактирования
+   * @type {any}
+   */
+  get editSchema() {
+    return {
+      fields: [
+        {
+          model: 'active',
+          type: 'v-checkbox',
+          label: this.$t('ui.card.badges.active')
+        },
+        {
+          model: 'last_name',
+          type: 'v-text-field',
+          label: this.$t('field.lastName'),
+          placeholder: this.$t('field.lastName'),
+          rules: [this.$rules.required],
+          inputType: 'text'
+        },
+        {
+          model: 'first_name',
+          type: 'v-text-field',
+          label: this.$t('field.firstName'),
+          placeholder: this.$t('field.firstName'),
+          rules: [this.$rules.required],
+          inputType: 'text'
+        },
+        {
+          model: 'patronymic',
+          type: 'v-text-field',
+          label: this.$t('field.patronymic'),
+          placeholder: this.$t('field.patronymic'),
+          rules: [this.$rules.required],
+          inputType: 'text'
+        },
+        {
+          model: 'course_ids',
+          type: 'v-select',
+          multiple: true,
+          items: this.courses,
+          itemValue: 'id',
+          itemText: 'title',
+          label: this.$t('lesson.lessons')
+        }
+      ]
     }
-  },
-  mounted() {
-    Course.$apiFetch()
-    Lecturer.$apiFetch()
-  },
-  methods: {
-    /**
-     * Получить отображение предмета
-     * @type {Function}
-     * @param {String} id
-     * @returns {String}
-     */
-    getCourseView(id) {
-      const course = this.courses.find((item) => item.id === id)
+  }
 
-      return course ? course.title : '-'
-    },
+  /**
+   * Получить отображение предмета
+   * @type {Function}
+   * @param {String} id
+   * @returns {String}
+   */
+  getCourseView(id: string): string {
+    const course = this.courses.find((item) => item.id === id)
 
-    /**
-     * Редактировать прпреподавателяе
-     * @type {Function}
-     * @param {Object} model - модель редактируемого преподавателя
-     */
-    edit(model) {
-      this.editModel = { ...model }
+    return course ? course.title : '-'
+  }
 
-      this.$refs.modal.open()
-    },
+  /**
+   * Редактировать прпреподавателяе
+   * @type {Function}
+   * @param {Lecturer} model - модель редактируемого преподавателя
+   */
+  edit(model: Lecturer): void {
+    this.editModel = { ...model }
 
-    /**
-     * Создать преподавателя
-     * @type {Function}
-     */
-    async create(data) {
-      const lecturer = await Lecturer.$apiCreate(data)
+    this.modalEdit.open()
+  }
+
+  /**
+   * Создать преподавателя
+   * @type {Function}
+   */
+  async create(data: Lecturer): Promise<void> {
+    try {
+      this.updating = true
+      const lecturer = await lecturersApi.create(data)
+      this.lecturers.push(lecturer)
 
       this.editModel = lecturer
-    },
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    } finally {
+      this.updating = false
+    }
+  }
 
-    /**
-     * Обновить преподавателя
-     * @type {Function}
-     */
-    update(data) {
-      Lecturer.$apiUpdate(data)
-    },
+  /**
+   * Обновить преподавателя
+   * @type {Function}
+   */
+  async update(data: Lecturer): Promise<void> {
+    if (!data.id) return
 
-    /**
-     * Удалить преподавателя
-     * @type {Function}
-     * @param {String} id - id преподавателя
-     */
-    delteCourse(id) {
-      Lecturer.$apiDelete(id)
+    try {
+      this.updating = true
+
+      const lecturer = await lecturersApi.update(data, data.id)
+      this.lecturers = this.lecturers.map((item) =>
+        item.id === lecturer.id ? lecturer : item
+      )
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    } finally {
+      this.updating = false
+    }
+  }
+
+  /**
+   * Удалить преподавателя
+   * @type {Function}
+   * @param {String} id - id преподавателя
+   */
+  async deleteLecturer(id: string): Promise<void> {
+    try {
+      this.updating = true
+
+      await lecturersApi.deleteById(id)
+      this.lecturers = this.lecturers.filter((item) => item.id !== id)
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    } finally {
+      this.updating = false
     }
   }
 }

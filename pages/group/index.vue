@@ -50,12 +50,15 @@
   </div>
 </template>
 
-<script>
-import Student from '~/models/Student'
-import checkGroup from '~/mixins/checkgroup'
+<script lang="ts">
+import { Component, Mixins } from 'vue-property-decorator'
+import { getGroupUsers, Student } from '~/api/group-users.ts'
+import CheckGroup from '~/mixins/CheckGroup.ts'
 
-export default {
-  name: 'GroupPage',
+/**
+ * Компонент вывода списка студентов группы
+ */
+@Component({
   components: {
     Loader: () =>
       import(
@@ -69,34 +72,38 @@ export default {
       import(
         '~/components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
       )
-  },
-  mixins: [checkGroup],
-  data: () => ({
-    /**
-     * Строка поиска
-     * @type {String}
-     */
-    search: ''
-  }),
-  computed: {
-    /**
-     * Флаг загрузки
-     * @type {Boolean}
-     */
-    loading() {
-      return Student.getFetchingStatus()
-    },
+  }
+})
+export default class GroupPage extends Mixins(CheckGroup) {
+  /**
+   * Строка поиска
+   */
+  search: string = ''
 
-    /**
-     * Список студентов
-     * @type {Array}
-     */
-    students() {
-      return Student.all()
-    }
-  },
+  /**
+   * Флаг загрузки
+   */
+  loading: boolean = true
+
+  /**
+   * Список студентов
+   */
+  students: Student[] = []
+
   mounted() {
-    Student.$apiFetch()
+    this.loadData()
+  }
+
+  /**
+   * Загрузить данные
+   */
+  async loadData() {
+    try {
+      this.students = await getGroupUsers()
+      this.loading = false
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    }
   }
 }
 </script>

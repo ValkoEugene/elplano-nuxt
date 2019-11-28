@@ -39,7 +39,7 @@ function getFromCookieByName(req, name) {
 
 /**
  * Получение токена из Cookie
- * @param {Request} req
+ * @param {} req
  */
 export const getAccessTokenFromCookie = (req) => {
   return getFromCookieByName(req, 'access_token')
@@ -47,7 +47,7 @@ export const getAccessTokenFromCookie = (req) => {
 
 /**
  * Получение рефрреш токена из Cookie
- * @param {Request} req
+ * @param {} req
  */
 export const getRefreshTokenFromCookie = (req) => {
   return getFromCookieByName(req, 'refresh_token')

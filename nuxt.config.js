@@ -33,18 +33,20 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
+    '~/plugins/VuexDecaratorsModules',
     '~/plugins/rules',
     '~/plugins/i18n',
     '~/plugins/helpers',
-    { src: '~/plugins/a2hs.js', mode: 'client' }
+    { src: '~/plugins/a2hs.ts', mode: 'client' }
   ],
   /*
    ** Nuxt.js dev-modules
    */
-  devModules: [
+  buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
-    '@nuxtjs/vuetify'
+    '@nuxtjs/vuetify',
+    '@nuxt/typescript-build'
   ],
   /**
    *
@@ -122,7 +124,7 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {
+    extend(config /** ctx */) {
       // Убираем неиспользуемые локали
       config.plugins.push(new MomentLocalesPlugin())
       config.plugins.push(
