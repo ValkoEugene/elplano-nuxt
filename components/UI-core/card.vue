@@ -43,6 +43,10 @@
     >
       <slot name="actions" />
     </div>
+
+    <div v-if="$scopedSlots.footer">
+      <slot name="footer" />
+    </div>
   </div>
 </template>
 
