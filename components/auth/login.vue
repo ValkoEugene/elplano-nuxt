@@ -34,6 +34,10 @@
         >{{ $t('auth.loginBtn') }}</v-btn
       >
     </template>
+
+    <template v-slot:footer>
+      <social-networks />
+    </template>
   </Card>
 </template>
 
@@ -47,6 +51,10 @@ interface UserI {
 
 @Component({
   components: {
+    SocialNetworks: () =>
+      import(
+        '~/components/auth/social-networks.vue' /* webpackChunkName: 'components/auth/login' */
+      ),
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
@@ -74,6 +82,10 @@ export default class Login extends Vue {
    */
   login() {
     this.$vuexModules.User.login(this.user)
+  }
+
+  mounted() {
+    console.log(process.env.baseUrl)
   }
 }
 </script>

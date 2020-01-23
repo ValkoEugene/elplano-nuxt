@@ -5,6 +5,7 @@
     "email": "Email must contain @"
   },
   "auth": {
+    "or": "OR",
     "loginTitle": "Login to your account",
     "loginBtn": "Login",
     "sigunTitle": "Create account",
