@@ -9,7 +9,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { IdentityProvider } from '~/api/users-identities.ts'
 
 @Component({ layout: 'empty' })
-export default class AuthVkCallbackPage extends Vue {
+export default class AuthYandexCallbackPage extends Vue {
   /**
    * Токен для входа
    */
@@ -25,20 +25,14 @@ export default class AuthVkCallbackPage extends Vue {
    * Отправить code в главную страницу
    */
   sendCode() {
-    const mainPage: Window = window.opener
-    mainPage.$nuxt.$router.push(
-      {
-        path: '/auth/callback',
-        query: {
-          code: this.code,
-          provider: IdentityProvider.vk,
-          redirect_uri: process.env.VK_AUTH_REDIRECT_URL
-        }
-      },
-      () => {
-        window.close()
+    this.$router.push({
+      path: '/auth/callback',
+      query: {
+        code: this.code,
+        provider: IdentityProvider.yandex,
+        redirect_uri: process.env.YANDEX_AUTH_REDITECT_URL
       }
-    )
+    })
   }
 }
 </script>

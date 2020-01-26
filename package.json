@@ -5,8 +5,8 @@
   "author": "Valko Eugene",
   "private": true,
   "scripts": {
-    "dev": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com PORT=3000 nuxt",
-    "build": "yarn && cross-env BASE_URL=https://elplano-api.herokuapp.com nuxt build",
+    "dev": "yarn && env-cmd -e development nuxt",
+    "build": "yarn && env-cmd -e production nuxt build",
     "analyze": "yarn && nuxt build --analyze",
     "deploy-manual": "./deploy_manual.sh",
     "start": "nuxt start",

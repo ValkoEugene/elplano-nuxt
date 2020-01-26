@@ -25,14 +25,12 @@ export default class GoogleAuth extends Vue {
     gapi.load('auth2', () => {
       gapi.auth2.authorize(
         {
-          client_id:
-            '755391828122-f8lsukf4sbqth14q6e3bv7661ivghf2k.apps.googleusercontent.com',
+          client_id: process.env.GOOGLE_AUTH_CLIENT_ID as string,
           scope: 'email profile openid',
           response_type: 'code'
         },
         (response) => {
           if (response.error) {
-            console.error(response.error)
             if (response.error === 'popup_closed_by_user') return
 
             this.$vuexModules.Snackbars.ADD_SNACKBARS([

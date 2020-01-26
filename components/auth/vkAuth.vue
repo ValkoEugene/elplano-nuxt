@@ -13,10 +13,8 @@ export default class vkAuth extends Vue {
    * Авторизовать через ВК
    */
   loginVK(): void {
-    // const client_id = process.env.VK_AUTH_CLIENT_ID
-    // const redirect_uri = process.env.VK_AUTH_REDIRECT_URL
-    const client_id = '7283405'
-    const redirect_uri = 'http://localhost:3000/auth/vk'
+    const client_id = process.env.VK_AUTH_CLIENT_ID
+    const redirect_uri = process.env.VK_AUTH_REDIRECT_URL
     const display = 'popup'
     const response_type = 'code'
     const src =

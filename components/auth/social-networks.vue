@@ -5,6 +5,7 @@
     <div>
       <vk-auth />
       <google-auth />
+      <yandex-auth />
     </div>
   </div>
 </template>
@@ -21,6 +22,10 @@ import { Component, Vue } from 'vue-property-decorator'
     googleAuth: () =>
       import(
         '~/components/auth/googleAuth.vue' /** webpackChunkName: 'components/auth' */
+      ),
+    yandexAuth: () =>
+      import(
+        '~/components/auth/yandexAuth.vue' /** webpackChunkName: 'components/auth' */
       )
   }
 })

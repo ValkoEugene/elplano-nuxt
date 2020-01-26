@@ -1,17 +1,13 @@
 <template>
   <div class="token_wrapper">
-    {{ code || 'something go wrong' }}
+    <v-progress-circular :size="50" color="primary" indeterminate />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { SnackbarColor } from '~/store/snackbars.ts'
-import {
-  signInByProvider,
-  IdentityProvider,
-  Identity
-} from '~/api/users-identities.ts'
+import { IdentityProvider, Identity } from '~/api/users-identities.ts'
 
 @Component({ layout: 'empty' })
 export default class AuthCallbackPage extends Vue {
@@ -38,8 +34,6 @@ export default class AuthCallbackPage extends Vue {
 
   mounted() {
     if (this.code && this.provider) {
-      console.log(this.code, this.provider)
-      // if (this.code === 'never')
       const identity: Identity = {
         code: this.code,
         provider: this.provider
@@ -49,7 +43,7 @@ export default class AuthCallbackPage extends Vue {
         identity.redirect_uri = this.redirect_uri
       }
 
-      signInByProvider(identity)
+      this.$vuexModules.User.socialLogin(identity)
     } else {
       this.$vuexModules.Snackbars.ADD_SNACKBARS([
         { text: 'Invalid params', color: SnackbarColor.error }

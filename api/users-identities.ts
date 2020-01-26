@@ -1,10 +1,11 @@
-import axios from '~/plugins/axios'
+import axios from '~/plugins/axios.ts'
 
 const restUrl = '/users/identities'
 
 export enum IdentityProvider {
   google = 'google',
-  vk = 'vk'
+  vk = 'vk',
+  yandex = 'yandex'
 }
 
 export interface Identity {
@@ -17,10 +18,10 @@ export interface Identity {
  * Отправить приглашение
  * @param invite - приглашение
  */
-export async function signInByProvider(identity: Identity): Promise<void> {
+export async function signInByProvider(identity: Identity): Promise<any> {
   try {
     const response = await axios.post(restUrl, { identity })
-    console.log('response', response)
+    return response.data
   } catch (error) {
     return Promise.reject(error)
   }
