@@ -83,9 +83,5 @@ export default class Login extends Vue {
   login() {
     this.$vuexModules.User.login(this.user)
   }
-
-  mounted() {
-    console.log(process.env.baseUrl)
-  }
 }
 </script>

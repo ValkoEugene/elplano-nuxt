@@ -15,8 +15,7 @@ export interface Identity {
 }
 
 /**
- * Отправить приглашение
- * @param invite - приглашение
+ * Логин через сторонние сервисы
  */
 export async function signInByProvider(identity: Identity): Promise<any> {
   try {

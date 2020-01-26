@@ -26,7 +26,7 @@ export default class AuthCallbackPage extends Vue {
   }
 
   /**
-   *
+   * Адрес для перенаправления
    */
   get redirect_uri(): string | undefined {
     return this.$route.query.redirect_uri as string | undefined
