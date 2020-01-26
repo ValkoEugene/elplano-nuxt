@@ -1,5 +1,9 @@
 <template>
-  <Loader v-if="loading" :show-form="true" :form-inputs-count="2" />
+  <Loader
+    v-if="loadInMounted && loading"
+    :show-form="true"
+    :form-inputs-count="2"
+  />
 
   <v-card v-else>
     <v-card-title>{{

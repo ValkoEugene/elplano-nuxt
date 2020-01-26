@@ -84,7 +84,12 @@ export default {
    * Перменные окружения
    */
   env: {
-    baseUrl: process.env.BASE_URL
+    baseUrl: process.env.BASE_URL,
+    VK_AUTH_CLIENT_ID: process.env.VK_AUTH_CLIENT_ID,
+    VK_AUTH_REDIRECT_URL: process.env.VK_AUTH_REDIRECT_URL,
+    GOOGLE_AUTH_CLIENT_ID: process.env.GOOGLE_AUTH_CLIENT_ID,
+    YANDEX_AUTH_CLIENT_ID: process.env.YANDEX_AUTH_CLIENT_ID,
+    YANDEX_AUTH_REDITECT_URL: process.env.YANDEX_AUTH_REDITECT_URL
   },
 
   /*

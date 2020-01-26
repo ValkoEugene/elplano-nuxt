@@ -1,4 +1,4 @@
-import axios, { baseAxiosIntance } from '~/plugins/axios'
+import axios from '~/plugins/axios.ts'
 import { User } from '~/api/admin-user.ts'
 import { Student } from '~/api/group-users.ts'
 
@@ -68,7 +68,7 @@ export async function confirmAccount(
 ): Promise<void> {
   try {
     const params = { confirmation_token }
-    await baseAxiosIntance.get('/users/confirmation', { params })
+    await axios.get('/users/confirmation', { params })
   } catch (error) {
     return Promise.reject(error)
   }

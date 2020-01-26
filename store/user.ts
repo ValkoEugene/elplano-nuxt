@@ -14,6 +14,7 @@ import { setTokensInCookie, resetTokensInCookie } from '~/utils/auth'
 import { Snackbars } from './snackbars'
 import { Group } from './group'
 import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow'
+import { signInByProvider, Identity } from '~/api/users-identities.ts'
 
 export const name = 'user'
 
@@ -187,7 +188,6 @@ export class User extends VuexModule implements UserStateI {
 
   /**
    * Установить токены
-   * @param {ActionContext} context
    * @param {Tokens} tokens
    */
   @Action
@@ -249,6 +249,37 @@ export class User extends VuexModule implements UserStateI {
   }
 
   /**
+   * Войти через соц. сети
+   * @param {Identity} identity
+   */
+  @Action
+  async socialLogin(identity: Identity) {
+    console.log('socialLogin')
+    try {
+      this.SET_LOADING(true)
+
+      const { included } = await signInByProvider(identity)
+      const tokens = included.find(
+        (item: { type: string }) => item.type === 'access_token'
+      )
+      const { access_token, refresh_token } = tokens.attributes
+      this.setTokens({
+        access_token,
+        refresh_token
+      })
+
+      getRouter().push('/')
+    } catch (error) {
+      getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
+        error.snackbarErrors
+      )
+      getRouter().push('/log-off')
+    } finally {
+      this.SET_LOGIN_FETCHING(false)
+    }
+  }
+
+  /**
    * Загрузить информацию о пользователе
    * @param {ActionContext} context
    */
@@ -262,7 +293,11 @@ export class User extends VuexModule implements UserStateI {
 
       this.SET_USER(user)
       if (student) this.SET_STUDENT(student)
-      if (groupId) getVuexDecaratorModuleByWindow(Group).setGroupId(groupId)
+
+      groupId
+        ? getVuexDecaratorModuleByWindow(Group).setGroupId(groupId)
+        : getRouter().push('/group/ungrouped')
+
       this.SET_LOADING(false)
     } catch (error) {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
