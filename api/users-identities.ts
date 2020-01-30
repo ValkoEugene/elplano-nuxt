@@ -5,7 +5,8 @@ const restUrl = '/users/identities'
 export enum IdentityProvider {
   google = 'google',
   vk = 'vk',
-  yandex = 'yandex'
+  yandex = 'yandex',
+  facebook = 'facebook'
 }
 
 export interface Identity {

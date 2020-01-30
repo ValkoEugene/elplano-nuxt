@@ -22,8 +22,12 @@
           {{ $t('ui.a2hsButton') }}
         </v-list-item>
 
-        <v-list-item v-for="link in links" :key="link.url" :to="link.url" nuxt
-          >{{ link.text }} - {{ link.url }}</v-list-item
+        <v-list-item
+          v-for="link in links"
+          :key="link.url"
+          :to="link.url"
+          nuxt
+          >{{ link.text }}</v-list-item
         >
       </v-list>
     </v-menu>

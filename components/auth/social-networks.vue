@@ -6,6 +6,7 @@
       <vk-auth />
       <google-auth />
       <yandex-auth />
+      <facebook-auth />
     </div>
   </div>
 </template>
@@ -26,6 +27,10 @@ import { Component, Vue } from 'vue-property-decorator'
     yandexAuth: () =>
       import(
         '~/components/auth/yandexAuth.vue' /** webpackChunkName: 'components/auth' */
+      ),
+    FacebookAuth: () =>
+      import(
+        '~/components/auth/facebookAuth.vue' /** webpackChunkName: 'components/auth' */
       )
   }
 })
