@@ -273,7 +273,6 @@ export class User extends VuexModule implements UserStateI {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.snackbarErrors
       )
-      getRouter().push('/log-off')
     } finally {
       this.SET_LOGIN_FETCHING(false)
     }
