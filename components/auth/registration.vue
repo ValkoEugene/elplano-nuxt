@@ -11,7 +11,6 @@
         <v-text-field
           v-model.trim="user.username"
           :label="$t('field.loginField')"
-          :placeholder="$t('field.loginField')"
           type="text"
           :rules="[$rules.required]"
           outlined
@@ -20,7 +19,6 @@
         <v-text-field
           v-model.trim="user.email"
           label="Email"
-          placeholder="Email"
           type="text"
           :rules="[$rules.required, $rules.email]"
           outlined
@@ -29,7 +27,6 @@
         <v-text-field
           v-model.trim="user.password"
           :label="$t('field.passwordField')"
-          :placeholder="$t('field.passwordField')"
           type="password"
           :rules="[$rules.required, $rules.getMinLength(6)]"
           outlined
@@ -38,7 +35,6 @@
         <v-text-field
           v-model.trim="user.password_confirmation"
           :label="$t('field.confirmPasswordField')"
-          :placeholder="$t('field.confirmPasswordField')"
           type="password"
           :rules="[
             $rules.required,
@@ -49,21 +45,30 @@
       </v-form>
     </template>
     <template v-if="!successMessage" v-slot:actions>
-      <v-btn
-        color="primary"
-        rounded
-        :disabled="unactive"
-        class="login__btn elevation-10"
-        @click="$refs.form.validate() && createUser()"
-        >{{ $t('auth.sigunBtn') }}</v-btn
-      >
+      <div class="actions__wrapper">
+        <button
+          type="button"
+          :style="colorStyle"
+          class="actions__link"
+          @click="$emit('setComponent', 'Login')"
+        >
+          {{ $t('auth.loginLink') }}
+        </button>
+        <v-btn
+          color="primary"
+          :disabled="unactive"
+          class="login__btn"
+          @click="createUser"
+          >{{ $t('auth.sigunBtn') }}</v-btn
+        >
+      </div>
     </template>
   </Card>
 </template>
 
 <script lang="ts">
 import axios from 'axios'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Ref } from 'vue-property-decorator'
 import { setRegistrationInfo } from '~/utils/auth'
 
 @Component({
@@ -75,6 +80,12 @@ import { setRegistrationInfo } from '~/utils/auth'
   }
 })
 export default class Registration extends Vue {
+  /**
+   * Ссылка на компонент формы из vuetify
+   */
+  @Ref()
+  readonly form: { validate: () => boolean }
+
   /**
    * Информация о пользователе
    */
@@ -96,9 +107,21 @@ export default class Registration extends Vue {
   unactive: boolean = false
 
   /**
+   * Стили с цветом
+   */
+  get colorStyle(): { color: string } {
+    const { theme }: { theme: any } = this.$vuetify
+    return {
+      color: theme.currentTheme.primary.base
+    }
+  }
+
+  /**
    * Создать пользователя
    */
   async createUser() {
+    if (!this.form.validate()) return
+
     this.unactive = true
 
     const registrationInfo = {

@@ -10,9 +10,11 @@
     "loginBtn": "Login",
     "sigunTitle": "Create account",
     "sigunBtn": "Create",
+    "sigunWithBtn": "Create with",
     "resetPasswordTitle": "Reset password",
     "resetPasswordBtn": "Reset",
     "loginLink": "Login with password",
+    "loginWith": "Login with",
     "signupText": "Dont have an account yet?",
     "sigunpLink": "Register now",
     "resetPasswordLink": "Forgot your password?"

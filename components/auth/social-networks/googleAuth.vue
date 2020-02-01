@@ -1,7 +1,10 @@
 <template>
-  <span @click="initAuthByGoogle">
-    <img class="social-networks__logo" src="~assets/images/google-auth.svg" />
-  </span>
+  <social-login-btn
+    provider="Google"
+    icon-src="/images/auth/google-auth.png"
+    :icon-height="20"
+    @click="initAuthByGoogle"
+  />
 </template>
 
 <script lang="ts">
@@ -9,7 +12,14 @@ import { Component, Vue } from 'vue-property-decorator'
 import { SnackbarColor } from '~/store/snackbars.ts'
 import { IdentityProvider } from '~/api/users-identities.ts'
 
-@Component({})
+@Component({
+  components: {
+    SocialLoginBtn: () =>
+      import(
+        '~/components/auth/social-networks/social-login-btn.vue' /* webpackChunkName: 'components/auth/social-networks/social-login-btn' */
+      )
+  }
+})
 export default class GoogleAuth extends Vue {
   /**
    * Флаг что скрпит для авторизации через google загружен
@@ -75,9 +85,3 @@ export default class GoogleAuth extends Vue {
   }
 }
 </script>
-
-<style scoped>
-.auth__google-icon {
-  cursor: pointer;
-}
-</style>

@@ -1,48 +1,63 @@
 <template>
-  <Card>
-    <template v-slot:content>
-      <h3 class="login-card__title">{{ $t('auth.loginTitle') }}</h3>
+  <div>
+    <Card>
+      <template v-slot:content>
+        <h3 class="login-card__title" :style="colorStyle">EL</h3>
 
-      <v-form ref="form" :lazy-validation="true">
-        <v-text-field
-          v-model.trim="user.login"
-          :label="$t('field.loginField')"
-          :placeholder="$t('field.loginField')"
-          type="text"
-          :rules="[$rules.required]"
-          outlined
-        />
+        <v-form ref="form" :lazy-validation="true">
+          <v-text-field
+            v-model.trim="user.login"
+            :label="$t('field.loginField')"
+            type="text"
+            :rules="[$rules.required]"
+            outlined
+          />
 
-        <v-text-field
-          v-model.trim="user.password"
-          :label="$t('field.passwordField')"
-          :placeholder="$t('field.passwordField')"
-          type="password"
-          :rules="[$rules.required, $rules.getMinLength(6)]"
-          outlined
-        />
-      </v-form>
-    </template>
+          <div class="password-link__wrapper">
+            <button
+              type="button"
+              :style="colorStyle"
+              @click="$emit('setComponent', 'ResetPassword')"
+            >
+              {{ $t('auth.resetPasswordLink') }}
+            </button>
+          </div>
 
-    <template v-slot:actions>
-      <v-btn
-        color="primary"
-        rounded
-        :disabled="loginFetching"
-        class="login__btn elevation-10"
-        @click="$refs.form.validate() && login()"
-        >{{ $t('auth.loginBtn') }}</v-btn
-      >
-    </template>
+          <v-text-field
+            v-model.trim="user.password"
+            :label="$t('field.passwordField')"
+            type="password"
+            :rules="[$rules.required, $rules.getMinLength(6)]"
+            outlined
+          />
+        </v-form>
+      </template>
 
-    <template v-slot:footer>
-      <social-networks />
-    </template>
-  </Card>
+      <template v-slot:actions>
+        <div class="actions__wrapper">
+          <button
+            type="button"
+            :style="colorStyle"
+            class="actions__link"
+            @click="$emit('setComponent', 'Registration')"
+          >
+            {{ $t('auth.sigunpLink') }}
+          </button>
+          <v-btn
+            color="primary"
+            :disabled="loginFetching"
+            class="login__btn"
+            @click="login"
+            >{{ $t('auth.loginBtn') }}</v-btn
+          >
+        </div>
+      </template>
+    </Card>
+  </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Ref } from 'vue-property-decorator'
 
 interface UserI {
   login: string
@@ -51,10 +66,6 @@ interface UserI {
 
 @Component({
   components: {
-    SocialNetworks: () =>
-      import(
-        '~/components/auth/social-networks.vue' /* webpackChunkName: 'components/auth/login' */
-      ),
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
@@ -62,6 +73,12 @@ interface UserI {
   }
 })
 export default class Login extends Vue {
+  /**
+   * Ссылка на компонент формы из vuetify
+   */
+  @Ref()
+  readonly form: { validate: () => boolean }
+
   /**
    * Информация о пользователе
    */
@@ -78,10 +95,29 @@ export default class Login extends Vue {
   }
 
   /**
+   * Стили с цветом
+   */
+  get colorStyle(): { color: string } {
+    const { theme }: { theme: any } = this.$vuetify
+    return {
+      color: theme.currentTheme.primary.base
+    }
+  }
+
+  /**
    * Логин
    */
   login() {
+    if (!this.form.validate()) return
+
     this.$vuexModules.User.login(this.user)
   }
 }
 </script>
+
+<style scoped>
+.password-link__wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

@@ -1,13 +1,22 @@
 <template>
-  <span @click="loginVK">
-    <img class="social-networks__logo" src="~assets/images/vk-auth.png" />
-  </span>
+  <social-login-btn
+    provider="VKontakte"
+    icon-src="/images/auth/vk-auth.png"
+    @click="loginVK"
+  />
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-@Component({})
+@Component({
+  components: {
+    SocialLoginBtn: () =>
+      import(
+        '~/components/auth/social-networks/social-login-btn.vue' /* webpackChunkName: 'components/auth/social-networks/social-login-btn' */
+      )
+  }
+})
 export default class vkAuth extends Vue {
   /*
    * Авторизовать через ВК
@@ -29,9 +38,3 @@ export default class vkAuth extends Vue {
   }
 }
 </script>
-
-<style scoped>
-.auth__google-icon {
-  cursor: pointer;
-}
-</style>
