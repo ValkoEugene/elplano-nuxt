@@ -1,51 +1,181 @@
 <template>
-  <v-content>
-    <v-container fluid fill-height>
-      <v-layout align-center justify-center>
-        <v-flex xs12 sm8 md4 class="elevation-12">
-          <v-tabs v-model="tab" right grow show-arrows>
-            <v-tab>Вход</v-tab>
-            <v-tab>Регистрация</v-tab>
-            <v-tab>Сброс пароля</v-tab>
+  <div class="login__wrapper">
+    <div class="login__title">
+      <h1 :style="colorStyle">Welcom to ELplano</h1>
+    </div>
 
-            <v-tab-item>
-              <Login />
-            </v-tab-item>
+    <div class="login__content">
+      <Login v-if="currentComponent === 'Login'" @setComponent="setComponent" />
+      <Registration
+        v-if="currentComponent === 'Registration'"
+        @setComponent="setComponent"
+      />
+      <ResetPassword
+        v-if="currentComponent === 'ResetPassword'"
+        @setComponent="setComponent"
+      />
 
-            <v-tab-item>
-              <Registration />
-            </v-tab-item>
-
-            <v-tab-item>
-              <ResetPassword />
-            </v-tab-item>
-          </v-tabs>
-        </v-flex>
-      </v-layout>
-    </v-container>
-  </v-content>
+      <social-networks
+        v-if="
+          currentComponent === 'Login' || currentComponent === 'Registration'
+        "
+        :title-i18n="socialNetworksTitleI18n"
+      />
+    </div>
+  </div>
 </template>
 
-<script>
-export default {
-  name: 'AuthPage',
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component({
   layout: 'empty',
   components: {
+    SocialNetworks: () =>
+      import(
+        '~/components/auth/social-networks/social-networks.vue' /* webpackChunkName: 'components/auth/login' */
+      ),
     Login: () =>
       import(
-        '../components/auth/login.vue' /* webpackChunkName: 'components/auth' */
+        '~/components/auth/login.vue' /* webpackChunkName: 'components/auth/login' */
       ),
     Registration: () =>
       import(
-        '../components/auth/registration.vue' /* webpackChunkName: 'components/auth/login' */
+        '~/components/auth/registration.vue' /* webpackChunkName: 'components/auth/login' */
       ),
     ResetPassword: () =>
       import(
-        '../components/auth/reset-password.vue' /* webpackChunkName: 'components/auth/login' */
+        '~/components/auth/reset-password.vue' /* webpackChunkName: 'components/auth/login' */
       )
-  },
-  data: () => ({
-    tab: null
-  })
+  }
+})
+export default class LoginPage extends Vue {
+  /**
+   * Показываемый компонент
+   */
+  currentComponent: string = 'Login'
+
+  /**
+   * Стили с цветом
+   */
+  get colorStyle(): { color: string } {
+    const { theme }: { theme: any } = this.$vuetify
+    return {
+      color: theme.currentTheme.primary.base
+    }
+  }
+
+  /**
+   * Свойство для i18n заголовка логина через соц. сети
+   */
+  get socialNetworksTitleI18n(): string {
+    return this.currentComponent === 'Registration'
+      ? 'sigunWithBtn'
+      : 'loginWith'
+  }
+
+  /**
+   * Установить показываемый компонент
+   */
+  setComponent(componentName: string): void {
+    this.currentComponent = componentName
+  }
 }
 </script>
+
+<style>
+.login__content .v-card {
+  width: 100%;
+  padding: 15px 0;
+}
+
+.login__btn {
+  min-width: 150px !important;
+}
+
+.login__title--registration p {
+  margin: 0;
+}
+
+.actions__wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+@media (max-width: 900px) {
+  .actions__wrapper {
+    flex-direction: column-reverse;
+  }
+
+  .actions__link {
+    margin-top: 10px;
+  }
+
+  .login__wrapper {
+    min-width: 100vw;
+    min-height: 100vh;
+  }
+
+  .login__title {
+    position: static;
+    width: auto;
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .login__title h1 {
+    font-size: 26px;
+    margin-bottom: 15px;
+  }
+
+  .login__content {
+    width: 90%;
+    margin: auto;
+  }
+
+  .login-card__title {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+}
+
+@media (min-width: 900px) {
+  .login__wrapper {
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background: url(~assets/images/login-bg.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .login__title {
+    position: absolute;
+    width: 500px;
+    top: 50px;
+    left: 50px;
+  }
+
+  .login__title h1 {
+    font-size: 42px;
+  }
+
+  .login__title--registration {
+    display: flex;
+    align-items: center;
+  }
+
+  .login-card__title {
+    font-size: 32px;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  .login__content {
+    width: 500px;
+    padding-left: 50px;
+  }
+}
+</style>

@@ -1,5 +1,16 @@
-import axios from 'axios'
-import { namespace, Types } from '../store/user'
+import axios, { AxiosRequestConfig, AxiosError } from 'axios'
+import { User } from '~/store/user.ts'
+import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow'
+import { SnackbarI, SnackbarColor } from '~/store/snackbars'
+
+interface CustomAxiosRequestConfig {
+  _retry?: boolean
+}
+
+interface CustomError {
+  messages: string[]
+  snackbarErrors: SnackbarI[]
+}
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.baseUrl}/api/v1`,
@@ -9,12 +20,20 @@ const axiosInstance = axios.create({
   }
 })
 
+const baseAxiosIntance = axios.create({
+  baseURL: `${process.env.baseUrl}`,
+  data: {},
+  headers: {
+    'Content-Type': 'application/vnd.api+json'
+  }
+})
+
 /**
  * Добавляем токены к каждому запросу
- * @param {import('axios').AxiosRequestConfig} config
  */
-const addToken = (config) => {
-  const token = window.$nuxt.$store.state.user.access_token
+const addToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
+  const UserModule = getVuexDecaratorModuleByWindow(User)
+  const token = UserModule.access_token
 
   if (token) {
     config.headers.common.Authorization = `Bearer ${token}`
@@ -25,11 +44,13 @@ const addToken = (config) => {
 
 /**
  * Обновляем токен при 401 статусе
- * @param {import('axios').AxiosError} error
  */
-const updateToken = (error) => {
+const updateToken = (error: AxiosError) => {
+  if (!error.response) return
+
   console.log('updateToken', error)
-  const originalRequest = error.config
+  const originalRequest: CustomAxiosRequestConfig & AxiosRequestConfig =
+    error.config
 
   if (error.response.status !== 401) {
     return Promise.reject(error)
@@ -38,10 +59,11 @@ const updateToken = (error) => {
   // Проверяем статус и что это не повторный запрос
   if (error.response.status === 401 && !originalRequest._retry) {
     originalRequest._retry = true
+    const UserModule = getVuexDecaratorModuleByWindow(User)
 
     const data = {
       grant_type: 'refresh_token',
-      refresh_token: window.$nuxt.$store.state.user.refresh_token
+      refresh_token: UserModule.refresh_token
     }
 
     return axios
@@ -50,17 +72,10 @@ const updateToken = (error) => {
       .then((data) => {
         const { access_token, refresh_token } = data
 
-        window.$nuxt.$store.commit(
-          `${namespace}/${Types.mutations.SET_ACCESS_TOKEN}`,
-          access_token
-        )
-        window.$nuxt.$store.commit(
-          `${namespace}/${Types.mutations.SET_REFRESH_TOKEN}`,
-          refresh_token
-        )
+        UserModule.setTokens({ access_token, refresh_token })
 
         // Обновляем заголовки для повторного запроса
-        axios.defaults.headers.commonAuthorization = `Bearer ${access_token}`
+        axios.defaults.headers.common.Authorization = `Bearer ${access_token}`
         originalRequest.headers.Authorization = `Bearer ${access_token}`
 
         return axios(originalRequest)
@@ -74,9 +89,8 @@ const updateToken = (error) => {
 
 /**
  * Обработка ошибок
- * @param {AxiosError} error
  */
-const handlingErrors = (error) => {
+const handlingErrors = (error: AxiosError & CustomError) => {
   console.log('axios errorHandker', error)
   // Обрабатываем ошибки сети
   // в них нет ответа и соответственно status, data что нужны
@@ -93,12 +107,16 @@ const handlingErrors = (error) => {
   } else if (status === 404) {
     error.messages = ['Запись не найдена']
   } else if (status >= 400 && status < 500 && data.errors) {
-    error.messages = data.errors.map(({ detail }) => detail)
+    error.messages = data.errors.map(({ detail }: { detail: string }) => detail)
   } else if (status >= 500) {
     error.messages = ['Извините, возникла ошибка на сервере']
   }
 
   console.log('before axios reject', error.messages)
+  error.snackbarErrors = error.messages.map((text) => ({
+    text,
+    color: SnackbarColor.error
+  }))
   return Promise.reject(error)
 }
 
@@ -106,4 +124,13 @@ axiosInstance.interceptors.request.use(addToken)
 axiosInstance.interceptors.response.use((response) => response, updateToken)
 axiosInstance.interceptors.response.use((response) => response, handlingErrors)
 
+baseAxiosIntance.interceptors.request.use(addToken)
+baseAxiosIntance.interceptors.response.use((response) => response, updateToken)
+baseAxiosIntance.interceptors.response.use(
+  (response) => response,
+  handlingErrors
+)
+
 export default axiosInstance
+
+export { baseAxiosIntance }

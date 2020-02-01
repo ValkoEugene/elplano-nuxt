@@ -1,50 +1,220 @@
 <template>
-  <v-app light>
-    <Sidebar />
+  <v-app
+    light
+    :style="cssVariblesFromTheme"
+    :class="[$vuetify.breakpoint.smAndDown ? 'mobile' : '']"
+  >
+    <Sidebar :have-group="haveGroup" />
 
-    <v-app-bar color="deep-purple accent-4" app dark>
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-      <v-toolbar-title>Elplano</v-toolbar-title>
-
-      <v-spacer></v-spacer>
-
-      <v-menu left bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on">
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item v-for="n in 5" :key="n" @click="() => {}">
-            <v-list-item-title>Option {{ n }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-app-bar>
+    <Header class="mobile__header" />
 
     <!-- Sizes your content based upon application components -->
-    <v-content>
+    <v-content class="mobile__content">
       <!-- Provides the application the proper gutter -->
-      <v-container fluid>
-        <!-- If using vue-router -->
-        <nuxt></nuxt>
-        <Snackbars />
-      </v-container>
+      <!-- <v-container fluid> -->
+      <!-- If using vue-router -->
+      <div
+        class="nuxt-wrapper"
+        :class="[$vuetify.breakpoint.smAndDown ? 'pa-3' : 'pa-6']"
+      >
+        <Loader v-if="loading" />
+
+        <nuxt v-else />
+      </div>
+      <Snackbars />
+
+      <ModalConfirm />
+      <!-- </v-container> -->
     </v-content>
   </v-app>
 </template>
 
-<script>
-export default {
-  name: 'DefaultLayout',
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { User as UserI } from '~/api/admin-user.ts'
+
+@Component({
+  // Проверяем что пользователь авторизован
+  middleware: ['auth'],
   components: {
-    Sidebar: () => import('./sidebar.vue'),
-    Snackbars: () => import('../components/UI-core/snackbars.vue')
-  },
-  data: () => ({
-    test: ''
-  })
+    Loader: () =>
+      import(
+        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+      ),
+    Sidebar: () =>
+      import('./sidebar.vue' /* webpackChunkName: 'layouts/sidebar' */),
+    Header: () =>
+      import('./header.vue' /* webpackChunkName: 'layouts/header' */),
+    Snackbars: () =>
+      import(
+        '~/components/UI-core/snackbars.vue' /* webpackChunkName: 'components/UI-core/snackbars' */
+      ),
+    ModalConfirm: () =>
+      import(
+        '~/components/modal/modal-confirm.vue' /* webpackChunkName: 'components/modal/modal-confirm' */
+      )
+  }
+})
+export default class DefaultLayout extends Vue {
+  /**
+   * Флаг загрузки
+   */
+  get loading(): boolean {
+    return this.$vuexModules.User.loading
+  }
+
+  /**
+   * Пользователь
+   */
+  get userInfo(): UserI {
+    return this.$vuexModules.User.userInfo
+  }
+
+  /**
+   * Флаг наличия группы
+   */
+  get haveGroup(): boolean {
+    return this.$vuexModules.Group.haveGroup
+  }
+
+  /**
+   * Стили с css переменными из темы
+   */
+  get cssVariblesFromTheme() {
+    const { currentTheme } = this.$vuetify.theme as any
+
+    return {
+      '--secondary-color': currentTheme.secondary,
+      '--primary-base': currentTheme.primary.base,
+      '--primary-lighten1': currentTheme.primary.lighten1,
+      '--primary-lighten2': currentTheme.primary.lighten2,
+      '--primary-lighten3': currentTheme.primary.lighten3,
+      '--primary-lighten4': currentTheme.primary.lighten4,
+
+      '--primary-darken1': currentTheme.primary.darken1,
+      '--primary-darken2': currentTheme.primary.darken2,
+      '--primary-darken3': currentTheme.primary.darken3,
+      '--primary-darken4': currentTheme.primary.darken4,
+
+      '--primary-accent1': currentTheme.primary.accent1,
+      '--primary-accent2': currentTheme.primary.accent2,
+      '--primary-accent3': currentTheme.primary.accent3,
+      '--primary-accent4': currentTheme.primary.accent4
+    }
+  }
+
+  mounted() {
+    this.$vuexModules.User.getUserInfo()
+  }
 }
 </script>
+
+<style>
+.v-content__wrap {
+  background: #000ef30a;
+}
+
+.nuxt-wrapper {
+  max-width: 1280px;
+  margin: auto;
+}
+
+.mobile .mobile__header {
+  max-width: 100vw;
+}
+
+.mobile .mobile__content {
+  overflow-x: hidden;
+}
+
+/* Создаем css классы на основе цветовой схемы указанной в nuxt-config */
+.text-secondary {
+  color: var(--secondary-color) !important;
+}
+
+.text-primary {
+  color: var(--primary-base) !important;
+}
+
+.text-primary-lighten1 {
+  color: var(--primary-lighten1) !important;
+}
+.text-primary-lighten2 {
+  color: var(--primary-lighten2) !important;
+}
+.text-primary-lighten3 {
+  color: var(--primary-lighten3) !important;
+}
+.text-primary-lighten4 {
+  color: var(--primary-lighten4) !important;
+}
+
+.text-primary-darken1 {
+  color: var(--primary-darken1) !important;
+}
+.text-primary-darken2 {
+  color: var(--primary-darken2) !important;
+}
+.text-primary-darken3 {
+  color: var(--primary-darken3) !important;
+}
+.text-primary-darken4 {
+  color: var(--primary-darken4) !important;
+}
+
+.text-primary-accent1 {
+  color: var(--primary-accent1) !important;
+}
+.text-primary-accent2 {
+  color: var(--primary-accent2) !important;
+}
+.text-primary-accent3 {
+  color: var(--primary-accent3) !important;
+}
+.text-primary-accent4 {
+  color: var(--primary-accent4) !important;
+}
+
+.bg-primary {
+  background: var(--primary-base) !important;
+}
+
+.bg-primary-lighten1 {
+  background: var(--primary-lighten1) !important;
+}
+.bg-primary-lighten2 {
+  background: var(--primary-lighten2) !important;
+}
+.bg-primary-lighten3 {
+  background: var(--primary-lighten3) !important;
+}
+.bg-primary-lighten4 {
+  background: var(--primary-lighten4) !important;
+}
+
+.bg-primary-darken1 {
+  background: var(--primary-darken1) !important;
+}
+.bg-primary-darken2 {
+  background: var(--primary-darken2) !important;
+}
+.bg-primary-darken3 {
+  background: var(--primary-darken3) !important;
+}
+.bg-primary-darken4 {
+  background: var(--primary-darken4) !important;
+}
+
+.bg-primary-accent1 {
+  background: var(--primary-accent1) !important;
+}
+.bg-primary-accent2 {
+  background: var(--primary-accent2) !important;
+}
+.bg-primary-accent3 {
+  background: var(--primary-accent3) !important;
+}
+.bg-primary-accent4 {
+  background: var(--primary-accent4) !important;
+}
+</style>

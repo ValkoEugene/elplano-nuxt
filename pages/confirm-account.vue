@@ -1,89 +1,64 @@
 <template>
   <v-layout align-center justify-center fill-height>
-    <!-- eslint-disable -->
-    <v-alert v-if="!token" type="error">Проблема с токеном, повторите попытку.</v-alert>
+    <v-alert v-if="!token" type="error"
+      >Проблема с токеном, повторите попытку.</v-alert
+    >
 
     <v-progress-circular v-else :size="100" color="primary" indeterminate />
   </v-layout>
 </template>
 
-<script>
-import axios from 'axios'
-import { mapMutations, mapActions } from 'vuex'
-import {
-  Types as snackbarsTypes,
-  namespace as snackbarsNamespace
-} from '../store/snackbars'
-import { Types as userTypes, namespace as userNamespace } from '../store/user'
-import { getRegistrationInfo } from '../utils/auth'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { SnackbarColor } from '~/store/snackbars.ts'
+import { getRegistrationInfo } from '~/utils/auth'
+import { confirmAccount } from '~/api/user.ts'
 
-export default {
-  name: 'ConfirmAccount',
-  layout: 'empty',
-  computed: {
-    /**
-     * Токен для подтверждения аккаунта
-     * @type {String}
-     */
-    token() {
-      return this.$route.query.confirmation_token
-    }
-  },
+@Component({ layout: 'empty' })
+export default class ConfirmAccount extends Vue {
+  /**
+   * Токен для подтверждения аккаунта
+   */
+  get token(): string | undefined {
+    return this.$route.query.confirmation_token as string | undefined
+  }
+
   mounted() {
-    if (this.token) this.confirm()
-  },
-  methods: {
-    ...mapMutations({
-      /**
-       * Показать сообщение
-       */
-      addSnackbars: `${snackbarsNamespace}/${snackbarsTypes.mutations.ADD_SNACKBARS}`
-    }),
+    this.confirm()
+  }
 
-    ...mapActions({
-      /**
-       * Войти
-       */
-      login: `${userNamespace}/${userTypes.actions.LOGIN}`
-    }),
+  /**
+   * Подтвердить аккаунт
+   * @async
+   * @type {Function}
+   * @returns {Void}
+   */
+  async confirm() {
+    if (!this.token) return
 
-    /**
-     * Подтвердить аккаунт
-     * @async
-     * @type {Function}
-     * @returns {Void}
-     */
-    async confirm() {
-      try {
-        const params = { confirmation_token: this.token }
+    try {
+      await confirmAccount(this.token)
 
-        await axios({
-          method: 'get',
-          url: `${process.env.baseUrl}/api/v1/users/confirmation`,
-          params,
-          data: {},
-          headers: {
-            'Content-Type': 'application/vnd.api+json'
-          }
-        })
+      this.$vuexModules.Snackbars.ADD_SNACKBARS([
+        { text: 'Аккаунт подтвержден', color: SnackbarColor.success }
+      ])
 
-        this.addSnackbars([{ text: 'Аккаунт подтвержден', color: 'success' }])
+      // Берем информацию из localStorage и если она была сразу логиним
+      const registrationInfo = getRegistrationInfo()
 
-        // Берем информацию из localStorage и если она была сразу логиним
-        const registrationInfo = getRegistrationInfo()
+      // Проверить наличие в localStorage пароль-логин если есть то логиним
+      registrationInfo
+        ? this.$vuexModules.User.login(registrationInfo)
+        : this.$router.push('/login')
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(
+        error.response.data.errors.map(({ detail }: { detail: string }) => ({
+          text: detail,
+          color: 'error'
+        }))
+      )
 
-        // Проверить наличие в localStorage пароль-логин если есть то логиним
-        if (registrationInfo) this.login(registrationInfo)
-      } catch (error) {
-        this.addSnackbars(
-          error.response.data.errors.map(({ detail }) => ({
-            text: detail,
-            color: 'error'
-          }))
-        )
-
-        this.$router.push('/login')
-      }
+      this.$router.push('/login')
     }
   }
 }

@@ -1,0 +1,132 @@
+{
+  "rules": {
+    "required": "Required field",
+    "minLength": "Minimum characters - ",
+    "email": "Email must contain @"
+  },
+  "auth": {
+    "or": "OR",
+    "loginTitle": "Login to your account",
+    "loginBtn": "Login",
+    "sigunTitle": "Create account",
+    "sigunBtn": "Create",
+    "sigunWithBtn": "Create with",
+    "resetPasswordTitle": "Reset password",
+    "resetPasswordBtn": "Reset",
+    "loginLink": "Login with password",
+    "loginWith": "Login with",
+    "signupText": "Dont have an account yet?",
+    "sigunpLink": "Register now",
+    "resetPasswordLink": "Forgot your password?"
+  },
+  "sidebar": {
+    "schedule": "Schedule",
+    "lessons": "Lessons",
+    "tasks": "Tasks",
+    "teachers": "Teachers",
+    "group": "Group",
+    "measure": "Measure",
+    "ratings": "Ratings",
+    "attachments": "Attachmets",
+    "student": "Profile",
+    "groupSettings": "Group setting"
+  },
+  "header": {
+    "logout": "Logout",
+    "profile": "Profile",
+    "settings": "Settings",
+    "groupSettings": "Group settings"
+  },
+  "actions": {
+    "save": "Save",
+    "create": "Create",
+    "addTask": "Add task",
+    "addRaiting": "Add rating",
+    "edit": "Edit",
+    "send": "Send"
+  },
+  "field": {
+    "loginField": "Login",
+    "passwordField": "Password",
+    "confirmPasswordField": "Confirm password",
+    "confirmPasswordValidate": "Passwords do not match",
+    "fullName": "Full name",
+    "about": "About",
+    "description": "description",
+    "phone": "Phone",
+    "search": "Search",
+    "title": "Title",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "patronymic": "Patronymic",
+    "startAt": "Start date",
+    "endAt": "End Date",
+    "time": "Time",
+    "daysOfWeek": "Days",
+    "number": "Number"
+  },
+  "ui": {
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "confirm": "Ok",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "notready": "This page in progress",
+    "a2hsButton": "Add to home screen",
+    "card": {
+      "badges": {
+        "active": "Active"
+      }
+    }
+  },
+  "student": {
+    "title": "Profile settings"
+  },
+  "lesson": {
+    "empty": "No saved courses",
+    "lessons": "Lessons",
+    "lesson": "Lesson",
+    "edit": "Edit lesson",
+    "create": "Create lesson",
+    "confirm": "Delete lesson?"
+  },
+  "lecturers": {
+    "empty": "No saved lecturers",
+    "lecturers": "Lecturers",
+    "confirm": "Delete lecturer?"
+  },
+  "events": {
+    "empty": "No saved events",
+    "own": "Own",
+    "confirm": "Delete from schedule?",
+    "prev": "Prev",
+    "next": "Next"
+  },
+  "invites": {
+    "empty": "No saved invites",
+    "accept": "Accept",
+    "invites": "Invites",
+    "send": "Send invite",
+    "sended": "Invitate sent",
+    "statuses": {
+      "pending": "pending",
+      "accepted": "accepted"
+    }
+  },
+  "group": {
+    "create": "Create group",
+    "update": "Update group",
+    "infoline1": "To use Elplano you must be a member of a group.",
+    "infoline2": "You can create your own group or join another by invite."
+  },
+  "students": {
+    "president": "President"
+  },
+  "ratings": {
+    "add": "Add rating"
+  },
+  "tasks": {
+    "add": "Add task"
+  }
+}

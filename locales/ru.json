@@ -1,0 +1,131 @@
+{
+  "rules": {
+    "required": "Обязательное поле",
+    "minLength": "Минимум символов - ",
+    "email": "Email должен содержать @"
+  },
+  "auth": {
+    "or": "ИЛИ",
+    "loginTitle": "Войти",
+    "loginBtn": "Войти",
+    "sigunTitle": "Создать аккаунт",
+    "sigunBtn": "Создать",
+    "sigunWithBtn": "Создать аккаунт с помощью",
+    "resetPasswordTitle": "Сбросить пароль",
+    "resetPasswordBtn": "Сбросить",
+    "loginLink": "Войти с паролем",
+    "loginWith": "Войти через",
+    "signupText": "Еще нет аккаунта?",
+    "sigunpLink": "Зарегистрироваться",
+    "resetPasswordLink": "Забыли пароль?"
+  },
+  "sidebar": {
+    "schedule": "Расписание",
+    "lessons": "Предметы",
+    "tasks": "Задания",
+    "teachers": "Преподаватели",
+    "group": "Группа",
+    "measure": "Мероприятия",
+    "ratings": "Оценки",
+    "attachments": "Вложения",
+    "student": "Профиль",
+    "groupSettings": "Настройки группы"
+  },
+  "header": {
+    "logout": "Выход",
+    "profile": "Профиль",
+    "settings": "Настройки",
+    "groupSettings": "Настройки группы"
+  },
+  "actions": {
+    "save": "Сохранить",
+    "create": "Добавить",
+    "addTask": "Добавить задание",
+    "addRaiting": "Добавить оценку",
+    "edit": "Редактировать",
+    "send": "Отправить"
+  },
+  "field": {
+    "loginField": "Логин",
+    "passwordField": "Пароль",
+    "confirmPasswordField": "Подтверждение пароля",
+    "confirmPasswordValidate": "Пароли не совпадают",
+    "fullName": "ФИО",
+    "about": "Описание",
+    "description": "Описание",
+    "phone": "Телефон",
+    "search": "Поиск",
+    "title": "Наименование",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "patronymic": "Отчество",
+    "startAt": "Дата начала",
+    "endAt": "Дата завершения",
+    "time": "Время",
+    "daysOfWeek": "Дни недели",
+    "number": "Номер"
+  },
+  "ui": {
+    "loading": "Загрузка...",
+    "cancel": "Отмена",
+    "confirm": "Да",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "add": "Добавить",
+    "notready": "Страница находится в разработке",
+    "a2hsButton": "Добавить на главный экран",
+    "card": {
+      "badges": {
+        "active": "Действующий"
+      }
+    }
+  },
+  "student": {
+    "title": "Настройка профиля"
+  },
+  "lesson": {
+    "empty": "Предметы отсутствуют",
+    "lessons": "Предметы",
+    "lesson": "Предмет",
+    "edit": "Редактрование предмета",
+    "create": "Создание предмета",
+    "confirm": "Удалить предмет?"
+  },
+  "lecturers": {
+    "empty": "Преподаватели отсутствуют",
+    "lecturers": "Преподаватели",
+    "confirm": "Удалить преподавателя?"
+  },
+  "events": {
+    "empty": "Нет событий",
+    "own": "Собственное",
+    "confirm": "Удалить из расписания?",
+    "prev": "Назад",
+    "next": "Вперёд"
+  },
+  "invites": {
+    "accept": "Вступить",
+    "invites": "Приглашения",
+    "send": "Отправить приглашение",
+    "sended": "Приглашение отправлено",
+    "statuses": {
+      "pending": "ожидает подтверждения",
+      "accepted": "подтверждено"
+    }
+  },
+  "group": {
+    "create": "Создать группу",
+    "update": "Обновить группу",
+    "infoline1": "Для использования Elplano необходимо состоять в группе.",
+    "infoline2": "Вы можете создать свою группу или вступить в другую по приглашению."
+  },
+  "students": {
+    "president": "Староста"
+  },
+  "ratings": {
+    "add": "Добавить оценку"
+  },
+  "tasks": {
+    "add": "Добавить задание"
+  }
+}

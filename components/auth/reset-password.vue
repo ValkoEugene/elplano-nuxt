@@ -1,88 +1,118 @@
 <template>
-  <v-card>
-    <v-card-text>
-      <!-- eslint-disable -->
-      <v-alert v-if="successMessage" type="success">{{ successMessage }}</v-alert>
+  <Card>
+    <template v-slot:content>
+      <h3 class="login-card__title">{{ $t('auth.resetPasswordTitle') }}</h3>
 
-      <v-form v-else>
-        <!-- eslint-disable -->
-        <v-text-field v-model="login" label="Email" placeholder="Email" type="text" outlined />
+      <v-alert v-if="successMessage" type="success">{{
+        successMessage
+      }}</v-alert>
+
+      <v-form v-else ref="form" :lazy-validation="true">
+        <v-text-field
+          v-model.trim="login"
+          label="Email"
+          type="text"
+          :rules="[$rules.required, $rules.email]"
+          outlined
+        />
       </v-form>
-    </v-card-text>
-    <v-card-actions v-if="!successMessage">
-      <v-spacer></v-spacer>
-      <!-- eslint-disable -->
-      <v-btn color="primary" :disabled="unactive" @click="resetPassword">Сбросить</v-btn>
-    </v-card-actions>
-  </v-card>
+    </template>
+    <template v-if="!successMessage" v-slot:actions>
+      <div class="actions__wrapper">
+        <button
+          type="button"
+          :style="colorStyle"
+          class="actions__link"
+          @click="$emit('setComponent', 'Login')"
+        >
+          {{ $t('auth.loginLink') }}
+        </button>
+        <v-btn
+          color="primary"
+          :disabled="unactive"
+          class="login__btn"
+          @click="resetPassword"
+          >{{ $t('auth.resetPasswordBtn') }}</v-btn
+        >
+      </div>
+    </template>
+  </Card>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue, Ref } from 'vue-property-decorator'
 import axios from 'axios'
-import { mapMutations } from 'vuex'
-import {
-  Types as snackbarsTypes,
-  namespace as snackbarsNamespace
-} from '../../store/snackbars'
 
-export default {
-  name: 'ResetPassword',
-  data: () => ({
-    /**
-     * Логин для сброса
-     * @type {String}
-     */
-    login: '',
+@Component({
+  components: {
+    Card: () =>
+      import(
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      )
+  }
+})
+export default class ResetPassword extends Vue {
+  /**
+   * Ссылка на компонент формы из vuetify
+   */
+  @Ref()
+  readonly form: { validate: () => boolean }
 
-    /**
-     * Сообщение при успешном сбросе
-     * @type {String}
-     */
-    successMessage: '',
+  /**
+   * Логин для сброса
+   */
+  login: string = ''
 
-    /**
-     * Флаг блокировки кнопки
-     * @type {Boolean}
-     */
-    unactive: false
-  }),
-  methods: {
-    ...mapMutations({
-      /**
-       * Показать сообщение
-       */
-      addSnackbars: `${snackbarsNamespace}/${snackbarsTypes.mutations.ADD_SNACKBARS}`
-    }),
+  /**
+   * Сообщение при успешном сбросе
+   */
+  successMessage: string = ''
 
-    /**
-     * Сбросить пароль
-     * @async
-     * @type {Function}
-     * @returns {Void}
-     */
-    async resetPassword() {
-      this.unactive = true
+  /**
+   * Флаг блокировки кнопки
+   */
+  unactive: boolean = false
 
-      try {
-        const {
-          data: { meta }
-        } = await axios({
-          method: 'post',
-          url: `${process.env.baseUrl}/api/v1/users/password`,
-          data: { user: { login: this.login } },
-          headers: {
-            'Content-Type': 'application/vnd.api+json'
-          }
-        })
+  /**
+   * Стили с цветом
+   */
+  get colorStyle(): { color: string } {
+    const { theme }: { theme: any } = this.$vuetify
+    return {
+      color: theme.currentTheme.primary.base
+    }
+  }
 
-        this.successMessage = meta.message
-      } catch (error) {
-        this.addSnackbars(
-          error.messages.map((text) => ({ text, color: 'error' }))
-        )
-      } finally {
-        this.unactive = false
-      }
+  /**
+   * Сбросить пароль
+   */
+  async resetPassword() {
+    if (!this.form.validate()) return
+
+    this.unactive = true
+
+    try {
+      const {
+        data: { meta }
+      } = await axios({
+        method: 'post',
+        url: `${process.env.baseUrl}/api/v1/users/password`,
+        data: { user: { login: this.login } },
+        headers: {
+          'Content-Type': 'application/vnd.api+json'
+        }
+      })
+
+      this.successMessage = meta.message
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(
+        error.response.data.errors.map(({ detail }: { detail: string }) => ({
+          text: detail,
+          color: 'error'
+        }))
+      )
+    } finally {
+      this.unactive = false
     }
   }
 }

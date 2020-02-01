@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": ["esnext", "esnext.asynciterable", "dom"],
+    "esModuleInterop": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "strict": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["./*"]
+    },
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "types": [
+      "@nuxt/types",
+      "@nuxtjs/vuetify",
+      "@types/node",
+      "@types/gapi.auth2"
+    ]
+  }
+}

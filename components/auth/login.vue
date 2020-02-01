@@ -1,62 +1,123 @@
 <template>
-  <v-card>
-    <v-card-text>
-      <v-form>
-        <!-- eslint-disable -->
-        <v-text-field v-model="user.login" label="Логин" placeholder="Логин" type="text" outlined />
+  <div>
+    <Card>
+      <template v-slot:content>
+        <h3 class="login-card__title" :style="colorStyle">EL</h3>
 
-        <v-text-field
-          v-model="user.password"
-          label="Пароль"
-          placeholder="Пароль"
-          type="password"
-          outlined
-        />
-      </v-form>
-    </v-card-text>
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <!-- eslint-disable -->
-      <v-btn color="primary" :disabled="loginFetching" @click="login(user)">Войти</v-btn>
-    </v-card-actions>
-  </v-card>
+        <v-form ref="form" :lazy-validation="true">
+          <v-text-field
+            v-model.trim="user.login"
+            :label="$t('field.loginField')"
+            type="text"
+            :rules="[$rules.required]"
+            outlined
+          />
+
+          <div class="password-link__wrapper">
+            <button
+              type="button"
+              :style="colorStyle"
+              @click="$emit('setComponent', 'ResetPassword')"
+            >
+              {{ $t('auth.resetPasswordLink') }}
+            </button>
+          </div>
+
+          <v-text-field
+            v-model.trim="user.password"
+            :label="$t('field.passwordField')"
+            type="password"
+            :rules="[$rules.required, $rules.getMinLength(6)]"
+            outlined
+          />
+        </v-form>
+      </template>
+
+      <template v-slot:actions>
+        <div class="actions__wrapper">
+          <button
+            type="button"
+            :style="colorStyle"
+            class="actions__link"
+            @click="$emit('setComponent', 'Registration')"
+          >
+            {{ $t('auth.sigunpLink') }}
+          </button>
+          <v-btn
+            color="primary"
+            :disabled="loginFetching"
+            class="login__btn"
+            @click="login"
+            >{{ $t('auth.loginBtn') }}</v-btn
+          >
+        </div>
+      </template>
+    </Card>
+  </div>
 </template>
 
-<script>
-import { mapActions } from 'vuex'
-import { Types, namespace } from '../../store/user'
+<script lang="ts">
+import { Component, Vue, Ref } from 'vue-property-decorator'
 
-export default {
-  name: 'Login',
-  data: () => ({
-    /**
-     * Информация о пользователе
-     * @type {{
-     *  login: String,
-     *  password: String
-     * }}
-     */
-    user: {
-      login: '',
-      password: ''
+interface UserI {
+  login: string
+  password: string
+}
+
+@Component({
+  components: {
+    Card: () =>
+      import(
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      )
+  }
+})
+export default class Login extends Vue {
+  /**
+   * Ссылка на компонент формы из vuetify
+   */
+  @Ref()
+  readonly form: { validate: () => boolean }
+
+  /**
+   * Информация о пользователе
+   */
+  user: UserI = {
+    login: '',
+    password: ''
+  }
+
+  /**
+   * Флаг процесса логина
+   */
+  get loginFetching(): boolean {
+    return this.$vuexModules.User.loginFetching
+  }
+
+  /**
+   * Стили с цветом
+   */
+  get colorStyle(): { color: string } {
+    const { theme }: { theme: any } = this.$vuetify
+    return {
+      color: theme.currentTheme.primary.base
     }
-  }),
-  computed: {
-    /**
-     * Флаг процесса логина
-     * @type {Boolean}
-     */
-    loginFetching() {
-      return this.$store.state.user.loginFetching
-    }
-  },
-  methods: {
-    ...mapActions({
-      /**
-       * Вход
-       */
-      login: `${namespace}/${Types.actions.LOGIN}`
-    })
+  }
+
+  /**
+   * Логин
+   */
+  login() {
+    if (!this.form.validate()) return
+
+    this.$vuexModules.User.login(this.user)
   }
 }
 </script>
+
+<style scoped>
+.password-link__wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

@@ -1,136 +1,157 @@
 <template>
-  <v-card>
-    <v-card-text>
-      <!-- eslint-disable -->
-      <v-alert v-if="successMessage" type="success">{{ successMessage }}</v-alert>
+  <Card>
+    <template v-slot:content>
+      <h3 class="login-card__title">{{ $t('auth.sigunTitle') }}</h3>
 
-      <v-form v-else>
+      <v-alert v-if="successMessage" type="success">{{
+        successMessage
+      }}</v-alert>
+
+      <v-form v-else ref="form" :lazy-validation="true">
         <v-text-field
-          v-model="user.username"
-          label="Логин"
-          placeholder="Логин"
+          v-model.trim="user.username"
+          :label="$t('field.loginField')"
           type="text"
-          outlined
-        />
-
-        <!-- eslint-disable -->
-        <v-text-field v-model="user.email" label="Email" placeholder="Email" type="text" outlined />
-
-        <v-text-field
-          v-model="user.password"
-          label="Пароль"
-          placeholder="Пароль"
-          type="password"
+          :rules="[$rules.required]"
           outlined
         />
 
         <v-text-field
-          v-model="user.password_confirmation"
-          label="Подтверждение пароля"
-          placeholder="Подтверждение пароля"
+          v-model.trim="user.email"
+          label="Email"
+          type="text"
+          :rules="[$rules.required, $rules.email]"
+          outlined
+        />
+
+        <v-text-field
+          v-model.trim="user.password"
+          :label="$t('field.passwordField')"
           type="password"
+          :rules="[$rules.required, $rules.getMinLength(6)]"
+          outlined
+        />
+
+        <v-text-field
+          v-model.trim="user.password_confirmation"
+          :label="$t('field.confirmPasswordField')"
+          type="password"
+          :rules="[
+            $rules.required,
+            $rules.equal(user.password, $t('field.confirmPasswordValidate'))
+          ]"
           outlined
         />
       </v-form>
-    </v-card-text>
-    <v-card-actions v-if="!successMessage">
-      <v-spacer></v-spacer>
-      <!-- eslint-disable -->
-      <v-btn color="primary" :disabled="unactive" @click="createUser">Зарегистироваться</v-btn>
-    </v-card-actions>
-  </v-card>
+    </template>
+    <template v-if="!successMessage" v-slot:actions>
+      <div class="actions__wrapper">
+        <button
+          type="button"
+          :style="colorStyle"
+          class="actions__link"
+          @click="$emit('setComponent', 'Login')"
+        >
+          {{ $t('auth.loginLink') }}
+        </button>
+        <v-btn
+          color="primary"
+          :disabled="unactive"
+          class="login__btn"
+          @click="createUser"
+          >{{ $t('auth.sigunBtn') }}</v-btn
+        >
+      </div>
+    </template>
+  </Card>
 </template>
 
-<script>
+<script lang="ts">
 import axios from 'axios'
-import { mapMutations } from 'vuex'
-import {
-  Types as snackbarsTypes,
-  namespace as snackbarsNamespace
-} from '../../store/snackbars'
-import {
-  Types as userTypes,
-  namespace as userNamespace
-} from '../../store/user'
-import { setRegistrationInfo } from '../../utils/auth'
+import { Component, Vue, Ref } from 'vue-property-decorator'
+import { setRegistrationInfo } from '~/utils/auth'
 
-export default {
-  name: 'Registration',
-  data: () => ({
-    /**
-     * Информация о пользователе
-     * @type {Object}
-     */
-    user: {
-      username: '',
-      email: '',
-      password: '',
-      password_confirmation: ''
-    },
+@Component({
+  components: {
+    Card: () =>
+      import(
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      )
+  }
+})
+export default class Registration extends Vue {
+  /**
+   * Ссылка на компонент формы из vuetify
+   */
+  @Ref()
+  readonly form: { validate: () => boolean }
 
-    /**
-     * Сообщение при успешной регистрации
-     * @type {String}
-     */
-    successMessage: '',
+  /**
+   * Информация о пользователе
+   */
+  user = {
+    username: '',
+    email: '',
+    password: '',
+    password_confirmation: ''
+  }
 
-    /**
-     * Флаг блокировки кнопки
-     * @type {Boolean}
-     */
-    unactive: false
-  }),
-  methods: {
-    ...mapMutations({
-      /**
-       * Сохранить пользователя
-       */
-      setUser: `${userNamespace}/${userTypes.mutations.SET_USER}`,
+  /**
+   * Сообщение при успешной регистрации
+   */
+  successMessage: string = ''
 
-      /**
-       * Показать сообщение
-       */
-      addSnackbars: `${snackbarsNamespace}/${snackbarsTypes.mutations.ADD_SNACKBARS}`
-    }),
+  /**
+   * Флаг блокировки кнопки
+   */
+  unactive: boolean = false
 
-    /**
-     * Создать пользователя
-     * @async
-     * @type {Function}
-     * @returns {Void}
-     */
-    async createUser() {
-      this.unactive = true
+  /**
+   * Стили с цветом
+   */
+  get colorStyle(): { color: string } {
+    const { theme }: { theme: any } = this.$vuetify
+    return {
+      color: theme.currentTheme.primary.base
+    }
+  }
 
-      const registrationInfo = {
-        login: this.user,
-        password: this.user.password
-      }
+  /**
+   * Создать пользователя
+   */
+  async createUser() {
+    if (!this.form.validate()) return
 
-      try {
-        const {
-          data: { attributes, meta }
-        } = await axios({
-          method: 'post',
-          url: `${process.env.baseUrl}/api/v1/users`,
-          data: { user: this.user },
-          headers: {
-            'Content-Type': 'application/vnd.api+json'
-          }
-        })
-        setRegistrationInfo(registrationInfo)
+    this.unactive = true
 
-        const user = attributes
-        this.setUser(user)
+    const registrationInfo = {
+      login: this.user.username,
+      password: this.user.password
+    }
 
-        this.message = meta.message
-      } catch (error) {
-        this.addSnackbars(
-          error.messages.map((text) => ({ text, color: 'error' }))
-        )
-      } finally {
-        this.unactive = false
-      }
+    try {
+      const { data } = await axios({
+        method: 'post',
+        url: `${process.env.baseUrl}/api/v1/users`,
+        data: { user: this.user },
+        headers: {
+          'Content-Type': 'application/vnd.api+json'
+        }
+      })
+      const meta = data.meta
+
+      setRegistrationInfo(registrationInfo)
+
+      this.successMessage = meta.message
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(
+        error.response.data.errors.map(({ detail }: { detail: string }) => ({
+          text: detail,
+          color: 'error'
+        }))
+      )
+    } finally {
+      this.unactive = false
     }
   }
 }
