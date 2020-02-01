@@ -11,7 +11,6 @@
         <v-text-field
           v-model.trim="login"
           label="Email"
-          placeholder="Email"
           type="text"
           :rules="[$rules.required, $rules.email]"
           outlined
@@ -19,20 +18,29 @@
       </v-form>
     </template>
     <template v-if="!successMessage" v-slot:actions>
-      <v-btn
-        color="primary"
-        rounded
-        :disabled="unactive"
-        class="login__btn elevation-10"
-        @click="$refs.form.validate() && resetPassword()"
-        >{{ $t('auth.resetPasswordBtn') }}</v-btn
-      >
+      <div class="actions__wrapper">
+        <button
+          type="button"
+          :style="colorStyle"
+          class="actions__link"
+          @click="$emit('setComponent', 'Login')"
+        >
+          {{ $t('auth.loginLink') }}
+        </button>
+        <v-btn
+          color="primary"
+          :disabled="unactive"
+          class="login__btn"
+          @click="resetPassword"
+          >{{ $t('auth.resetPasswordBtn') }}</v-btn
+        >
+      </div>
     </template>
   </Card>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Ref } from 'vue-property-decorator'
 import axios from 'axios'
 
 @Component({
@@ -44,6 +52,12 @@ import axios from 'axios'
   }
 })
 export default class ResetPassword extends Vue {
+  /**
+   * Ссылка на компонент формы из vuetify
+   */
+  @Ref()
+  readonly form: { validate: () => boolean }
+
   /**
    * Логин для сброса
    */
@@ -60,9 +74,21 @@ export default class ResetPassword extends Vue {
   unactive: boolean = false
 
   /**
+   * Стили с цветом
+   */
+  get colorStyle(): { color: string } {
+    const { theme }: { theme: any } = this.$vuetify
+    return {
+      color: theme.currentTheme.primary.base
+    }
+  }
+
+  /**
    * Сбросить пароль
    */
   async resetPassword() {
+    if (!this.form.validate()) return
+
     this.unactive = true
 
     try {

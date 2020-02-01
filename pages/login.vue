@@ -2,22 +2,6 @@
   <div class="login__wrapper">
     <div class="login__title">
       <h1 :style="colorStyle">Welcom to ELplano</h1>
-      <div
-        v-if="
-          currentComponent === 'Login' || currentComponent === 'ResetPassword'
-        "
-        class="login__title--registration"
-      >
-        <p>{{ $t('auth.signupText') }}</p>
-        <button
-          type="button"
-          :style="colorStyle"
-          class="ml-2"
-          @click="setComponent('Registration')"
-        >
-          {{ $t('auth.sigunpLink') }}
-        </button>
-      </div>
     </div>
 
     <div class="login__content">
@@ -31,40 +15,29 @@
         @setComponent="setComponent"
       />
 
-      <button
+      <social-networks
         v-if="
-          currentComponent === 'Registration' ||
-            currentComponent === 'ResetPassword'
+          currentComponent === 'Login' || currentComponent === 'Registration'
         "
-        type="button"
-        :style="colorStyle"
-        class="mt-3"
-        @click="setComponent('Login')"
-      >
-        {{ $t('auth.loginLink') }}
-      </button>
-
-      <button
-        v-if="currentComponent === 'Login'"
-        type="button"
-        :style="colorStyle"
-        class="mt-3"
-        @click="setComponent('ResetPassword')"
-      >
-        {{ $t('auth.resetPasswordLink') }}
-      </button>
+        :title-i18n="socialNetworksTitleI18n"
+      />
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'AuthPage',
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component({
   layout: 'empty',
   components: {
+    SocialNetworks: () =>
+      import(
+        '~/components/auth/social-networks/social-networks.vue' /* webpackChunkName: 'components/auth/login' */
+      ),
     Login: () =>
       import(
-        '~/components/auth/login.vue' /* webpackChunkName: 'components/auth' */
+        '~/components/auth/login.vue' /* webpackChunkName: 'components/auth/login' */
       ),
     Registration: () =>
       import(
@@ -74,29 +47,38 @@ export default {
       import(
         '~/components/auth/reset-password.vue' /* webpackChunkName: 'components/auth/login' */
       )
-  },
-  data: () => ({
-    /**
-     * @type ('Login', 'Registration', 'ResetPassword')
-     * Показываемый компонент
-     */
-    currentComponent: 'Login'
-  }),
-  computed: {
-    colorStyle() {
-      return {
-        color: this.$vuetify.theme.currentTheme.primary.base
-      }
+  }
+})
+export default class LoginPage extends Vue {
+  /**
+   * Показываемый компонент
+   */
+  currentComponent: string = 'Login'
+
+  /**
+   * Стили с цветом
+   */
+  get colorStyle(): { color: string } {
+    const { theme }: { theme: any } = this.$vuetify
+    return {
+      color: theme.currentTheme.primary.base
     }
-  },
-  methods: {
-    /**
-     * Установить показываемый компонент
-     * @type {String}
-     */
-    setComponent(componentName) {
-      this.currentComponent = componentName
-    }
+  }
+
+  /**
+   * Свойство для i18n заголовка логина через соц. сети
+   */
+  get socialNetworksTitleI18n(): string {
+    return this.currentComponent === 'Registration'
+      ? 'sigunWithBtn'
+      : 'loginWith'
+  }
+
+  /**
+   * Установить показываемый компонент
+   */
+  setComponent(componentName: string): void {
+    this.currentComponent = componentName
   }
 }
 </script>
@@ -108,17 +90,28 @@ export default {
 }
 
 .login__btn {
-  width: 200px !important;
-  margin-left: calc(50% - 100px);
+  min-width: 150px !important;
 }
 
 .login__title--registration p {
   margin: 0;
 }
 
-/**/
+.actions__wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
 
 @media (max-width: 900px) {
+  .actions__wrapper {
+    flex-direction: column-reverse;
+  }
+
+  .actions__link {
+    margin-top: 10px;
+  }
+
   .login__wrapper {
     min-width: 100vw;
     min-height: 100vh;

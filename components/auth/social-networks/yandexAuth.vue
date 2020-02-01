@@ -1,13 +1,22 @@
 <template>
-  <span @click="loginYandex">
-    <img class="social-networks__logo" src="~assets/images/yandex-auth.png" />
-  </span>
+  <social-login-btn
+    provider="Yandex"
+    icon-src="/images/auth/yandex-auth.png"
+    @click="loginYandex"
+  />
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-@Component({})
+@Component({
+  components: {
+    SocialLoginBtn: () =>
+      import(
+        '~/components/auth/social-networks/social-login-btn.vue' /* webpackChunkName: 'components/auth/social-networks/social-login-btn' */
+      )
+  }
+})
 export default class yandexAuth extends Vue {
   /*
    * Авторизовать через Yandex

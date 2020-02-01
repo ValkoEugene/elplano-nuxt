@@ -7,12 +7,14 @@
   "auth": {
     "or": "ИЛИ",
     "loginTitle": "Войти",
-    "loginBtn": "Вход",
+    "loginBtn": "Войти",
     "sigunTitle": "Создать аккаунт",
-    "sigunBtn": "Зарегистироваться",
+    "sigunBtn": "Создать",
+    "sigunWithBtn": "Создать аккаунт с помощью",
     "resetPasswordTitle": "Сбросить пароль",
     "resetPasswordBtn": "Сбросить",
     "loginLink": "Войти с паролем",
+    "loginWith": "Войти через",
     "signupText": "Еще нет аккаунта?",
     "sigunpLink": "Зарегистрироваться",
     "resetPasswordLink": "Забыли пароль?"

@@ -1,5 +1,5 @@
 <template>
-  <div class="card elevation-5" :style="cardStyle">
+  <div class="card elevation-2" :style="cardStyle">
     <div v-if="$scopedSlots.badges" class="card__badges">
       <slot name="badges" />
     </div>
@@ -159,6 +159,7 @@ export default class Card extends Vue {
 
 .card__title--text {
   align-self: center;
+  width: 100%;
 }
 
 .card__content--wrapper {
