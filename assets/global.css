@@ -11,6 +11,13 @@
     0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12) !important;
 }
 
+.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--box
+  .v-select__selections,
+.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--enclosed
+  .v-select__selections {
+  min-height: 32px !important;
+}
+
 /* Фикс выбранных элементов для мультиселекта */
 .v-chip.v-size--default {
   height: auto !important;

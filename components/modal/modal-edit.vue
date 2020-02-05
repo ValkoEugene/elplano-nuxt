@@ -38,6 +38,12 @@
                 outlined
               />
 
+              <labels-field
+                v-if="field.type === 'tags'"
+                :key="field.model"
+                v-model.trim="localModel[field.model]"
+              />
+
               <v-select
                 v-if="field.type === 'v-select'"
                 :key="field.model"
@@ -122,6 +128,10 @@ import clonedeep from 'lodash.clonedeep'
 
 @Component({
   components: {
+    LabelsField: () =>
+      import(
+        '~/components/UI-core/labels-field.vue' /* webpackChunkName: 'components/UI-core/labels-field' */
+      ),
     Datepicker: () =>
       import(
         '~/components/UI-core/datepicker.vue' /* webpackChunkName: 'components/UI-core/datepicker' */

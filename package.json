@@ -34,7 +34,8 @@
     "vue-content-loader": "^0.2.2",
     "vue-i18n": "^8.15.0",
     "vue-infinite-scroll": "^2.0.2",
-    "vue-property-decorator": "^8.2.2"
+    "vue-property-decorator": "^8.2.2",
+    "vuetify": "2.2.8"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.3.1",

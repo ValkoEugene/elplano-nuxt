@@ -63,7 +63,8 @@
     "endAt": "End Date",
     "time": "Time",
     "daysOfWeek": "Days",
-    "number": "Number"
+    "number": "Number",
+    "tags": "Tags"
   },
   "ui": {
     "loading": "Loading...",
@@ -74,6 +75,7 @@
     "add": "Add",
     "notready": "This page in progress",
     "a2hsButton": "Add to home screen",
+    "no-data": "No results",
     "card": {
       "badges": {
         "active": "Active"
@@ -128,5 +130,9 @@
   },
   "tasks": {
     "add": "Add task"
+  },
+  "tags": {
+    "addNew": "Add tag",
+    "edit": "Edit tag"
   }
 }

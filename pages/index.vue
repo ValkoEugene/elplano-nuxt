@@ -141,6 +141,10 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
           options: this.eventableTypeOptions
         },
         {
+          type: 'tags',
+          model: 'label_ids'
+        },
+        {
           type: 'v-text-field',
           model: 'title',
           label: this.$t('field.title'),
