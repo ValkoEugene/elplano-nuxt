@@ -3,7 +3,7 @@
     <v-select
       v-model="localValue"
       :items="labels"
-      prepend-icon="add"
+      append-icon="add"
       item-value="id"
       item-text="title"
       :loading="loading"
@@ -13,7 +13,7 @@
       :multiple="true"
       :menu-props="{ bottom: true, offsetY: true, 'z-index': 202 }"
       outlined
-      @click:prepend="openEditingWindow()"
+      @click:append="openEditingWindow()"
     >
       <template v-slot:selection="{ attrs, item, parent, selected }">
         <v-chip
