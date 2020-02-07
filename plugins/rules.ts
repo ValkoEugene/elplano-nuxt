@@ -3,13 +3,13 @@ import { Plugin } from '@nuxt/types'
 declare module 'vue/types/vue' {
   interface Vue {
     $rules: {
-      required(v: any): string | false
-      getMinLength(len: number): (v: any) => string | false
-      email(v: any): string | false
+      required(v: any): string | true
+      getMinLength(len: number): (v: any) => string | true
+      email(v: any): string | true
       equal(
         compareValue: string,
         errorText?: string
-      ): (v: string) => string | false
+      ): (v: string) => string | true
     }
   }
 }
@@ -17,13 +17,13 @@ declare module 'vue/types/vue' {
 declare module '@nuxt/types' {
   interface NuxtAppOptions {
     $rules: {
-      required(v: any): string | false
-      getMinLength(len: number): (v: any) => string | false
-      email(v: any): string | false
+      required(v: any): string | true
+      getMinLength(len: number): (v: any) => string | true
+      email(v: any): string | true
       equal(
         compareValue: string,
         errorText?: string
-      ): (v: string) => string | false
+      ): (v: string) => string | true
     }
   }
 }
@@ -54,33 +54,33 @@ const rulesPlugin: Plugin = (context, inject) => {
     /**
      * Валидатор - Обязательное поле
      */
-    required(v: any): string | false {
+    required(v: any): string | true {
       if (Array.isArray(v)) {
-        return !v.length ? getErrorText('required') : false
+        return !v.length ? getErrorText('required') : true
       }
 
-      return !v ? getErrorText('required') : false
+      return !v ? getErrorText('required') : true
     },
 
     /**
      * Валидатор для проверки минимального количества символов
      * Возвращает функцию которой надо передать число с минимальным кол-вом символов
      */
-    getMinLength(len: number): (v: any) => string | false {
+    getMinLength(len: number): (v: any) => string | true {
       return (v: any) => {
         if (typeof v === 'number') v = String(v)
 
         if (typeof v !== 'string') return 'error validation type'
-        return v.length < len ? getErrorText('minLength') + len : false
+        return v.length < len ? getErrorText('minLength') + len : true
       }
     },
 
     /**
      * Валидатор проверки на соответствие строки валидному email
      */
-    email(v: any): string | false {
+    email(v: any): string | true {
       if (typeof v !== 'string') return 'error validation type'
-      return v && !v.includes('@') ? getErrorText('email') : false
+      return v && !v.includes('@') ? getErrorText('email') : true
     },
 
     /**
@@ -92,8 +92,8 @@ const rulesPlugin: Plugin = (context, inject) => {
     equal(
       compareValue: string,
       errorText = 'Values not equal'
-    ): (v: string) => string | false {
-      return (v) => (v !== compareValue ? errorText : false)
+    ): (v: string) => string | true {
+      return (v) => (v !== compareValue ? errorText : true)
     }
   }
 

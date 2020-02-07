@@ -75,6 +75,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
     end_at: '',
     eventable_type: 'student',
     eventable_id: '',
+    label_ids: [],
     by_day: [],
     recurrence: [],
     timezone: ''
@@ -139,6 +140,10 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
           type: 'v-radio-group',
           row: true,
           options: this.eventableTypeOptions
+        },
+        {
+          type: 'tags',
+          model: 'label_ids'
         },
         {
           type: 'v-text-field',

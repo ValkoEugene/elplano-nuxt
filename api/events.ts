@@ -16,6 +16,7 @@ export interface Event {
   end_at: string
   recurrence: string[]
   timezone: string
+  label_ids: string[]
 }
 
 /**
@@ -50,6 +51,7 @@ const formatDataFromApi = (data: any): Event => {
   let course_id = ''
   let eventable_id = ''
   let eventable_type = ''
+  let label_ids = []
 
   if (relationships && relationships.course && relationships.course.data) {
     course_id = relationships.course.data.id
@@ -64,9 +66,19 @@ const formatDataFromApi = (data: any): Event => {
     eventable_type = relationships.eventable.data.type
   }
 
+  if (
+    relationships &&
+    relationships.labels &&
+    relationships.labels.data &&
+    relationships.labels.data.length
+  ) {
+    label_ids = relationships.labels.data.map(({ id }: { id: string }) => id)
+  }
+
   return {
     id,
     ...attributes,
+    label_ids,
     eventable_id,
     eventable_type,
     by_day: parseDaysOfWeek(attributes.recurrence),
