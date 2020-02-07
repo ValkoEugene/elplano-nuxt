@@ -6,12 +6,8 @@ WORKDIR /app
 # Копирование содержимого репозитория в контейнер
 COPY . /app/
 
-# Установка глобальных зависимостей
-RUN npm i -g npm && npm i -g yarn
-
 # Удаляем lock файлы
 RUN rm yarn.lock
-RUN rm package-lock.json
 
 RUN yarn
 # Собираем проект

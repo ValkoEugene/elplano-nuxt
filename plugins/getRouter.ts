@@ -1,10 +1,11 @@
-// Для использования router из vuex
 import VueRouter from 'vue-router'
-declare global {
-  interface Window {
-    $nuxt: {
-      $router: VueRouter
-    }
-  }
+
+/**
+ * Получить инстанс роутера через window
+ */
+const getRouter = (): VueRouter => {
+  const { $nuxt } = window as any
+  return $nuxt.$router
 }
-export default () => window.$nuxt.$router
+
+export default getRouter

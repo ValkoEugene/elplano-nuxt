@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig, AxiosError } from 'axios'
 import { User } from '~/store/user.ts'
 import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow'
 import { SnackbarI, SnackbarColor } from '~/store/snackbars'
+import getRouter from '~/plugins/getRouter'
 
 interface CustomAxiosRequestConfig {
   _retry?: boolean
@@ -81,7 +82,7 @@ const updateToken = (error: AxiosError) => {
         return axios(originalRequest)
       })
       .catch((error) => {
-        window.$nuxt.$router.push('/log-off')
+        getRouter().push('/log-off')
         console.error(`Не получилось получить token: ${error}`)
       })
   }
