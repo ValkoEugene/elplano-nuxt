@@ -75,6 +75,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
     end_at: '',
     eventable_type: 'student',
     eventable_id: '',
+    label_ids: [],
     by_day: [],
     recurrence: [],
     timezone: ''
