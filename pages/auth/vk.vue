@@ -7,6 +7,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { IdentityProvider } from '~/api/users-identities.ts'
+import VueRouter from 'vue-router'
 
 @Component({ layout: 'empty' })
 export default class AuthVkCallbackPage extends Vue {
@@ -25,8 +26,9 @@ export default class AuthVkCallbackPage extends Vue {
    * Отправить code в главную страницу
    */
   sendCode() {
-    const mainPage: Window = window.opener
-    mainPage.$nuxt.$router.push(
+    const mainPage: any = window.opener
+    const $router = mainPage.$nuxt.$router as VueRouter
+    $router.push(
       {
         path: '/auth/callback',
         query: {
