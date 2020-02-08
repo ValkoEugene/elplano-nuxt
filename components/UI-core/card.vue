@@ -126,6 +126,7 @@ export default class Card extends Vue {
   border-radius: 4px;
   word-break: break-word;
   word-wrap: break-word;
+  height: 100%;
 }
 
 .card__badges {
