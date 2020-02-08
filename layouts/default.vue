@@ -39,7 +39,7 @@ import { User as UserI } from '~/api/admin-user.ts'
   components: {
     Loader: () =>
       import(
-        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loaders/loader.vue' /* webpackChunkName: 'components/UI-core/loaders/loader' */
       ),
     Sidebar: () =>
       import('./sidebar.vue' /* webpackChunkName: 'layouts/sidebar' */),

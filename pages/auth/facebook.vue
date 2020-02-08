@@ -1,14 +1,20 @@
 <template>
-  <div class="token_wrapper">
-    <v-progress-circular :size="50" color="primary" indeterminate />
-  </div>
+  <loader-full-page />
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { IdentityProvider } from '~/api/users-identities.ts'
 
-@Component({ layout: 'empty' })
+@Component({
+  layout: 'empty',
+  components: {
+    LoaderFullPage: () =>
+      import(
+        '~/components/UI-core/loaders/loader-full-page.vue' /* webpackChunkName: 'components/UI-core/loaders/loader-full-page' */
+      )
+  }
+})
 export default class AuthYandexCallbackPage extends Vue {
   /**
    * Токен для входа

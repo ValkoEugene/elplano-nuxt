@@ -45,7 +45,7 @@ export interface TableHeader {
     SendInvite: () => import('./send-invite.vue'),
     Loader: () =>
       import(
-        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loaders/loader.vue' /* webpackChunkName: 'components/UI-core/loaders/loader' */
       ),
     Card: () =>
       import(
