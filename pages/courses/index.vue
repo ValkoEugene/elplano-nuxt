@@ -2,34 +2,32 @@
   <Loader v-if="loading" :show-search="true" :show-cards="true" />
 
   <div v-else>
-    <template>
-      <v-alert v-if="!courses.length" type="info" prominent>
-        <span>{{ $t('lesson.empty') }}</span>
-      </v-alert>
+    <v-layout row wrap>
+      <Search v-model="search" />
 
-      <v-layout v-else row wrap>
-        <Search v-model="search" />
+      <v-flex v-if="!filtredCourses.length" xs12 class="pa-3">
+        <v-alert type="info" prominent>
+          <span>{{ $t('lesson.empty') }}</span>
+        </v-alert>
+      </v-flex>
 
-        <template v-for="course in courses">
-          <v-flex
-            v-if="!search || $customHelpers.search(course.title, search)"
-            :key="course.id"
-            xs12
-            sm12
-            md4
-            class="pa-3"
-          >
-            <CourseCard
-              :course="course"
-              :updating="updating"
-              :get-lecturer-view="getLecturerView"
-              @deleteCourse="deleteCourse"
-              @editCourse="edit"
-            />
-          </v-flex>
-        </template>
-      </v-layout>
-    </template>
+      <v-flex
+        v-for="course in filtredCourses"
+        :key="course.id"
+        xs12
+        sm12
+        md4
+        class="pa-3"
+      >
+        <CourseCard
+          :course="course"
+          :updating="updating"
+          :get-lecturer-view="getLecturerView"
+          @deleteCourse="deleteCourse"
+          @editCourse="edit"
+        />
+      </v-flex>
+    </v-layout>
 
     <ModalEdit
       ref="modalEdit"
@@ -159,6 +157,17 @@ export default class LessonsPage extends Mixins(
   }
 
   /**
+   * Отфильтрованные по строке поиска предметы
+   */
+  get filtredCourses(): Course[] {
+    if (!this.search) return this.courses
+
+    return this.courses.filter((course) =>
+      this.$customHelpers.search(course.title, this.search)
+    )
+  }
+
+  /**
    * Получить отображение преподавателя
    * @type {Function}
    * @param {String} id
@@ -177,7 +186,6 @@ export default class LessonsPage extends Mixins(
    */
   edit(model: Course): void {
     this.editModel = { ...model }
-
     this.modalEdit.open()
   }
 
