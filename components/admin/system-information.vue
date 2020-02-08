@@ -59,7 +59,7 @@ import { getSystemInformation, DisksUsage, MemoryUsage } from '~/api/admin.ts'
   components: {
     Loader: () =>
       import(
-        '~/components/UI-core/loader.vue' /* webpackChunkName: 'components/UI-core/loader' */
+        '~/components/UI-core/loaders/loader.vue' /* webpackChunkName: 'components/UI-core/loaders/loader' */
       ),
     Card: () =>
       import(

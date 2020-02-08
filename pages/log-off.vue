@@ -1,5 +1,5 @@
 <template>
-  <div>log-off</div>
+  <loader-full-page />
 </template>
 
 <script lang="ts">
@@ -9,7 +9,13 @@ import { Component, Vue } from 'vue-property-decorator'
  * Страница для разлогина
  */
 @Component({
-  layout: 'empty'
+  layout: 'empty',
+  components: {
+    LoaderFullPage: () =>
+      import(
+        '~/components/UI-core/loaders/loader-full-page.vue' /* webpackChunkName: 'components/UI-core/loaders/loader-full-page' */
+      )
+  }
 })
 export default class LogOff extends Vue {
   async mounted() {
