@@ -2,68 +2,60 @@
   <Loader v-if="loading" :show-search="true" :show-cards="true" />
 
   <div v-else>
-    <template>
-      <v-alert v-if="!lecturers.length" type="info" prominent>
-        <span>{{ $t('lecturers.empty') }}</span>
-      </v-alert>
+    <v-layout row wrap>
+      <Search v-model="search" />
 
-      <v-layout v-else row wrap>
-        <Search v-model="search" />
+      <v-flex v-if="!filtredLecturers.length" xs12 class="pa-3">
+        <v-alert type="info" prominent>
+          <span>{{ $t('lecturers.empty') }}</span>
+        </v-alert>
+      </v-flex>
 
-        <template v-for="lecturer in lecturers">
-          <v-flex
-            v-if="!search || $customHelpers.search(lecturer.view, search)"
-            :key="lecturer.id"
-            xs12
-            sm12
-            md4
-            class="pa-3"
-          >
-            <Card avatar-url="/images/professor.png">
-              <template v-slot:badges>
-                <span v-if="lecturer.active">
-                  {{ $t('ui.card.badges.active') }}
-                </span>
-              </template>
+      <v-flex
+        v-for="lecturer in filtredLecturers"
+        :key="lecturer.id"
+        xs12
+        sm12
+        md4
+        class="pa-3"
+      >
+        <Card avatar-url="/images/professor.png">
+          <template v-slot:badges>
+            <span v-if="lecturer.active">
+              {{ $t('ui.card.badges.active') }}
+            </span>
+          </template>
 
-              <template v-slot:title>
-                {{ lecturer.view }}
-              </template>
+          <template v-slot:title>
+            {{ lecturer.view }}
+          </template>
 
-              <template v-slot:content>
-                <div>
-                  <span class="font-weight-bold"
-                    >{{ $t('lesson.lessons') }}:</span
-                  >
-                  <span v-if="!lecturer.course_ids.length">-</span>
+          <template v-slot:content>
+            <div>
+              <span class="font-weight-bold">{{ $t('lesson.lessons') }}:</span>
+              <span v-if="!lecturer.course_ids.length">-</span>
 
-                  <template v-else>
-                    <div
-                      v-for="id in lecturer.course_ids"
-                      :key="id"
-                      class="mb-1"
-                    >
-                      {{ getCourseView(id) }}
-                    </div>
-                  </template>
+              <template v-else>
+                <div v-for="id in lecturer.course_ids" :key="id" class="mb-1">
+                  {{ getCourseView(id) }}
                 </div>
               </template>
+            </div>
+          </template>
 
-              <template v-slot:menu>
-                <EditButton :disabled="updating" @click="edit(lecturer)" />
+          <template v-slot:menu>
+            <EditButton :disabled="updating" @click="edit(lecturer)" />
 
-                <DeleteButton
-                  :id="lecturer.id"
-                  :disabled="updating"
-                  :confirm-text="$t('lecturers.confirm')"
-                  @delete="deleteLecturer(lecturer.id)"
-                />
-              </template>
-            </Card>
-          </v-flex>
-        </template>
-      </v-layout>
-    </template>
+            <DeleteButton
+              :id="lecturer.id"
+              :disabled="updating"
+              :confirm-text="$t('lecturers.confirm')"
+              @delete="deleteLecturer(lecturer.id)"
+            />
+          </template>
+        </Card>
+      </v-flex>
+    </v-layout>
 
     <ModalEdit
       ref="modalEdit"
@@ -125,20 +117,17 @@ export default class LecturersPage extends Mixins(
 ) {
   /**
    * Ссылка на экземпляр компонента ModalEdit
-   * @type {ModalEditComponent}
    */
   @Ref()
   readonly modalEdit!: ModalEditComponent
 
   /**
    * Строка поиска
-   * @type {String}
    */
   search: string = ''
 
   /**
    * Шаблон модели преподавателя
-   * @type {Lecturer}
    */
   lectureEmptyModel: Lecturer = {
     id: '',
@@ -152,19 +141,16 @@ export default class LecturersPage extends Mixins(
 
   /**
    * Редактируемая модель преподавателя
-   * @type {Lecturer}
    */
   editModel: Lecturer = { ...this.lectureEmptyModel }
 
   /**
    * Флаг обновления
-   * @type {boolean}
    */
   updating: boolean = false
 
   /**
    * Флаг загрузки
-   * @type {boolean}
    */
   get loading(): boolean {
     return this.loadingCourses || this.loadingLecturers
@@ -172,7 +158,6 @@ export default class LecturersPage extends Mixins(
 
   /**
    * Схема для редактирования
-   * @type {any}
    */
   get editSchema() {
     return {
@@ -220,10 +205,18 @@ export default class LecturersPage extends Mixins(
   }
 
   /**
+   * Отфлильтрованный по строке поиска список преподавателей
+   */
+  get filtredLecturers(): Lecturer[] {
+    if (!this.search) return this.lecturers
+
+    return this.lecturers.filter((lecturer) =>
+      this.$customHelpers.search(lecturer.view || '', this.search)
+    )
+  }
+
+  /**
    * Получить отображение предмета
-   * @type {Function}
-   * @param {String} id
-   * @returns {String}
    */
   getCourseView(id: string): string {
     const course = this.courses.find((item) => item.id === id)
@@ -233,8 +226,6 @@ export default class LecturersPage extends Mixins(
 
   /**
    * Редактировать прпреподавателяе
-   * @type {Function}
-   * @param {Lecturer} model - модель редактируемого преподавателя
    */
   edit(model: Lecturer): void {
     this.editModel = { ...model }
@@ -244,7 +235,6 @@ export default class LecturersPage extends Mixins(
 
   /**
    * Создать преподавателя
-   * @type {Function}
    */
   async create(data: Lecturer): Promise<void> {
     try {
@@ -262,7 +252,6 @@ export default class LecturersPage extends Mixins(
 
   /**
    * Обновить преподавателя
-   * @type {Function}
    */
   async update(data: Lecturer): Promise<void> {
     if (!data.id) return
@@ -283,8 +272,6 @@ export default class LecturersPage extends Mixins(
 
   /**
    * Удалить преподавателя
-   * @type {Function}
-   * @param {String} id - id преподавателя
    */
   async deleteLecturer(id: string): Promise<void> {
     try {
