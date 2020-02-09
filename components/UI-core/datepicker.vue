@@ -19,7 +19,12 @@
             <v-icon>schedule</v-icon>
           </v-tab>
           <v-tab-item>
-            <v-date-picker v-model="localDate" scrollable @change="tab = 1" />
+            <v-date-picker
+              v-model="localDate"
+              :locale="$store.state.i18n.locale"
+              scrollable
+              @change="tab = 1"
+            />
           </v-tab-item>
 
           <v-tab-item>

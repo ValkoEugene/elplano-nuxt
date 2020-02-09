@@ -64,7 +64,8 @@
     "time": "Time",
     "daysOfWeek": "Days",
     "number": "Number",
-    "tags": "Tags"
+    "tags": "Tags",
+    "language": "Language"
   },
   "ui": {
     "loading": "Loading...",

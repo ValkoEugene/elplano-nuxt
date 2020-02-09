@@ -3,7 +3,7 @@ import { VuexModule, Module, Action, Mutation } from 'vuex-module-decorators'
 export const name = 'i18n'
 
 export type Locales = 'en' | 'ru'
-export type LocalesList = ['en', 'ru']
+export const localesList = ['en', 'ru']
 
 export interface I18nStateI {
   locales: string[]
@@ -15,7 +15,7 @@ export class I18n extends VuexModule implements I18nStateI {
   /**
    * Список локалей
    */
-  public locales: string[] = ['en', 'ru']
+  public locales: string[] = [...localesList]
 
   /**
    * Текущая локаль

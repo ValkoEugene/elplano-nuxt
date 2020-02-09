@@ -1,8 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosError } from 'axios'
 import { User } from '~/store/user.ts'
-import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow'
-import { SnackbarI, SnackbarColor } from '~/store/snackbars'
-import getRouter from '~/plugins/getRouter'
+import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow.ts'
+import { SnackbarI, SnackbarColor } from '~/store/snackbars.ts'
+import { I18n } from '~/store/i18n.ts'
+import getRouter from '~/plugins/getRouter.ts'
 
 interface CustomAxiosRequestConfig {
   _retry?: boolean
@@ -30,15 +31,16 @@ const baseAxiosIntance = axios.create({
 })
 
 /**
- * Добавляем токены к каждому запросу
+ * Добавляем необходимые заголовки к каждому запросу
  */
-const addToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
-  const UserModule = getVuexDecaratorModuleByWindow(User)
-  const token = UserModule.access_token
+const addHeaders = (config: AxiosRequestConfig): AxiosRequestConfig => {
+  const token = getVuexDecaratorModuleByWindow(User).access_token
+  const locale = getVuexDecaratorModuleByWindow(I18n).locale
 
   if (token) {
     config.headers.common.Authorization = `Bearer ${token}`
   }
+  config.headers.common['Accept-Language'] = locale
 
   return config
 }
@@ -121,11 +123,11 @@ const handlingErrors = (error: AxiosError & CustomError) => {
   return Promise.reject(error)
 }
 
-axiosInstance.interceptors.request.use(addToken)
+axiosInstance.interceptors.request.use(addHeaders)
 axiosInstance.interceptors.response.use((response) => response, updateToken)
 axiosInstance.interceptors.response.use((response) => response, handlingErrors)
 
-baseAxiosIntance.interceptors.request.use(addToken)
+baseAxiosIntance.interceptors.request.use(addHeaders)
 baseAxiosIntance.interceptors.response.use((response) => response, updateToken)
 baseAxiosIntance.interceptors.response.use(
   (response) => response,

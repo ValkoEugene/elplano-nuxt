@@ -47,6 +47,15 @@
         type="text"
         outlined
       />
+
+      <v-select
+        v-model="localStudent.locale"
+        :items="locales"
+        item-value="value"
+        item-text="view"
+        :label="$t('field.language')"
+        outlined
+      />
     </template>
 
     <template v-slot:actions>
@@ -66,6 +75,11 @@ import clonedeep from 'lodash.clonedeep'
 import CheckGroup from '~/mixins/CheckGroup.ts'
 import { Student } from '~/api/group-users.ts'
 
+interface localesOption {
+  value: string
+  view: string
+}
+
 @Component({
   components: {
     Card: () =>
@@ -80,6 +94,7 @@ export default class StudentPage extends Mixins(CheckGroup) {
    */
   localStudent: Student = {
     id: '',
+    locale: '',
     about: '',
     created_at: '',
     email: '',
@@ -89,6 +104,11 @@ export default class StudentPage extends Mixins(CheckGroup) {
     social_networks: {},
     updated_at: ''
   }
+
+  locales: localesOption[] = [
+    { view: 'English', value: 'en' },
+    { view: 'Русский', value: 'ru' }
+  ]
 
   /**
    * Флаг обновления

@@ -44,7 +44,7 @@
         />
       </v-form>
     </template>
-    <template v-if="!successMessage" v-slot:actions>
+    <template v-slot:actions>
       <div class="actions__wrapper">
         <button
           type="button"
@@ -55,6 +55,7 @@
           {{ $t('auth.loginLink') }}
         </button>
         <v-btn
+          v-if="!successMessage"
           color="primary"
           :disabled="unactive"
           class="login__btn"
@@ -67,9 +68,9 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
 import { Component, Vue, Ref } from 'vue-property-decorator'
 import { setRegistrationInfo } from '~/utils/auth'
+import axios from '~/plugins/axios.ts'
 
 @Component({
   components: {
@@ -130,14 +131,7 @@ export default class Registration extends Vue {
     }
 
     try {
-      const { data } = await axios({
-        method: 'post',
-        url: `${process.env.baseUrl}/api/v1/users`,
-        data: { user: this.user },
-        headers: {
-          'Content-Type': 'application/vnd.api+json'
-        }
-      })
+      const { data } = await axios.post('/users', { user: this.user })
       const meta = data.meta
 
       setRegistrationInfo(registrationInfo)
