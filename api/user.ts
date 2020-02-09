@@ -21,6 +21,7 @@ function formatDataFromApi(response: any): UserDetail {
   const student = response.data.included.find(
     (item: { type: string }) => item.type === 'student'
   )
+  if (student && student.attributes) student.attributes.locale = user.locale
   const group = student && student.relationships && student.relationships.group
 
   return {
@@ -51,7 +52,11 @@ export async function updateStudentInfo(
   student_attributes: Student
 ): Promise<UserDetail> {
   try {
-    const response = await axios.put(REST_URL, { student_attributes })
+    const user = {
+      locale: student_attributes.locale,
+      student_attributes
+    }
+    const response = await axios.put(REST_URL, { user })
 
     return formatDataFromApi(response)
   } catch (error) {
@@ -73,5 +78,3 @@ export async function confirmAccount(
     return Promise.reject(error)
   }
 }
-
-export async function login() {}

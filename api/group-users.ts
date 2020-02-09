@@ -1,7 +1,8 @@
-import axios from '~/plugins/axios'
+import axios from '~/plugins/axios.ts'
 
 export interface Student {
   id: string
+  locale: string | null
   about: string | null
   created_at: string
   email: string

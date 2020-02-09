@@ -27,6 +27,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { getBrowserLocale } from '~/utils/getBrowserLocale.ts'
+import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow.ts'
+import { I18n, Locales } from '~/store/i18n.ts'
 
 @Component({
   layout: 'empty',
@@ -79,6 +82,18 @@ export default class LoginPage extends Vue {
    */
   setComponent(componentName: string): void {
     this.currentComponent = componentName
+  }
+
+  /**
+   * Инициализация локали
+   */
+  initLocale() {
+    const locale = getBrowserLocale() as Locales
+    getVuexDecaratorModuleByWindow(I18n).setLang(locale)
+  }
+
+  mounted() {
+    this.initLocale()
   }
 }
 </script>

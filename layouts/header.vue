@@ -8,8 +8,6 @@
 
     <v-spacer></v-spacer>
 
-    <v-btn text small @click="switchLocale">{{ locale }}</v-btn>
-
     <v-menu left bottom>
       <template v-slot:activator="{ on }">
         <v-btn icon v-on="on">
@@ -36,7 +34,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Locales } from '~/store/i18n.ts'
 import { TOGGLE_SIDEBAR_ROOT_LISTENER } from '~/layouts/sidebar.vue'
 
 @Component
@@ -55,13 +52,6 @@ export default class Header extends Vue {
     '/attachments': 'attachments',
     '/student': 'student',
     '/group/settings': 'groupSettings'
-  }
-
-  /**
-   * Текущая локаль
-   */
-  get locale(): Locales {
-    return this.$vuexModules.I18n.locale
   }
 
   /**
@@ -120,14 +110,6 @@ export default class Header extends Vue {
     if (!this.pageTitlesI18n[this.currentPath]) return 'unkwnown page'
 
     return this.$t(`sidebar.${this.pageTitlesI18n[this.currentPath]}`)
-  }
-
-  /**
-   * Сменить локаль
-   */
-  switchLocale() {
-    const newLocale = this.locale === 'en' ? 'ru' : 'en'
-    this.$vuexModules.I18n.setLang(newLocale)
   }
 
   /**

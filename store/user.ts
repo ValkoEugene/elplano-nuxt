@@ -1,20 +1,15 @@
 import axios from 'axios'
-import {
-  VuexModule,
-  Module,
-  Action,
-  Mutation,
-  getModule
-} from 'vuex-module-decorators'
-import { UserDetail, getUserInfo, updateStudentInfo } from '~/api/user.ts'
+import { VuexModule, Module, Action, Mutation } from 'vuex-module-decorators'
+import { getUserInfo, updateStudentInfo } from '~/api/user.ts'
 import { User as UserI } from '~/api/admin-user.ts'
 import { Student } from '~/api/group-users.ts'
-import getRouter from '~/plugins/getRouter'
+import getRouter from '~/plugins/getRouter.ts'
 import { setTokensInCookie, resetTokensInCookie } from '~/utils/auth'
-import { Snackbars } from './snackbars'
-import { Group } from './group'
-import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow'
+import { Snackbars } from '~/store/snackbars.ts'
+import { Group } from '~/store/group.ts'
+import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow.ts'
 import { signInByProvider, Identity } from '~/api/users-identities.ts'
+import { I18n } from '~/store/i18n.ts'
 
 export const name = 'user'
 
@@ -50,7 +45,7 @@ const userTemplate = {
   confirmed: false,
   avatar: '',
   banned: false,
-  locale: '',
+  locale: null,
   locked: false
 } as UserI
 
@@ -81,6 +76,7 @@ export class User extends VuexModule implements UserStateI {
    */
   studentInfo: Student = {
     id: '',
+    locale: '',
     about: '',
     created_at: '',
     email: '',
@@ -223,11 +219,17 @@ export class User extends VuexModule implements UserStateI {
 
     try {
       const data = { login, password, grant_type: 'password' }
+      const locale = getVuexDecaratorModuleByWindow(I18n).locale
 
-      const response = await axios.post(
-        `${process.env.baseUrl}/oauth/token`,
+      const response = await axios({
+        method: 'POST',
+        url: `${process.env.baseUrl}/oauth/token`,
+        headers: {
+          'Content-Type': 'application/vnd.api+json',
+          'Accept-Language': locale
+        },
         data
-      )
+      })
       const { access_token, refresh_token } = response.data
 
       this.setTokens({
@@ -290,6 +292,9 @@ export class User extends VuexModule implements UserStateI {
 
       const { user, student, groupId } = await getUserInfo()
 
+      const locale = user.locale
+      if (locale) getVuexDecaratorModuleByWindow(I18n).setLang(locale)
+
       this.SET_USER(user)
       if (student) this.SET_STUDENT(student)
 
@@ -316,6 +321,9 @@ export class User extends VuexModule implements UserStateI {
       this.SET_UPDATING(true)
 
       const { user, student } = await updateStudentInfo(student_attributes)
+
+      const locale = user.locale
+      if (locale) getVuexDecaratorModuleByWindow(I18n).setLang(locale)
 
       this.SET_USER(user)
       if (student) this.SET_STUDENT(student)

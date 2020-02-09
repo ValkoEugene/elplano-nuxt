@@ -17,7 +17,7 @@
         />
       </v-form>
     </template>
-    <template v-if="!successMessage" v-slot:actions>
+    <template v-slot:actions>
       <div class="actions__wrapper">
         <button
           type="button"
@@ -28,6 +28,7 @@
           {{ $t('auth.loginLink') }}
         </button>
         <v-btn
+          v-if="!successMessage"
           color="primary"
           :disabled="unactive"
           class="login__btn"
@@ -41,7 +42,7 @@
 
 <script lang="ts">
 import { Component, Vue, Ref } from 'vue-property-decorator'
-import axios from 'axios'
+import axios from '~/plugins/axios.ts'
 
 @Component({
   components: {
@@ -94,14 +95,7 @@ export default class ResetPassword extends Vue {
     try {
       const {
         data: { meta }
-      } = await axios({
-        method: 'post',
-        url: `${process.env.baseUrl}/api/v1/users/password`,
-        data: { user: { login: this.login } },
-        headers: {
-          'Content-Type': 'application/vnd.api+json'
-        }
-      })
+      } = await axios.post('users/password', { user: { login: this.login } })
 
       this.successMessage = meta.message
     } catch (error) {

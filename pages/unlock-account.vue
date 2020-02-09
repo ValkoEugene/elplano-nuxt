@@ -10,8 +10,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import axios from 'axios'
 import { SnackbarColor } from '~/store/snackbars.ts'
+import axios from '~/plugins/axios.ts'
 
 @Component({
   layout: 'empty'
@@ -35,15 +35,7 @@ export default class ConfirmAccount extends Vue {
     try {
       const params = { unlock_token: this.token }
 
-      await axios({
-        method: 'get',
-        url: `${process.env.baseUrl}/api/v1/users/unlock`,
-        params,
-        data: {},
-        headers: {
-          'Content-Type': 'application/vnd.api+json'
-        }
-      })
+      await axios.get('/users/unlock', { params })
 
       this.$vuexModules.Snackbars.ADD_SNACKBARS([
         { text: 'Аккаунт разблокирован', color: SnackbarColor.success }

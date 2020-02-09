@@ -1,5 +1,6 @@
-import ApiCRUD from './ApiCRUD'
-import { Student } from '~/api/group-users'
+import ApiCRUD from '~/api/ApiCRUD.ts'
+import { Student } from '~/api/group-users.ts'
+import { Locales } from '~/store/i18n.ts'
 
 export interface User {
   id: string
@@ -9,7 +10,7 @@ export interface User {
   confirmed: boolean
   created_at: string
   email: string
-  locale: string | null
+  locale: Locales | null
   locked: boolean
   updated_at: string
   username: string
