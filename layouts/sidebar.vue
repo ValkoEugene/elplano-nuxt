@@ -24,8 +24,14 @@
 
     <v-divider></v-divider>
 
-    <v-list v-if="haveGroup" dense nav>
-      <v-list-item v-for="item in items" :key="item.title" :to="item.url" nuxt>
+    <v-list dense nav>
+      <v-list-item
+        v-for="item in items"
+        :key="item.title"
+        :to="item.url"
+        :disabled="!haveGroup"
+        nuxt
+      >
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -143,6 +149,10 @@ export default class Sidebar extends Vue {
 </script>
 
 <style>
+.v-list-item--disabled {
+  opacity: 0.3;
+}
+
 .drawer-background {
   background-image: linear-gradient(45deg, rgb(31, 71, 160), rgb(31, 71, 160));
 }

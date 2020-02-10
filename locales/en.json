@@ -29,7 +29,8 @@
     "ratings": "Ratings",
     "attachments": "Attachmets",
     "student": "Profile",
-    "groupSettings": "Group setting"
+    "groupSettings": "Group setting",
+    "ungrouped": "Group setting"
   },
   "header": {
     "logout": "Logout",

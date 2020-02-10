@@ -1,14 +1,8 @@
-import {
-  VuexModule,
-  Module,
-  Action,
-  Mutation,
-  getModule
-} from 'vuex-module-decorators'
-import getRouter from '~/plugins/getRouter'
+import { VuexModule, Module, Action, Mutation } from 'vuex-module-decorators'
+import getRouter from '~/plugins/getRouter.ts'
 import groupApi, { GroupI } from '~/api/group.ts'
-import { Snackbars } from './snackbars'
-import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow'
+import { Snackbars } from '~/store/snackbars.ts'
+import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow.ts'
 
 export const name = 'groupe'
 
@@ -22,39 +16,72 @@ export interface GroupStateI {
 
 @Module({ namespaced: true, name })
 export class Group extends VuexModule implements GroupStateI {
+  /**
+   * ID группы
+   */
   public groupId: string = ''
+
+  /**
+   * Флаг загрузки
+   */
   public loading: boolean = true
-  public updating: boolean = true
+
+  /**
+   * Флаг обновления
+   */
+  public updating: boolean = false
+
+  /**
+   * Информация о группе
+   */
   public group: GroupI = {
     id: '',
     title: '',
     number: ''
   }
 
+  /**
+   * Флаг наличия группы
+   */
   get haveGroup(): boolean {
     return Boolean(this.groupId)
   }
 
+  /**
+   * Установить id группы
+   */
   @Mutation
   private SET_GROUP_ID(id: string) {
     this.groupId = id
   }
 
+  /**
+   * Установить флаг загрузки
+   */
   @Mutation
   private SET_LOADING(loading: boolean) {
     this.loading = loading
   }
 
+  /**
+   * Установить флаг обновления
+   */
   @Mutation
   private SET_UPDATING(updating: boolean) {
     this.updating = updating
   }
 
+  /**
+   * Установить информацию о группе
+   */
   @Mutation
   private SET_GROUP(group: GroupI) {
     this.group = group
   }
 
+  /**
+   * Установить группу
+   */
   @Action
   public setGroupId(id: string) {
     const router = getRouter()
@@ -66,6 +93,9 @@ export class Group extends VuexModule implements GroupStateI {
     this.SET_GROUP_ID(id)
   }
 
+  /**
+   * Загрузить информацию о группе
+   */
   @Action
   public async getGroup() {
     try {
@@ -84,6 +114,9 @@ export class Group extends VuexModule implements GroupStateI {
     }
   }
 
+  /**
+   * Создать группу
+   */
   @Action
   public async createGroup(data: GroupI) {
     try {
@@ -105,6 +138,9 @@ export class Group extends VuexModule implements GroupStateI {
     }
   }
 
+  /**
+   * Обновить информацию о группе
+   */
   @Action
   public async updateGroup(data: GroupI) {
     if (!data.id) return

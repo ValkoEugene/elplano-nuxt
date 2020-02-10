@@ -51,7 +51,8 @@ export default class Header extends Vue {
     '/ratings': 'ratings',
     '/attachments': 'attachments',
     '/student': 'student',
-    '/group/settings': 'groupSettings'
+    '/group/settings': 'groupSettings',
+    '/group/ungrouped': 'ungrouped'
   }
 
   /**
