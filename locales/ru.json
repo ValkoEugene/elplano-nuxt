@@ -29,7 +29,8 @@
     "ratings": "Оценки",
     "attachments": "Вложения",
     "student": "Профиль",
-    "groupSettings": "Настройки группы"
+    "groupSettings": "Настройки группы",
+    "ungrouped": "Настройки группы"
   },
   "header": {
     "logout": "Выход",

@@ -94,10 +94,8 @@ export default class InvitesList extends Vue {
       this.updating = true
 
       await acceptInvite(token)
+      await this.$vuexModules.User.getUserInfo()
 
-      // После принятия прглашения редиректим на главную страницу
-      // Там в layout идет запрос на получение информации о группе
-      // TODO делать запрос на получение информацие о группе тут
       this.$router.push('/')
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)

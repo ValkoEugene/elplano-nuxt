@@ -5,12 +5,12 @@
     :form-inputs-count="2"
   />
 
-  <v-card v-else>
-    <v-card-title>{{
+  <card v-else>
+    <template #title>{{
       $t(`group.${localGroup.id ? 'update' : 'create'}`)
-    }}</v-card-title>
+    }}</template>
 
-    <v-card-text>
+    <template #content>
       <v-form ref="form" :lazy-validation="true">
         <v-text-field
           v-model="localGroup.title"
@@ -28,14 +28,14 @@
           outlined
         />
       </v-form>
-    </v-card-text>
+    </template>
 
-    <v-card-actions>
+    <template #actions>
       <v-btn color="primary" :disabled="updating" @click="save">{{
         $t('actions.save')
       }}</v-btn>
-    </v-card-actions>
-  </v-card>
+    </template>
+  </card>
 </template>
 
 <script lang="ts">
@@ -44,6 +44,10 @@ import { GroupI } from '~/api/group.ts'
 
 @Component({
   components: {
+    Card: () =>
+      import(
+        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+      ),
     Loader: () =>
       import(
         '~/components/UI-core/loaders/loader.vue' /* webpackChunkName: 'components/UI-core/loaders/loader' */

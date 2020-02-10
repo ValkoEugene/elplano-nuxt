@@ -1,6 +1,6 @@
 // Работа с приглашениями пользователя
 
-import axios from '~/plugins/axios'
+import axios from '~/plugins/axios.ts'
 import { GroupI } from '~/api/group.ts'
 
 const restUrl = '/invites'

@@ -24,5 +24,11 @@ import { Component, Vue } from 'vue-property-decorator'
     InvitesList: () => import('~/components/group/invites-list.vue')
   }
 })
-export default class Ungrouped extends Vue {}
+export default class Ungrouped extends Vue {
+  mounted() {
+    if (this.$vuexModules.Group.haveGroup) {
+      this.$router.push('/')
+    }
+  }
+}
 </script>
