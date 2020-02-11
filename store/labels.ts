@@ -20,17 +20,24 @@ export class Labels extends VuexModule implements LabelsStateI {
   @Mutation
   SET_LABEL(label: Label) {
     if (!label.id) return
+    const labels = { ...this.labels }
 
-    this.labels[label.id] = label
+    labels[label.id] = label
+
+    this.labels = labels
   }
 
   /**
    * Добавить список тегов
    */
   @Mutation
-  SET_LABELS(labels: Label[]) {
-    labels.forEach((label: Label) => {
-      if (label.id) this.labels[label.id] = label
+  SET_LABELS(labelsList: Label[]) {
+    const labels = { ...this.labels }
+
+    labelsList.forEach((label: Label) => {
+      if (label.id) labels[label.id] = label
     })
+
+    this.labels = labels
   }
 }
