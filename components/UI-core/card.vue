@@ -1,9 +1,5 @@
 <template>
   <div class="card elevation-2" :style="cardStyle">
-    <div v-if="$scopedSlots.badges" class="card__badges">
-      <slot name="badges" />
-    </div>
-
     <div
       v-if="$scopedSlots.title || $scopedSlots.menu"
       class="card__title--wrapper"
@@ -34,6 +30,10 @@
       <img v-if="avatarUrl" :src="avatarUrl" class="card__content--avatar" />
 
       <slot name="content" />
+    </div>
+
+    <div v-if="$scopedSlots.badges" class="card__badges">
+      <slot name="badges" />
     </div>
 
     <div
@@ -81,6 +81,12 @@ export default class Card extends Vue {
   private readonly small!: boolean
 
   /**
+   * Высота карточки
+   */
+  @Prop({ type: String, default: '100%' })
+  private readonly cardHeight!: string
+
+  /**
    * SRC для аватара
    * @type {String}
    */
@@ -92,6 +98,7 @@ export default class Card extends Vue {
    */
   get cardStyle() {
     return {
+      height: this.cardHeight,
       'min-height': this.small ? '50px' : '100px',
       padding: this.small ? '15px 10px' : '15px'
     }
@@ -130,9 +137,7 @@ export default class Card extends Vue {
 }
 
 .card__badges {
-  position: absolute;
-  top: -10px;
-  left: 15px;
+  margin-top: 5px;
 }
 
 .card__badges span {

@@ -28,9 +28,9 @@ export default class LecturersList extends Vue {
    */
   private async loadLecturers(): Promise<void> {
     try {
-      const lecturers = await lecturersApi.loadData()
+      const { data } = await lecturersApi.loadData()
 
-      this.lecturers = lecturers
+      this.lecturers = data
       this.loadingLecturers = false
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)

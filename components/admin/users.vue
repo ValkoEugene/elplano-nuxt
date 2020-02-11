@@ -181,7 +181,7 @@ export default class AdminUsers extends Vue {
     try {
       this.loading = true
 
-      const users = await adminUserApi.loadData(this.filters)
+      const { data: users } = await adminUserApi.loadData(this.filters)
 
       if (!users.length) this.allDataloading = true
       else this.users = [...this.users, ...users]

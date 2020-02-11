@@ -1,4 +1,4 @@
-import ApiCRUD from './ApiCRUD'
+import ApiCRUD from '~/api/ApiCRUD.ts'
 
 export type Label = {
   id?: string

@@ -1,10 +1,10 @@
+import { Plugin } from '@nuxt/types'
 import { getModule } from 'vuex-module-decorators'
 import { Group } from '~/store/group.ts'
 import { I18n } from '~/store/i18n.ts'
 import { Snackbars } from '~/store/snackbars.ts'
 import { User } from '~/store/user.ts'
-import { Context } from '@nuxt/types'
-import { Plugin } from '@nuxt/types'
+import { Labels } from '~/store/labels.ts'
 
 declare module 'vue/types/vue' {
   interface Vue {
@@ -13,6 +13,7 @@ declare module 'vue/types/vue' {
       User: User
       Snackbars: Snackbars
       I18n: I18n
+      Labels: Labels
     }
   }
 }
@@ -24,6 +25,7 @@ declare module '@nuxt/types' {
       User: User
       Snackbars: Snackbars
       I18n: I18n
+      Labels: Labels
     }
   }
 }
@@ -34,7 +36,8 @@ const vuexDecaratorsModules: Plugin = (context, inject) => {
     Group: getModule(Group, store),
     User: getModule(User, store),
     Snackbars: getModule(Snackbars, store),
-    I18n: getModule(I18n, store)
+    I18n: getModule(I18n, store),
+    Labels: getModule(Labels, store)
   }
 
   inject('vuexModules', vuexModules)

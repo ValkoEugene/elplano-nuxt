@@ -1,8 +1,9 @@
-import axios from '~/plugins/axios'
+import axios from '~/plugins/axios.ts'
 
 export type ApiCRUDConfig<T> = {
   restUrl: string
   includedTypes?: string[]
+  withAllIncluded?: boolean
   formatDataFromApi: (item: any) => T
   formatDataForApi: (item: any) => { [key: string]: any }
 }
@@ -26,6 +27,7 @@ export type ApiCRUDParams = {
  * Для более тонкой конфигурации необходимо наследовать этот класс и переопределить необходимые методы
  */
 class ApiCRUD<T> {
+  withAllIncluded: boolean
   restUrl: string = ''
   includedTypes: string[] = []
   formatDataFromApi: (v: any) => T = (item) => item
@@ -39,17 +41,20 @@ class ApiCRUD<T> {
    * @param {[String]} config.includedTypes - список связанных типов, информацию по которым необходимо включить
    * @param {Function} config.formatDataFromApi - функция преобразования данных ДЛЯ api
    * @param {Function} config.formatDataForApi - функция преобразования данных ОТ api
+   * @param {Boolean} confog.withAllIncluded - возвращать все связанные данные
    */
   constructor(config: ApiCRUDConfig<T>) {
     const {
       restUrl,
       includedTypes = [],
       formatDataForApi,
-      formatDataFromApi
+      formatDataFromApi,
+      withAllIncluded = false
     } = config
 
     this.restUrl = restUrl
     this.includedTypes = includedTypes
+    this.withAllIncluded = withAllIncluded
     if (formatDataForApi) this.formatDataForApi = formatDataForApi
     if (formatDataFromApi) this.formatDataFromApi = formatDataFromApi
   }
@@ -80,11 +85,23 @@ class ApiCRUD<T> {
 
       if (!data) return
 
-      const includedData = included.find(
-        (item) => item.id === data.id && item.type === type
-      )
+      if (Array.isArray(data)) {
+        result[type] = []
 
-      if (includedData) result[type] = includedData
+        data.forEach((dataItem) => {
+          const includedData = included.find(
+            (item) => item.id === dataItem.id && item.type === type
+          )
+
+          if (includedData) result[type].push(includedData)
+        })
+      } else {
+        const includedData = included.find(
+          (item) => item.id === data.id && item.type === type
+        )
+
+        if (includedData) result[type] = includedData
+      }
     })
 
     // Убираем исходную мета информацию о связанных данных
@@ -98,12 +115,14 @@ class ApiCRUD<T> {
    * @param
    * @returns {Array} форматированный список элементов
    */
-  async loadData(params?: ApiCRUDParams): Promise<T[]> {
+  async loadData(
+    params?: ApiCRUDParams
+  ): Promise<{ data: T[]; included?: any[] }> {
     try {
       console.log('loadData')
       const response = await axios.get(this.restUrl, { params })
       let { data } = response.data
-      const { included } = response.data
+      const { included }: { included: any[] } = response.data
 
       // Расширяем информацией о связанных данных
       if (
@@ -116,7 +135,13 @@ class ApiCRUD<T> {
         )
       }
 
-      return data.map((item: any) => this.formatDataFromApi(item))
+      const formatedData: T[] = data.map((item: any) =>
+        this.formatDataFromApi(item)
+      )
+
+      return this.withAllIncluded
+        ? { data: formatedData, included }
+        : { data: formatedData }
     } catch (error) {
       return Promise.reject(error)
     }
