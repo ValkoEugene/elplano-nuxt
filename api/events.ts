@@ -1,6 +1,6 @@
 import momentTz from 'moment-timezone'
 // import moment from '~/plugins/moment'
-import ApiCRUD from './ApiCRUD'
+import ApiCRUD from '~/api/ApiCRUD.ts'
 
 type Day = 'MO' | 'TU' | 'WE' | 'TH' | 'FR' | 'SA' | 'SU'
 
@@ -106,4 +106,9 @@ const formatDataForApi = (event: Event): { event: Event } => {
   return { event }
 }
 
-export default new ApiCRUD({ restUrl, formatDataForApi, formatDataFromApi })
+export default new ApiCRUD({
+  restUrl,
+  formatDataForApi,
+  formatDataFromApi,
+  withAllIncluded: true
+})

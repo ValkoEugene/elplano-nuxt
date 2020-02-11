@@ -1,15 +1,21 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { GroupStateI, Group, name as GroupName } from './group'
-import { I18nStateI, I18n, name as I18nName } from './i18n'
-import { SnackbarsStateI, Snackbars, name as SnackbarsName } from './snackbars'
-import { UserStateI, User, name as UserName } from './user'
+import { GroupStateI, Group, name as GroupName } from '~/store/group.ts'
+import { I18nStateI, I18n, name as I18nName } from '~/store/i18n.ts'
+import {
+  SnackbarsStateI,
+  Snackbars,
+  name as SnackbarsName
+} from '~/store/snackbars.ts'
+import { UserStateI, User, name as UserName } from '~/store/user.ts'
+import { Labels, LabelsStateI, name as LabelsName } from '~/store/labels.ts'
 
 export interface RootStateI {
   group: GroupStateI
   i18n: I18nStateI
   snackbars: SnackbarsStateI
   user: UserStateI
+  labels: LabelsStateI
 }
 
 Vue.use(Vuex)
@@ -21,7 +27,8 @@ const store = () =>
       [I18nName]: I18n,
       [GroupName]: Group,
       [SnackbarsName]: Snackbars,
-      [UserName]: User
+      [UserName]: User,
+      [LabelsName]: Labels
     }
   })
 

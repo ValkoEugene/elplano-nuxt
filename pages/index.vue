@@ -34,6 +34,13 @@ import CoursesList from '~/mixins/CoursesList.ts'
 import CheckGroup from '~/mixins/CheckGroup.ts'
 import { WeekDayItem } from '~/components/events/events.vue'
 import ModalEditComponent from '~/components/modal/modal-edit.vue'
+import { Label } from '~/api/labels.ts'
+
+interface IncludedData {
+  id: string
+  type: string
+  attributes: Label
+}
 
 @Component({
   components: {
@@ -255,7 +262,17 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
    */
   async loadEvents() {
     try {
-      this.events = await eventApi.loadData()
+      const response = await eventApi.loadData()
+
+      const events = response.data
+      const included = response.included as IncludedData[]
+      const labels = included.map(({ id, attributes }) => ({
+        id,
+        ...attributes
+      }))
+
+      this.events = events
+      this.$vuexModules.Labels.SET_LABELS(labels)
       this.loadingEvents = false
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)

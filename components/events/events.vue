@@ -33,14 +33,19 @@
 
             <div class="day__events">
               <template v-for="event in weekEvents[day]">
-                <Card :key="event.id" small class="mb-5">
-                  <template
-                    v-if="event.eventable_type === 'student'"
-                    v-slot:badges
-                  >
-                    <span>
+                <Card :key="event.id" card-height="auto" small class="mb-5">
+                  <template #badges>
+                    <span v-if="event.eventable_type === 'student'">
                       {{ $t('events.own') }}
                     </span>
+
+                    <template v-if="event.label_ids.length">
+                      <tag-badge
+                        v-for="label_id in event.label_ids"
+                        :key="label_id"
+                        :label-id="label_id"
+                      />
+                    </template>
                   </template>
 
                   <template v-slot:title>
@@ -125,6 +130,10 @@ export type WeekEvents = {
     EditButton: () =>
       import(
         '~/components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
+      ),
+    TagBadge: () =>
+      import(
+        '~/components/UI-core/tag-badge.vue' /* webpackChunkName: 'components/UI-core/tag-badge' */
       )
   }
 })

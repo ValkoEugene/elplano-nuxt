@@ -211,7 +211,8 @@ export default class TagsField extends Vue {
    */
   async loadData() {
     try {
-      this.labels = await labelApi.loadData()
+      const { data } = await labelApi.loadData()
+      this.labels = data
       this.loading = false
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
@@ -255,6 +256,8 @@ export default class TagsField extends Vue {
         this.editingLabel,
         this.editingLabel.id
       )
+      this.$vuexModules.Labels.SET_LABEL(updatedLabel)
+
       const oldLabel = this.labels.find(
         (item: Label) => item.id === updatedLabel.id
       )
@@ -272,6 +275,7 @@ export default class TagsField extends Vue {
       if (!this.editingLabel) return
 
       const label: Label = await labelApi.create(this.editingLabel)
+      this.$vuexModules.Labels.SET_LABEL(label)
       this.labels.push(label)
       this.localValue.push(label.id as string)
     } catch (error) {
