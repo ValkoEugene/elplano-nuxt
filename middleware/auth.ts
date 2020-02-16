@@ -1,25 +1,28 @@
+import { Context } from '@nuxt/types'
 import {
   getAccessTokenFromCookie,
   getRefreshTokenFromCookie
 } from '~/utils/auth'
-import { Context } from '@nuxt/types'
 
 // Middleware для проверки авторизован ли пользователь
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default ({ redirect, req, route, store, app }: Context) => {
   const UserModule = app.$vuexModules.User
   const GroupModule = app.$vuexModules.Group
 
-  console.log('auth middleware')
   // Флаг что выполняется серверная генерация
   const isServer = process.server
 
   // Получаем и сохраняем токены
   if (isServer) {
+    console.log('auth middleware cookie ', req.headers.cookie)
     const access_token = getAccessTokenFromCookie(req)
     const refresh_token = getRefreshTokenFromCookie(req)
 
     if (access_token && refresh_token) {
       UserModule.setTokens({ refresh_token, access_token })
+    } else {
+      return redirect(`/log-off`)
     }
   }
 
@@ -41,7 +44,6 @@ export default ({ redirect, req, route, store, app }: Context) => {
     !UserModule.loading &&
     !GroupModule.haveGroup
   ) {
-    console.log('auth /group/ungrouped')
     return redirect('/group/ungrouped')
   }
 }

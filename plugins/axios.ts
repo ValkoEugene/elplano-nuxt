@@ -4,6 +4,10 @@ import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleBy
 import { SnackbarI, SnackbarColor } from '~/store/snackbars.ts'
 import { I18n } from '~/store/i18n.ts'
 import getRouter from '~/plugins/getRouter.ts'
+import {
+  getAccessTokenFromCookie,
+  getRefreshTokenFromCookie
+} from '~/utils/auth.js'
 
 interface CustomAxiosRequestConfig {
   _retry?: boolean
@@ -34,7 +38,8 @@ const baseAxiosIntance = axios.create({
  * Добавляем необходимые заголовки к каждому запросу
  */
 const addHeaders = (config: AxiosRequestConfig): AxiosRequestConfig => {
-  const token = getVuexDecaratorModuleByWindow(User).access_token
+  const token = getAccessTokenFromCookie(null)
+
   const locale = getVuexDecaratorModuleByWindow(I18n).locale
 
   if (token) {
@@ -66,7 +71,7 @@ const updateToken = (error: AxiosError) => {
 
     const data = {
       grant_type: 'refresh_token',
-      refresh_token: UserModule.refresh_token
+      refresh_token: getRefreshTokenFromCookie(null)
     }
 
     return axios

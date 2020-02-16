@@ -237,7 +237,7 @@ export class User extends VuexModule implements UserStateI {
         refresh_token
       })
 
-      getRouter().push('/')
+      getRouter().replace('/schedule')
     } catch (error) {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.response.data.errors.map(({ detail }: { detail: string }) => ({
@@ -270,7 +270,7 @@ export class User extends VuexModule implements UserStateI {
         refresh_token
       })
 
-      getRouter().push('/')
+      getRouter().push('/schedule')
     } catch (error) {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.snackbarErrors

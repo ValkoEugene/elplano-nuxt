@@ -37,6 +37,7 @@ export default {
     '~/plugins/rules',
     '~/plugins/i18n',
     '~/plugins/helpers',
+    { src: '~/plugins/vuex-client-plugins.ts', mode: 'client' },
     { src: '~/plugins/a2hs.ts', mode: 'client' }
   ],
   /*
@@ -59,7 +60,7 @@ export default {
     short_name: 'EL Plano',
     description: 'Student schedule management applications',
     theme_color: '#1976d2',
-    start_url: '/',
+    start_url: '/schedule',
     icons: [
       {
         src: 'icon.png',

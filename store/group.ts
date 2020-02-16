@@ -128,7 +128,7 @@ export class Group extends VuexModule implements GroupStateI {
       if (group.id) this.SET_GROUP_ID(group.id)
 
       // Используем location чтобы страница перезагрузилась и все состояние vuex сбросилось
-      window.location.replace('/')
+      window.location.replace('/schedule')
     } catch (error) {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.snackbarErrors

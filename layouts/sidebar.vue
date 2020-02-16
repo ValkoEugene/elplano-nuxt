@@ -76,7 +76,7 @@ export default class Sidebar extends Vue {
       {
         title: this.$t('sidebar.schedule'),
         icon: 'mdi-view-dashboard',
-        url: '/'
+        url: '/schedule'
       },
       {
         title: this.$t('sidebar.lessons'),

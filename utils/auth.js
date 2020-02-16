@@ -5,8 +5,8 @@ import Cookie from 'js-cookie'
  * @param {{ access_token: String, refresh_token: String }} tokens - токены
  */
 export function setTokensInCookie({ access_token, refresh_token }) {
-  Cookie.set('access_token', access_token)
-  Cookie.set('refresh_token', refresh_token)
+  Cookie.set('access_token', access_token, { expires: 7 })
+  Cookie.set('refresh_token', refresh_token, { expires: 7 })
 }
 
 /**
@@ -23,18 +23,18 @@ export function resetTokensInCookie() {
  * @param {String} name
  */
 function getFromCookieByName(req, name) {
-  console.log('getFromCookieByName', Boolean(req))
+  const cookie = req ? req.headers.cookie : window.document.cookie
   // Проверка наличия Cookies
-  if (!req.headers.cookie) return
-
-  // Проверка наличия нужной
-  const cookie = req.headers.cookie
-    .split(';')
-    .find((c) => c.trim().startsWith(`${name}=`))
   if (!cookie) return
 
+  // Проверка наличия нужной
+  const cookieByName = cookie
+    .split(';')
+    .find((c) => c.trim().startsWith(`${name}=`))
+  if (!cookieByName) return
+
   // Получение и парсинг токена
-  return cookie.split('=')[1]
+  return cookieByName.split('=')[1]
 }
 
 /**

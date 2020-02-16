@@ -22,7 +22,8 @@ export default class LogOff extends Vue {
     await this.$vuexModules.User.resetUser()
 
     // Используем location чтобы страница перезагрузилась и все состояние vuex сбросилось
-    window.location.replace('/login')
+    // window.location.replace('/login')
+    this.$router.push('/login')
   }
 }
 </script>
