@@ -42,7 +42,7 @@ export default class Header extends Vue {
    * Заголовки страниц в i18n
    */
   pageTitlesI18n: { [key: string]: string } = {
-    '/': 'schedule',
+    '/schedule': 'schedule',
     '/courses': 'lessons',
     '/lecturers': 'teachers',
     '/group': 'group',

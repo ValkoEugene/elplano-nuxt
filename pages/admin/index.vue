@@ -56,7 +56,7 @@ export default class AdminPage extends Vue {
 
   mounted() {
     if (!this.isAdmin) {
-      this.$router.push('/')
+      this.$router.push('/schedule')
     }
   }
 

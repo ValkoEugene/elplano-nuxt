@@ -27,7 +27,7 @@ import { Component, Vue } from 'vue-property-decorator'
 export default class Ungrouped extends Vue {
   mounted() {
     if (this.$vuexModules.Group.haveGroup) {
-      this.$router.push('/')
+      this.$router.push('/schedule')
     }
   }
 }

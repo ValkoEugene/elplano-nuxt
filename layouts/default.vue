@@ -30,8 +30,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { User as UserI } from '~/api/admin-user.ts'
+import SyncLogin from '~/mixins/SyncLogin.ts'
 
 @Component({
   // Проверяем что пользователь авторизован
@@ -55,7 +56,7 @@ import { User as UserI } from '~/api/admin-user.ts'
       )
   }
 })
-export default class DefaultLayout extends Vue {
+export default class DefaultLayout extends Mixins(SyncLogin) {
   /**
    * Флаг загрузки
    */

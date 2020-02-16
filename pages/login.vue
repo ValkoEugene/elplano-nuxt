@@ -26,10 +26,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { getBrowserLocale } from '~/utils/getBrowserLocale.ts'
 import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow.ts'
 import { I18n, Locales } from '~/store/i18n.ts'
+import SyncLogin from '~/mixins/SyncLogin.ts'
 
 @Component({
   layout: 'empty',
@@ -52,7 +53,7 @@ import { I18n, Locales } from '~/store/i18n.ts'
       )
   }
 })
-export default class LoginPage extends Vue {
+export default class LoginPage extends Mixins(SyncLogin) {
   /**
    * Показываемый компонент
    */
