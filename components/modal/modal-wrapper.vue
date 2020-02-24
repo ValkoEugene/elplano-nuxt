@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-overlay v-if="visible" :value="visible" z-index="99" />
+    <v-overlay :value="visible" z-index="99" />
 
     <transition name="modal">
       <v-card v-if="visible" class="modal-edit">
-        <v-toolbar dark color="primary">
+        <v-toolbar class="bg-primary-lighten1">
           <v-btn icon dark :disabled="disableButtons" @click="close">
             <v-icon>close</v-icon>
           </v-btn>
