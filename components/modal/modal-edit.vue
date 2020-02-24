@@ -1,14 +1,8 @@
 <template>
-  <v-row justify="center">
-    <v-dialog
-      v-model="visible"
-      fullscreen
-      hide-overlay
-      :persistent="updating"
-      transition="dialog-bottom-transition"
-      @keydown="escHandler"
-    >
-      <v-card>
+  <div>
+    <v-overlay v-if="visible" :value="visible" z-index="99" />
+    <transition name="modal">
+      <v-card v-if="visible" class="modal-edit">
         <v-toolbar dark color="primary">
           <v-btn icon dark :disabled="updating" @click="close">
             <v-icon>close</v-icon>
@@ -25,8 +19,12 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <v-card-text v-if="visible" class="pa-6">
-          <v-form ref="form" :lazy-validation="true">
+        <v-card-text v-if="visible" class="pa-6 card-edit__content">
+          <v-form
+            v-if="!$scopedSlots.content"
+            ref="form"
+            :lazy-validation="true"
+          >
             <template v-for="field in editSchema.fields">
               <v-text-field
                 v-if="field.type === 'v-text-field'"
@@ -107,6 +105,12 @@
                 :rules="Array.isArray(field.rules) ? field.rules : undefined"
               />
 
+              <TextEditor
+                v-if="field.type === 'text-editor'"
+                :key="field.model"
+                v-model="localModel[field.model]"
+              />
+
               <Time
                 v-if="field.type === 'time'"
                 :key="field.model"
@@ -114,12 +118,21 @@
                 :label="field.label"
                 :rules="Array.isArray(field.rules) ? field.rules : undefined"
               />
+
+              <ReadonlyTextField
+                v-if="field.type === 'readonly-text'"
+                :key="field.model"
+                :label="field.label"
+                :value="localModel[field.model]"
+              />
             </template>
           </v-form>
+
+          <slot name="content" />
         </v-card-text>
       </v-card>
-    </v-dialog>
-  </v-row>
+    </transition>
+  </div>
 </template>
 
 <script lang="ts">
@@ -128,6 +141,10 @@ import clonedeep from 'lodash.clonedeep'
 
 @Component({
   components: {
+    ReadonlyTextField: () =>
+      import(
+        '~/components/UI-core/readonly-text-field.vue' /* webpackChunkName: 'components/UI-core/readonly-text-field' */
+      ),
     LabelsField: () =>
       import(
         '~/components/UI-core/labels-field.vue' /* webpackChunkName: 'components/UI-core/labels-field' */
@@ -143,6 +160,10 @@ import clonedeep from 'lodash.clonedeep'
     Time: () =>
       import(
         '~/components/UI-core/time.vue' /* webpackChunkName: 'components/UI-core/time' */
+      ),
+    TextEditor: () =>
+      import(
+        '~/components/UI-core/text-editor.vue' /* webpackChunkName: 'components/UI-core/text-editor' */
       )
   }
 })
@@ -175,6 +196,12 @@ export default class ModalEdit extends Vue {
    */
   @Prop({ type: Boolean, default: false })
   readonly watchModelChange!: boolean
+
+  /**
+   * Посылать наверх только измененные данные модели
+   */
+  @Prop({ type: Boolean, default: true })
+  readonly emitOnlyChangedData: boolean
 
   /**
    * Локальная копия модели на редактирование
@@ -224,6 +251,8 @@ export default class ModalEdit extends Vue {
    * @type {Function}
    */
   update() {
+    if (!this.emitOnlyChangedData) return this.$emit('update', this.localModel)
+
     const data: { [key: string]: any } = { id: this.localModel.id }
 
     for (const key in this.localModel) {
@@ -265,3 +294,33 @@ export default class ModalEdit extends Vue {
   }
 }
 </script>
+
+<style>
+.modal-edit {
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+  width: 35vw;
+  height: 100vh;
+}
+
+.card-edit__content {
+  max-height: calc(100vh - 64px);
+  overflow: auto;
+  height: 100%;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: 0.3s;
+}
+.modal-enter,
+.modal-leave-to {
+  transform: translateX(100%);
+}
+
+.mobile .modal-edit {
+  width: 100vw;
+}
+</style>

@@ -26,19 +26,19 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
       ),
     vkAuth: () =>
       import(
-        '~/components/auth/social-networks/vkAuth.vue' /** webpackChunkName: 'components/auth' */
+        '~/components/auth/social-networks/vkAuth.vue' /* webpackChunkName: 'components/auth' */
       ),
     googleAuth: () =>
       import(
-        '~/components/auth/social-networks/googleAuth.vue' /** webpackChunkName: 'components/auth' */
+        '~/components/auth/social-networks/googleAuth.vue' /* webpackChunkName: 'components/auth' */
       ),
     yandexAuth: () =>
       import(
-        '~/components/auth/social-networks/yandexAuth.vue' /** webpackChunkName: 'components/auth' */
+        '~/components/auth/social-networks/yandexAuth.vue' /* webpackChunkName: 'components/auth' */
       ),
     FacebookAuth: () =>
       import(
-        '~/components/auth/social-networks/facebookAuth.vue' /** webpackChunkName: 'components/auth' */
+        '~/components/auth/social-networks/facebookAuth.vue' /* webpackChunkName: 'components/auth' */
       )
   }
 })

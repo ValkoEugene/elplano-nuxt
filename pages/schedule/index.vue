@@ -22,6 +22,8 @@
         @modelChange="onModelChange"
       />
 
+      <TaskModal :events="events" />
+
       <AddNew :president-access="false" @click="edit(eventEmptyTemplate)" />
     </div>
   </div>
@@ -44,6 +46,10 @@ interface IncludedData {
 
 @Component({
   components: {
+    TaskModal: () =>
+      import(
+        '~/components/tasks/task-modal.vue' /* webpackChunkName: 'components/tasks/task-modal' */
+      ),
     Events: () =>
       import(
         '~/components/events/events.vue' /* webpackChunkName: 'components/events/events' */

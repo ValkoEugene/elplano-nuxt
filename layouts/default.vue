@@ -111,8 +111,15 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
 </script>
 
 <style>
+body,
+html {
+  overflow: hidden;
+}
+
 .v-content__wrap {
   background: #000ef30a;
+  max-height: calc(100vh - 64px);
+  overflow: auto;
 }
 
 .nuxt-wrapper {

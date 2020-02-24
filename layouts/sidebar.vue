@@ -79,6 +79,11 @@ export default class Sidebar extends Vue {
         url: '/schedule'
       },
       {
+        title: this.$t('sidebar.tasks'),
+        icon: 'mdi-briefcase',
+        url: '/tasks'
+      },
+      {
         title: this.$t('sidebar.lessons'),
         icon: 'mdi-library-books',
         url: '/courses'
@@ -92,11 +97,6 @@ export default class Sidebar extends Vue {
         title: this.$t('sidebar.group'),
         icon: 'mdi-account-group',
         url: '/group'
-      },
-      {
-        title: this.$t('sidebar.tasks'),
-        icon: 'mdi-briefcase',
-        url: '/tasks'
       },
       {
         title: this.$t('sidebar.measure'),

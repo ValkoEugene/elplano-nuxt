@@ -21,15 +21,7 @@
       <template v-else>
         <template v-for="(day, dayIndex) in daysOfWeekList">
           <div v-if="weekEvents[day].length" :key="day" class="day__wrapper">
-            <div class="day__date">
-              <span class="day__date--ddd">{{
-                getDayView(weekDates[dayIndex], 'ddd')
-              }}</span>
-              <br />
-              <span class="day__date--DD text-primary font-weight-medium">{{
-                getDayView(weekDates[dayIndex], 'DD')
-              }}</span>
-            </div>
+            <DayTag :date="weekDates[dayIndex]" />
 
             <div class="day__events">
               <template v-for="event in weekEvents[day]">
@@ -60,7 +52,7 @@
                       <v-icon class="pr-2">star_half</v-icon>
                       {{ $t('ratings.add') }}
                     </v-list-item>
-                    <v-list-item :disabled="true">
+                    <v-list-item @click="addNewTaskInit(event.id)">
                       <v-icon class="pr-2">work</v-icon>
                       {{ $t('tasks.add') }}
                     </v-list-item>
@@ -92,11 +84,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Component, Prop, Watch, Mixins } from 'vue-property-decorator'
 import clonedeep from 'lodash.clonedeep'
 import { Moment } from 'moment'
 import moment, { setLocale } from '~/plugins/moment'
 import { Event } from '~/api/events.ts'
+import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
 
 export type DaysOfWeeks = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
 
@@ -119,6 +112,10 @@ export type WeekEvents = {
 
 @Component({
   components: {
+    DayTag: () =>
+      import(
+        '~/components/UI-core/day-tag.vue' /* webpackChunkName: 'components/UI-core/day-tag' */
+      ),
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
@@ -137,7 +134,7 @@ export type WeekEvents = {
       )
   }
 })
-export default class Events extends Vue {
+export default class Events extends Mixins(TaskEventBusMixin) {
   /**
    * Список эвентов
    */
@@ -260,6 +257,13 @@ export default class Events extends Vue {
   }
 
   /**
+   * Добавить задание
+   */
+  addNewTaskInit(event_id: string) {
+    this.addNewTaskEmit(event_id)
+  }
+
+  /**
    * Инициализация элментов выбора для дней недели
    * @type {Function}
    */
@@ -376,13 +380,6 @@ export default class Events extends Vue {
   }
 
   /**
-   * Получить отображение дня
-   */
-  getDayView(date: string, format = 'dddd'): string {
-    return moment(date, 'DD.MM.YYYY').format(format)
-  }
-
-  /**
    * Получить время
    */
   getTime(date: string): string {
@@ -419,10 +416,6 @@ export default class Events extends Vue {
   margin-bottom: 25px;
 }
 
-.day__date {
-  margin-right: 10px;
-}
-
 .day__events {
   display: block;
   flex-grow: 1;
@@ -442,14 +435,6 @@ export default class Events extends Vue {
 .event__time {
   margin: 0;
   font-weight: 500;
-}
-
-.day__date--ddd {
-  color: rgba(0, 0, 0, 0.25);
-}
-
-.day__date--DD {
-  font-size: 1.5rem;
 }
 
 .mobile .week-title {

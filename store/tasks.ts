@@ -99,11 +99,13 @@ export class Tasks extends VuexModule implements TasksStateI {
    * Создать задание
    */
   @Action
-  public async createTask(task: Task): Promise<void> {
+  public async createTask(task: Task): Promise<void | Task> {
     try {
       this.SET_UPDATING(true)
       const savedTask = await taskApi.create(task)
       this.ADD_TASK(savedTask)
+
+      return savedTask
     } catch (error) {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.snackbarErrors
@@ -117,13 +119,15 @@ export class Tasks extends VuexModule implements TasksStateI {
    * Обновить задание
    */
   @Action
-  public async updateTask(task: Task): Promise<void> {
+  public async updateTask(task: Task): Promise<void | Task> {
     if (!task.id) return
 
     try {
       this.SET_UPDATING(true)
       const updatedTask = await taskApi.update(task, task.id)
       this.UPDATE_TASK(updatedTask)
+
+      return updatedTask
     } catch (error) {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.snackbarErrors

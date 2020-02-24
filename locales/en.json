@@ -105,7 +105,8 @@
     "own": "Own",
     "confirm": "Delete from schedule?",
     "prev": "Prev",
-    "next": "Next"
+    "next": "Next",
+    "eventsLabel": "Schedule"
   },
   "invites": {
     "empty": "No saved invites",
@@ -132,7 +133,9 @@
     "add": "Add rating"
   },
   "tasks": {
-    "add": "Add task"
+    "add": "Add task",
+    "confirm": "Delete task?",
+    "empty": "No saved tasks"
   },
   "tags": {
     "addNew": "Add tag",
