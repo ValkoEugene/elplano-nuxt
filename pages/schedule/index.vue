@@ -173,7 +173,6 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
           items: this.courses,
           itemValue: 'id',
           itemText: 'title',
-          rules: [this.$rules.required],
           label: this.$t('lesson.lesson')
         },
         {
@@ -248,7 +247,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
     const data = { ...model }
 
     if (!data.id) {
-      data.eventable_id = this.$vuexModules.User.userInfo.id
+      data.eventable_id = this.$vuexModules.User.studentInfo.id
     }
 
     this.editModel = data
@@ -347,7 +346,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
    */
   onModelChange(model: Event) {
     const ids = {
-      student: this.$vuexModules.User.userInfo.id,
+      student: this.$vuexModules.User.studentInfo.id,
       group: this.$vuexModules.Group.groupId
     } as { student: string; group: string }
 
