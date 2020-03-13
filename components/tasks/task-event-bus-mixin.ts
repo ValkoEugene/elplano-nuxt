@@ -19,6 +19,7 @@ export default class TaskEventBus extends Vue {
     expired_at: '',
     event_id: '',
     attachments: [],
+    student_ids: [],
     description: '',
     created_at: '',
     updated_at: ''

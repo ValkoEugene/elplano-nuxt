@@ -290,7 +290,9 @@ export class User extends VuexModule implements UserStateI {
     try {
       this.SET_LOADING(true)
 
-      const { user, student, groupId } = await getUserInfo()
+      const response = await getUserInfo()
+      console.log(response)
+      const { user, student, groupId } = response
 
       const locale = user.locale
       if (locale) getVuexDecaratorModuleByWindow(I18n).setLang(locale)

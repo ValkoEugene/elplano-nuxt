@@ -66,9 +66,12 @@
     "daysOfWeek": "Дни недели",
     "number": "Номер",
     "tags": "Теги",
-    "language": "Язык"
+    "language": "Язык",
+    "students": "Студенты"
   },
   "ui": {
+    "own": "Собственное",
+    "grouped": "Для всей группы",
     "loading": "Загрузка...",
     "cancel": "Отмена",
     "confirm": "Да",

@@ -118,7 +118,7 @@ html {
 
 .v-content__wrap {
   background: #000ef30a;
-  max-height: calc(100vh - 64px);
+  max-height: calc(100vh - 104px);
   overflow: auto;
 }
 

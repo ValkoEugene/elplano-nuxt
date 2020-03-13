@@ -24,6 +24,16 @@ export class Tasks extends VuexModule implements TasksStateI {
   public loading: boolean = true
 
   /**
+   *
+   */
+  public appending: boolean = true
+
+  /**
+   * Флаг что загруженны все задачи
+   */
+  public allTaskLoaded: boolean = false
+
+  /**
    * Флаг обновления
    */
   public updating: boolean = false
@@ -32,7 +42,7 @@ export class Tasks extends VuexModule implements TasksStateI {
    * Установить список задач
    */
   @Mutation
-  private SET_TASKS(task: Task[]) {
+  public SET_TASKS(task: Task[]) {
     this.tasks = task
   }
 
@@ -40,15 +50,23 @@ export class Tasks extends VuexModule implements TasksStateI {
    * Добавить задание в список
    */
   @Mutation
-  private ADD_TASK(task: Task) {
+  public ADD_TASK(task: Task) {
     this.tasks.push(task)
+  }
+
+  /**
+   * Добавить задания в список
+   */
+  @Mutation
+  public ADD_TASKS(tasks: Task[]) {
+    this.tasks = [...this.tasks, ...tasks]
   }
 
   /**
    * Обновить задание в списке
    */
   @Mutation
-  private UPDATE_TASK(task: Task) {
+  public UPDATE_TASK(task: Task) {
     this.tasks = this.tasks.map((item) => (item.id === task.id ? task : item))
   }
 
@@ -56,7 +74,7 @@ export class Tasks extends VuexModule implements TasksStateI {
    * Обновить задание в списке
    */
   @Mutation
-  private DELETE_TASK(id: string) {
+  public DELETE_TASK(id: string) {
     this.tasks = this.tasks.filter((item) => item.id !== id)
   }
 
@@ -66,6 +84,22 @@ export class Tasks extends VuexModule implements TasksStateI {
   @Mutation
   private SET_LOADING(loading: boolean) {
     this.loading = loading
+  }
+
+  /**
+   * Установить флаг
+   */
+  @Mutation
+  private SET_APPENDING(appending: boolean) {
+    this.appending = appending
+  }
+
+  /**
+   * Установить флаг загрузки
+   */
+  @Mutation
+  private SET_ALL_TASKS_LOADED(allTaskLoaded: boolean) {
+    this.allTaskLoaded = allTaskLoaded
   }
 
   /**
@@ -80,18 +114,30 @@ export class Tasks extends VuexModule implements TasksStateI {
    * Загрузить список задач
    */
   @Action
-  public async loadTasks(): Promise<void> {
+  public async loadTasks(params?: any): Promise<void> {
     try {
+      if (this.appending) return
+      this.SET_ALL_TASKS_LOADED(false)
+
+      this.SET_APPENDING(true)
       this.SET_LOADING(true)
 
-      const tasks = await taskApi.loadData()
+      const { data, meta } = await taskApi.loadData(params)
 
-      this.SET_TASKS(tasks)
-      this.SET_LOADING(false)
+      this.ADD_TASKS(data)
+
+      if (meta) {
+        const { current_page, total_pages } = meta
+        console.log(current_page, total_pages)
+        if (total_pages === current_page) this.SET_ALL_TASKS_LOADED(true)
+      }
     } catch (error) {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.snackbarErrors
       )
+    } finally {
+      this.SET_LOADING(false)
+      this.SET_APPENDING(false)
     }
   }
 

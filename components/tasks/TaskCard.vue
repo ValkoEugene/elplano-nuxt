@@ -2,7 +2,7 @@
 
 <template>
   <div class="task-card__wrapper">
-    <DayTag :date="dayTagDate" />
+    <DayTag v-if="showDayTag" :date="dayTagDate" />
 
     <Card class="mb-5 task__card" small @click.native="showPreview(task)">
       <template #title>
@@ -59,7 +59,7 @@ import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
 })
 export default class TaskCard extends Mixins(TaskEventBusMixin) {
   /**
-   * задание
+   * Задание
    */
   @Prop({ type: Object as () => Task, required: true })
   readonly task!: Task
@@ -76,6 +76,12 @@ export default class TaskCard extends Mixins(TaskEventBusMixin) {
    */
   @Prop({ type: Boolean, required: true })
   readonly updating!: boolean
+
+  /**
+   * Флаг показа тега с датой
+   */
+  @Prop({ type: Boolean, default: true })
+  readonly showDayTag: boolean
 
   /**
    * Дата для тега
@@ -117,6 +123,7 @@ export default class TaskCard extends Mixins(TaskEventBusMixin) {
 
 <style scoped>
 .task-card__wrapper {
+  /* min-height: 200px; */
   display: flex;
   margin-left: 25px;
 }

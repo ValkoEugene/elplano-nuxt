@@ -10,6 +10,7 @@ export interface Task {
   updated_at?: string
   outdated?: boolean
   id?: string
+  student_ids: string[]
   attachments: any[]
 }
 
@@ -25,6 +26,7 @@ const formatDataFromApi = (data: { [key: string]: any }): Task => {
       expired_at,
       created_at,
       updated_at,
+      student_ids,
       outdated
     },
     relationships: { event, attachments }
@@ -32,6 +34,7 @@ const formatDataFromApi = (data: { [key: string]: any }): Task => {
 
   return {
     id,
+    student_ids,
     title,
     description,
     expired_at: moment(expired_at).format('YYYY-MM-DD'),
@@ -53,7 +56,9 @@ export const taskApi = {
   async create(data: Task): Promise<Task> {
     try {
       console.log('create')
-      const response = await axios.post(restUrl, formatDataForApi(data))
+      const response = await axios.post(restUrl, {
+        task: formatDataForApi(data)
+      })
 
       return formatDataFromApi(response.data.data)
     } catch (error) {
@@ -86,12 +91,22 @@ export const taskApi = {
     }
   },
 
-  async loadData(params?: any): Promise<Task[]> {
+  async loadData(
+    params?: any
+  ): Promise<{
+    data: Task[]
+    meta?: { current_page: number; total_pages: number }
+  }> {
     try {
       console.log('loadData')
       const response = await axios.get(restUrl, { params })
-      const { data }: { data: any } = response.data
-      return data.map((item: any): Task => formatDataFromApi(item))
+      const data = response.data.data
+      const meta = response.data.meta
+
+      return {
+        data: data.map((item: any): Task => formatDataFromApi(item)),
+        meta
+      }
     } catch (error) {
       return Promise.reject(error)
     }

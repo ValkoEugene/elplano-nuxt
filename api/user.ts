@@ -21,7 +21,10 @@ function formatDataFromApi(response: any): UserDetail {
   const student = response.data.included.find(
     (item: { type: string }) => item.type === 'student'
   )
-  if (student && student.attributes) student.attributes.locale = user.locale
+  if (student && student.attributes) {
+    student.attributes.locale = user.locale
+    student.attributes.id = student.id
+  }
   const group = student && student.relationships && student.relationships.group
 
   return {

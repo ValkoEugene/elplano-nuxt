@@ -66,9 +66,12 @@
     "daysOfWeek": "Days",
     "number": "Number",
     "tags": "Tags",
-    "language": "Language"
+    "language": "Language",
+    "students": "Students"
   },
   "ui": {
+    "own": "Own",
+    "grouped": "For all group",
     "loading": "Loading...",
     "cancel": "Cancel",
     "confirm": "Ok",

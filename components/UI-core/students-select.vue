@@ -4,7 +4,7 @@
     :items="students"
     item-value="id"
     :item-text="(item) => item.full_name || item.email"
-    label="students"
+    :label="$t('field.students')"
     :rules="[$rules.required]"
     :chips="true"
     :multiple="true"

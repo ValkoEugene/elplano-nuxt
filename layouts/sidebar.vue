@@ -84,6 +84,11 @@ export default class Sidebar extends Vue {
         url: '/tasks'
       },
       {
+        title: this.$t('sidebar.tasks') + ' tabs',
+        icon: 'mdi-briefcase',
+        url: '/tasks-tabs'
+      },
+      {
         title: this.$t('sidebar.lessons'),
         icon: 'mdi-library-books',
         url: '/courses'
