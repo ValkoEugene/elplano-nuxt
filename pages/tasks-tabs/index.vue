@@ -1,25 +1,32 @@
 <template>
   <div v-card-scroll:200="checkDataAppending">
-    <!-- <client-only> -->
-    <!-- <div
-        v-infinite-scroll="loadTasks"
-        infinite-scroll-disabled="disabledInfinitScroll"
-        infinite-scroll-distance="10"
-        infinite-scroll-throttle-delay="500"
-        infinite-scroll-immediate-check="false"
-      > -->
     <div>
       <template v-if="tasks.length">
+        <template v-if="isOutdated">
+          <TaskCard
+            v-for="task in tasks"
+            :key="task.id"
+            :task="task"
+            :events="events"
+            :updating="updating"
+            :disabled="updating"
+            :completed="false"
+            @taskComplete="taskComplete"
+          />
+        </template>
+
         <template v-if="isToday">
           <div class="date-title">{{ todayDate }}</div>
 
           <TaskCard
-            v-for="task in todayTasks"
+            v-for="task in tasks"
             :key="task.id"
             :show-day-tag="false"
             :task="task"
             :events="events"
             :updating="updating"
+            :completed="false"
+            @taskComplete="taskComplete"
           />
         </template>
 
@@ -27,59 +34,53 @@
           <div class="date-title">{{ tomorrowDate }}</div>
 
           <TaskCard
-            v-for="task in tomorrowTasks"
+            v-for="task in tasks"
             :key="task.id"
             :show-day-tag="false"
             :task="task"
             :events="events"
             :updating="updating"
+            :completed="false"
+            @taskComplete="taskComplete"
           />
         </template>
 
-        <template v-if="isSoon">
+        <template v-if="isUpcoming">
           <TaskCard
-            v-for="task in soonTasks"
+            v-for="task in tasks"
             :key="task.id"
             :task="task"
             :events="events"
             :updating="updating"
+            :completed="false"
+            @taskComplete="taskComplete"
           />
         </template>
 
         <template v-if="isCompleted">
           <TaskCard
-            v-for="task in comletedTasks"
+            v-for="task in tasks"
             :key="task.id"
             :task="task"
             :events="events"
             :updating="updating"
-          />
-        </template>
-
-        <template v-if="isPastDue">
-          <TaskCard
-            v-for="task in pastDueTasks"
-            :key="task.id"
-            :task="task"
-            :events="events"
-            :updating="updating"
+            :completed="true"
           />
         </template>
       </template>
 
       <TaskModal :events="events" />
+      <TaskComplete ref="taskCompleteComponent" />
 
       <AddNew :president-access="false" @click="initAddingTask" />
     </div>
 
     <Loader v-if="taskLoading" :show-form="true" :form-inputs-count="9" />
-    <!-- </client-only> -->
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Mixins, Ref, Watch } from 'vue-property-decorator'
-// import infiniteScroll from 'vue-infinite-scroll'
 import moment from '~/plugins/moment.js'
 import { Task } from '~/api/tasks.ts'
 import eventApi, { Event } from '~/api/events.ts'
@@ -88,12 +89,17 @@ import ModalEditComponent from '~/components/modal/modal-edit.vue'
 import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
 import { TaskQuery } from '~/components/tasks/task-tabs.vue'
 import cardScroll from '~/directives/card-scroll.js'
+import TaskComplete from '~/components/tasks/task-complete.vue'
 
 @Component({
   components: {
     TaskModal: () =>
       import(
         '~/components/tasks/task-modal.vue' /* webpackChunkName: 'components/tasks/task-modal' */
+      ),
+    TaskComplete: () =>
+      import(
+        '~/components/tasks/task-complete.vue' /* webpackChunkName: 'components/tasks/task-complete'  */
       ),
     WeekInterval: () =>
       import(
@@ -122,7 +128,6 @@ import cardScroll from '~/directives/card-scroll.js'
   },
   directives: {
     'card-scroll': cardScroll
-    // infiniteScroll
   }
 })
 export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
@@ -131,6 +136,12 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
    */
   @Ref()
   readonly modalEdit!: ModalEditComponent
+
+  /**
+   *
+   */
+  @Ref()
+  readonly taskCompleteComponent!: TaskComplete
 
   /**
    * Список евентов
@@ -198,10 +209,10 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
         return TaskQuery.today
       case TaskQuery.tomorrow:
         return TaskQuery.tomorrow
-      case TaskQuery.pastDue:
-        return TaskQuery.pastDue
-      case TaskQuery.soon:
-        return TaskQuery.soon
+      case TaskQuery.outdated:
+        return TaskQuery.outdated
+      case TaskQuery.upcoming:
+        return TaskQuery.upcoming
       case TaskQuery.comleted:
         return TaskQuery.comleted
       default:
@@ -212,8 +223,8 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
   get apiFilters() {
     const filters: any = { limit: 15, page: this.page, appointed: true }
     if (this.event_id) filters.event_id = this.event_id
-    if (this.isPastDue) filters.outdated = true
-    if (this.isCompleted) filters.accomplished = true
+    if (!this.isCompleted) filters.expiration = this.taskType
+    filters.accomplished = this.isCompleted
 
     return { filters }
   }
@@ -226,57 +237,16 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
     return this.taskType === TaskQuery.tomorrow
   }
 
-  get isSoon(): boolean {
-    return this.taskType === TaskQuery.soon
+  get isUpcoming(): boolean {
+    return this.taskType === TaskQuery.upcoming
   }
 
   get isCompleted(): boolean {
     return this.taskType === TaskQuery.comleted
   }
 
-  get isPastDue(): boolean {
-    return this.taskType === TaskQuery.pastDue
-  }
-
-  /**
-   * Просроченные задачи
-   */
-  get pastDueTasks() {
-    return this.tasks.filter((task) =>
-      moment(task.expired_at).isBefore(moment(), 'day')
-    )
-  }
-
-  /**
-   * Задачи на сегодня
-   */
-  get todayTasks(): Task[] {
-    return this.tasks.filter((task) =>
-      moment(task.expired_at).isSame(moment(), 'day')
-    )
-  }
-
-  get tomorrowTasks(): Task[] {
-    return this.tasks.filter((task) =>
-      moment(task.expired_at).isSame(moment().add(1, 'day'), 'day')
-    )
-  }
-
-  /**
-   * Задачи на неделе
-   */
-  get soonTasks(): Task[] {
-    return this.tasks.filter((task) =>
-      moment(task.expired_at).isAfter(moment().add(2, 'day'), 'day')
-    )
-  }
-
-  /**
-   * Завершенные задачи за неделю
-   * TODO
-   */
-  get comletedTasks(): Task[] {
-    return []
+  get isOutdated(): boolean {
+    return this.taskType === TaskQuery.outdated
   }
 
   /**
@@ -292,7 +262,7 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
     this.appendTasks()
   }
 
-  @Watch('taskType')
+  @Watch('taskType', { immediate: true })
   onTaskTypeChange() {
     this.$vuexModules.Tasks.SET_TASKS([])
     this.page = 0
@@ -300,7 +270,16 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
   }
 
   mounted() {
+    this.$vuexModules.Tasks.SET_TASKS([])
     this.loadData()
+  }
+
+  /**
+   * Выполнить задание
+   */
+  taskComplete(id: string) {
+    this.taskCompleteComponent.id = id
+    this.taskCompleteComponent.modalWrapper.open()
   }
 
   /**

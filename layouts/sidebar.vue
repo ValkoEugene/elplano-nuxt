@@ -81,16 +81,11 @@ export default class Sidebar extends Vue {
       {
         title: this.$t('sidebar.tasks'),
         icon: 'mdi-briefcase',
-        url: '/tasks'
-      },
-      {
-        title: this.$t('sidebar.tasks') + ' tabs',
-        icon: 'mdi-briefcase',
         url: '/tasks-tabs'
       },
       {
         title: this.$t('sidebar.lessons'),
-        icon: 'mdi-library-books',
+        icon: 'mdi-bookshelf',
         url: '/courses'
       },
       {

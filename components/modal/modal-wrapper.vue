@@ -52,6 +52,14 @@ export default class ModalWrapper extends Vue {
    */
   visible: boolean = false
 
+  mounted() {
+    window.document.addEventListener('keydown', this.escHandler)
+  }
+
+  beforeDestroy() {
+    window.document.removeEventListener('keydown', this.escHandler)
+  }
+
   /**
    * Открыть модальное окно
    */

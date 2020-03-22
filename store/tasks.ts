@@ -74,7 +74,7 @@ export class Tasks extends VuexModule implements TasksStateI {
    * Обновить задание в списке
    */
   @Mutation
-  public DELETE_TASK(id: string) {
+  public REMOVE_TASK(id: string) {
     this.tasks = this.tasks.filter((item) => item.id !== id)
   }
 
@@ -149,7 +149,7 @@ export class Tasks extends VuexModule implements TasksStateI {
     try {
       this.SET_UPDATING(true)
       const savedTask = await taskApi.create(task)
-      this.ADD_TASK(savedTask)
+      // this.ADD_TASK(savedTask)
 
       return savedTask
     } catch (error) {
@@ -191,7 +191,7 @@ export class Tasks extends VuexModule implements TasksStateI {
     try {
       this.SET_UPDATING(true)
       await taskApi.deleteById(id)
-      this.DELETE_TASK(id)
+      this.REMOVE_TASK(id)
     } catch (error) {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.snackbarErrors

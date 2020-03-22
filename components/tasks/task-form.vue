@@ -9,7 +9,7 @@
     />
     <v-select
       v-model="localModel.event_id"
-      :items="events"
+      :items="availableEvents"
       item-value="id"
       item-text="title"
       :label="$t('events.eventsLabel')"
@@ -31,7 +31,10 @@
       <v-radio :label="$t('ui.own')" :value="false" />
     </v-radio-group>
 
-    <StudentsSelect v-if="isPresident" v-model="localModel.student_ids" />
+    <StudentsSelect
+      v-if="isPresident && grouped"
+      v-model="localModel.student_ids"
+    />
 
     <TextEditor v-model="localModel.description" />
   </v-form>
@@ -40,6 +43,9 @@
 <script lang="ts">
 import { Vue, Component, Ref, Prop, Watch } from 'vue-property-decorator'
 import { Task } from '~/api/tasks.ts'
+import { Event } from '~/api/events.ts'
+import { TaskQuery } from '~/components/tasks/task-tabs.vue'
+import moment from '~/plugins/moment'
 
 @Component({
   components: {
@@ -93,6 +99,22 @@ export default class TaskForm extends Vue {
     return this.$vuexModules.User.isPresident
   }
 
+  /**
+   * Доступные для выбора элементы расписания
+   * Для старосты все
+   * Для студентов только собственные
+   */
+  get availableEvents() {
+    if (this.$vuexModules.User.isPresident) return this.events
+
+    const studentId = this.$vuexModules.User.studentInfo.id
+
+    return this.events.filter(
+      (event: Event): boolean =>
+        event.eventable_type === 'student' || event.eventable_id === studentId
+    )
+  }
+
   @Watch('grouped')
   onGroupedChange() {
     if (!this.grouped)
@@ -117,6 +139,31 @@ export default class TaskForm extends Vue {
       : await this.$vuexModules.Tasks.createTask(this.localModel)
 
     if (!savedTask) return
+
+    // Проверяем попадает ли созданное задание под текущий фильтр
+    if (!this.localModel.id) {
+      const taskType = this.$route.query.tab
+      if (
+        taskType === TaskQuery.today &&
+        moment().isSame(savedTask.expired_at, 'day')
+      ) {
+        this.$vuexModules.Tasks.ADD_TASK(savedTask)
+      } else if (
+        taskType === TaskQuery.tomorrow &&
+        moment()
+          .add(1, 'd')
+          .isSame(savedTask.expired_at, 'day')
+      ) {
+        this.$vuexModules.Tasks.ADD_TASK(savedTask)
+      } else if (
+        taskType === TaskQuery.upcoming &&
+        moment()
+          .add(1, 'd')
+          .isBefore(moment(savedTask.expired_at))
+      ) {
+        this.$vuexModules.Tasks.ADD_TASK(savedTask)
+      }
+    }
 
     this.localModel = { ...savedTask }
   }

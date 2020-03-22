@@ -10,10 +10,10 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 
 export enum TaskQuery {
-  pastDue = 'past-due',
+  outdated = 'outdated',
   today = 'today',
   tomorrow = 'tomorrow',
-  soon = 'soon',
+  upcoming = 'upcoming',
   comleted = 'comleted'
 }
 
@@ -22,10 +22,10 @@ export default class TaskTabs extends Vue {
   tab = 1
 
   taskTabs = [
-    { view: 'Просроченные', query: TaskQuery.pastDue },
+    { view: 'Просроченные', query: TaskQuery.outdated },
     { view: 'Сегодня', query: TaskQuery.today },
     { view: 'Завтра', query: TaskQuery.tomorrow },
-    { view: 'Ближайшие', query: TaskQuery.soon },
+    { view: 'Ближайшие', query: TaskQuery.upcoming },
     { view: 'Выполненные', query: TaskQuery.comleted }
   ]
 

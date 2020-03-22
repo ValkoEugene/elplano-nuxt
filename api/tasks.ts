@@ -14,6 +14,15 @@ export interface Task {
   attachments: any[]
 }
 
+export interface Assignment {
+  id?: string
+  accomplished: boolean
+  report: string
+  extra_links: string[]
+  created_at?: string
+  updated_at?: string
+}
+
 const restUrl = '/tasks'
 
 const formatDataForApi = (task: Task): Task => task
@@ -107,6 +116,28 @@ export const taskApi = {
         data: data.map((item: any): Task => formatDataFromApi(item)),
         meta
       }
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  },
+
+  async complete(taskId: string, assignment: Assignment): Promise<void> {
+    try {
+      console.log('complete')
+      await axios.put(`${restUrl}/${taskId}/assignment`, {
+        assignment
+      })
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  },
+
+  async getCompletedInfo(taskId: string): Promise<Assignment> {
+    try {
+      console.log('getCompletedInfo')
+      const response = await axios.get(`${restUrl}/${taskId}/assignment`)
+
+      return response.data.data
     } catch (error) {
       return Promise.reject(error)
     }

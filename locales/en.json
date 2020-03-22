@@ -44,7 +44,8 @@
     "addTask": "Add task",
     "addRaiting": "Add rating",
     "edit": "Edit",
-    "send": "Send"
+    "send": "Send",
+    "complete": "Complete"
   },
   "field": {
     "loginField": "Login",
@@ -67,7 +68,9 @@
     "number": "Number",
     "tags": "Tags",
     "language": "Language",
-    "students": "Students"
+    "students": "Students",
+    "report": "Resport",
+    "links": "External links"
   },
   "ui": {
     "own": "Own",
@@ -75,12 +78,14 @@
     "loading": "Loading...",
     "cancel": "Cancel",
     "confirm": "Ok",
+    "complete": "Complete",
     "edit": "Edit",
     "delete": "Delete",
     "add": "Add",
     "notready": "This page in progress",
     "a2hsButton": "Add to home screen",
     "no-data": "No results",
+    "add-enter": "Press enter to add",
     "card": {
       "badges": {
         "active": "Active"

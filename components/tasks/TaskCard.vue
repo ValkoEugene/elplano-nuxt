@@ -14,6 +14,16 @@
       </template>
 
       <template #menu>
+        <v-list-item
+          v-if="!completed"
+          class="text-primary"
+          :disabled="updating"
+          icon
+          @click="completeTask(task.id)"
+        >
+          <v-icon class="pr-2">done</v-icon>
+          {{ $t('ui.complete') }}
+        </v-list-item>
         <EditButton :disabled="updating" @click="edit(task)" />
         <DeleteButton
           :id="task.id"
@@ -84,6 +94,12 @@ export default class TaskCard extends Mixins(TaskEventBusMixin) {
   readonly showDayTag: boolean
 
   /**
+   * Флаг что задача выполненна
+   */
+  @Prop({ type: Boolean, default: false })
+  readonly completed: boolean
+
+  /**
    * Дата для тега
    */
   get dayTagDate(): string {
@@ -113,10 +129,17 @@ export default class TaskCard extends Mixins(TaskEventBusMixin) {
   }
 
   /**
-   * Редактировать заданиет
+   * Редактировать задание
    */
   edit(task: Task) {
     this.editTaskEmit(task)
+  }
+
+  /**
+   * Выполнить задание
+   */
+  completeTask(id: string) {
+    this.$emit('taskComplete', id)
   }
 }
 </script>
