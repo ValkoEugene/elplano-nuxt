@@ -11,7 +11,7 @@
             :updating="updating"
             :disabled="updating"
             :completed="false"
-            @taskComplete="taskComplete"
+            @taskComplete="intiTaskComplete"
           />
         </template>
 
@@ -26,7 +26,7 @@
             :events="events"
             :updating="updating"
             :completed="false"
-            @taskComplete="taskComplete"
+            @taskComplete="intiTaskComplete"
           />
         </template>
 
@@ -41,7 +41,7 @@
             :events="events"
             :updating="updating"
             :completed="false"
-            @taskComplete="taskComplete"
+            @taskComplete="intiTaskComplete"
           />
         </template>
 
@@ -53,7 +53,7 @@
             :events="events"
             :updating="updating"
             :completed="false"
-            @taskComplete="taskComplete"
+            @taskComplete="intiTaskComplete"
           />
         </template>
 
@@ -275,11 +275,10 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
   }
 
   /**
-   * Выполнить задание
+   * Инициализация выполнения задания
    */
-  taskComplete(id: string) {
-    this.taskCompleteComponent.id = id
-    this.taskCompleteComponent.modalWrapper.open()
+  intiTaskComplete(id: string) {
+    this.taskCompleteComponent.initAssigment(id)
   }
 
   /**

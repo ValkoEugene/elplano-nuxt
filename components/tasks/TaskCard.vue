@@ -24,6 +24,17 @@
           <v-icon class="pr-2">done</v-icon>
           {{ $t('ui.complete') }}
         </v-list-item>
+        <v-list-item
+          v-else
+          class="text-primary"
+          :disabled="updating"
+          icon
+          @click="retrieveTask(task.id)"
+        >
+          <v-icon class="pr-2">undo</v-icon>
+          {{ $t('ui.retrieve') }}
+        </v-list-item>
+
         <EditButton :disabled="updating" @click="edit(task)" />
         <DeleteButton
           :id="task.id"
@@ -38,7 +49,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
-import { Task } from '~/api/tasks.ts'
+import { Task, Assignment, taskApi } from '~/api/tasks.ts'
 import { Event } from '~/api/events.ts'
 import moment from '~/plugins/moment.js'
 import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
@@ -140,6 +151,24 @@ export default class TaskCard extends Mixins(TaskEventBusMixin) {
    */
   completeTask(id: string) {
     this.$emit('taskComplete', id)
+  }
+
+  /**
+   * Вернуть в работу
+   */
+  async retrieveTask(id: string) {
+    try {
+      const assignment: Assignment = await taskApi.getCompletedInfo(id)
+      assignment.accomplished = false
+
+      await taskApi.complete(id, assignment)
+
+      if (this.$vuexModules.Tasks.tasks.some((task) => task.id === id)) {
+        this.$vuexModules.Tasks.REMOVE_TASK(id)
+      }
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    }
   }
 }
 </script>

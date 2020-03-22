@@ -136,8 +136,11 @@ export const taskApi = {
     try {
       console.log('getCompletedInfo')
       const response = await axios.get(`${restUrl}/${taskId}/assignment`)
+      const data: Assignment = response.data.data.attributes
 
-      return response.data.data
+      if (data.extra_links === null) data.extra_links = []
+
+      return data
     } catch (error) {
       return Promise.reject(error)
     }

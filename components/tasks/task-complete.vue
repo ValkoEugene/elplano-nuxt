@@ -2,7 +2,7 @@
   <ModalWrapper
     ref="modalWrapper"
     action-type="complete"
-    @action="onActionHandler"
+    @action="completeTask"
     @close="onModalClose"
   >
     <template #content>
@@ -32,7 +32,7 @@
             </v-chip>
             <v-spacer></v-spacer>
             <v-list-item-action @click.stop>
-              <v-btn icon @click.stop.prevent="() => {}">
+              <v-btn icon @click.stop.prevent="removeLink(item)">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </v-list-item-action>
@@ -84,11 +84,24 @@ export default class TaskComplete extends Vue {
   /**
    * Установить отчет о выполнение для редактирования
    */
-  public setAssigment(assigment: Assignment) {
-    this.assigment = assigment
+  public async initAssigment(id: string) {
+    try {
+      this.id = id
+      this.assigment = await taskApi.getCompletedInfo(id)
+      this.modalWrapper.open()
+    } catch (error) {
+      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    }
   }
 
-  onActionHandler() {}
+  /**
+   * Удалить ссылку
+   */
+  removeLink(link: string) {
+    this.assigment.extra_links = this.assigment.extra_links.filter(
+      (item) => item !== link
+    )
+  }
 
   onModalClose() {
     this.assigment = { ...this.assigmentTemplate }
