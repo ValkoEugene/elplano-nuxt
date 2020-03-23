@@ -1,75 +1,40 @@
 <template>
   <div v-card-scroll:200="checkDataAppending">
     <div>
+      <v-select
+        v-model="filtredEventId"
+        :items="events"
+        item-value="id"
+        item-text="title"
+        :label="$t('events.eventsLabel')"
+        :chips="false"
+        :multiple="false"
+        :disabled="taskLoading"
+        attach
+        solo
+        clearable
+      />
+
       <template v-if="tasks.length">
-        <template v-if="isOutdated">
-          <TaskCard
-            v-for="task in tasks"
-            :key="task.id"
-            :task="task"
-            :events="events"
-            :updating="updating"
-            :disabled="updating"
-            :completed="false"
-            @taskComplete="intiTaskComplete"
-          />
-        </template>
-
-        <template v-if="isToday">
-          <div class="date-title">{{ todayDate }}</div>
-
-          <TaskCard
-            v-for="task in tasks"
-            :key="task.id"
-            :show-day-tag="false"
-            :task="task"
-            :events="events"
-            :updating="updating"
-            :completed="false"
-            @taskComplete="intiTaskComplete"
-          />
-        </template>
-
-        <template v-if="isTomorrow">
-          <div class="date-title">{{ tomorrowDate }}</div>
-
-          <TaskCard
-            v-for="task in tasks"
-            :key="task.id"
-            :show-day-tag="false"
-            :task="task"
-            :events="events"
-            :updating="updating"
-            :completed="false"
-            @taskComplete="intiTaskComplete"
-          />
-        </template>
-
-        <template v-if="isUpcoming">
-          <TaskCard
-            v-for="task in tasks"
-            :key="task.id"
-            :task="task"
-            :events="events"
-            :updating="updating"
-            :completed="false"
-            @taskComplete="intiTaskComplete"
-          />
-        </template>
-
-        <template v-if="isCompleted">
-          <TaskCard
-            v-for="task in tasks"
-            :key="task.id"
-            :task="task"
-            :events="events"
-            :updating="updating"
-            :completed="true"
-          />
-        </template>
+        <TaskCard
+          v-for="task in tasks"
+          :key="task.id"
+          :task="task"
+          :events="events"
+          :updating="updating"
+          :disabled="updating"
+          :show-day-tag="isOutdated || isCompleted"
+          :completed="isCompleted"
+          @taskComplete="intiTaskComplete"
+        />
       </template>
 
-      <TaskModal :events="events" />
+      <v-alert v-if="!tasks.length && !taskLoading" type="info" prominent>
+        <span>{{ $t('tasks.empty') }}</span>
+      </v-alert>
+
+      <TaskModal :events="events" :completed="isCompleted" />
+
       <TaskComplete ref="taskCompleteComponent" />
 
       <AddNew :president-access="false" @click="initAddingTask" />
@@ -149,14 +114,14 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
   events: Event[] = []
 
   /**
+   * Выбранный евент для фильтрации
+   */
+  filtredEventId: string = ''
+
+  /**
    * Флаг загрузки
    */
   loading: boolean = true
-
-  /**
-   *
-   */
-  event_id: string = ''
 
   /**
    *
@@ -222,7 +187,7 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
 
   get apiFilters() {
     const filters: any = { limit: 15, page: this.page, appointed: true }
-    if (this.event_id) filters.event_id = this.event_id
+    if (this.filtredEventId) filters.event_id = Number(this.filtredEventId)
     if (!this.isCompleted) filters.expiration = this.taskType
     filters.accomplished = this.isCompleted
 
@@ -256,8 +221,9 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
     return this.$vuexModules.Tasks.allTaskLoaded
   }
 
-  @Watch('event_id')
+  @Watch('filtredEventId')
   onEventidChange() {
+    this.$vuexModules.Tasks.SET_TASKS([])
     this.page = 0
     this.appendTasks()
   }

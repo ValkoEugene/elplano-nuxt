@@ -9,7 +9,7 @@
             <v-icon>close</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
-          <v-toolbar-items>
+          <v-toolbar-items v-if="actionType">
             <v-btn
               dark
               text

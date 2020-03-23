@@ -1,11 +1,22 @@
 import { Plugin } from '@nuxt/types'
 
+/**
+ * Вспомогательная функция проверки на url ссылку
+ */
+const isValidUrl = (value: string): boolean => {
+  // eslint-disable-next-line no-useless-escape
+  return /^(?:http(s)?:\/\/)?[a-zA-Zа-яёА-ЯЁ0-9.\-]+(?:\.[a-zA-Zа-яёА-ЯЁ0-9.\-]+)+[a-zA-Zа-яёА-ЯЁ0-9\-\._~:/?#[\]@!\%\$&'\(\)\*\+,;=.]+$/.test(
+    value
+  )
+}
+
 declare module 'vue/types/vue' {
   interface Vue {
     $rules: {
       required(v: any): string | true
       getMinLength(len: number): (v: any) => string | true
       email(v: any): string | true
+      url(v: any): string | true
       equal(
         compareValue: string,
         errorText?: string
@@ -20,6 +31,7 @@ declare module '@nuxt/types' {
       required(v: any): string | true
       getMinLength(len: number): (v: any) => string | true
       email(v: any): string | true
+      url(v: any): string | true
       equal(
         compareValue: string,
         errorText?: string
@@ -81,6 +93,21 @@ const rulesPlugin: Plugin = (context, inject) => {
     email(v: any): string | true {
       if (typeof v !== 'string') return 'error validation type'
       return v && !v.includes('@') ? getErrorText('email') : true
+    },
+
+    /**
+     * Валидатор url ссылки
+     */
+    url(v: any): string | true {
+      if (typeof v === 'string') {
+        return v && !isValidUrl(v) ? getErrorText('url') : true
+      } else if (Array.isArray(v)) {
+        for (const valueItem of v) {
+          if (valueItem && !isValidUrl(valueItem)) return getErrorText('url')
+        }
+
+        return true
+      } else return 'error validation type'
     },
 
     /**

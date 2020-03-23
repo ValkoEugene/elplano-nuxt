@@ -2,7 +2,8 @@
   "rules": {
     "required": "Required field",
     "minLength": "Minimum characters - ",
-    "email": "Email must contain @"
+    "email": "Email must contain @",
+    "url": "Doesn't match url format"
   },
   "auth": {
     "or": "OR",
@@ -45,7 +46,8 @@
     "addRaiting": "Add rating",
     "edit": "Edit",
     "send": "Send",
-    "complete": "Complete"
+    "complete": "Complete",
+    "retrieve": "Retrieve"
   },
   "field": {
     "loginField": "Login",
@@ -79,7 +81,6 @@
     "cancel": "Cancel",
     "confirm": "Ok",
     "complete": "Complete",
-    "retrieve": "retrieve",
     "edit": "Edit",
     "delete": "Delete",
     "add": "Add",
@@ -144,7 +145,12 @@
   "tasks": {
     "add": "Add task",
     "confirm": "Delete task?",
-    "empty": "No saved tasks"
+    "empty": "No saved tasks",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "outdated": "Outdated",
+    "upcoming": "Upcoming",
+    "comleted": "Comleted"
   },
   "tags": {
     "addNew": "Add tag",

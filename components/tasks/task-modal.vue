@@ -11,12 +11,14 @@
         ref="taskForm"
         :task="taskModel"
         :events="events"
+        @createdTask="closeModal"
       />
 
       <TaskPreview
         v-if="contentComponentName === 'TaskPreview'"
         :task="taskModel"
         :events="events"
+        :completed="completed"
       />
     </template>
   </ModalWrapper>
@@ -62,6 +64,12 @@ export default class TaskModal extends Mixins(TaskEventBusMixin) {
   readonly events!: Event[]
 
   /**
+   * Флаг что задача выполненна
+   */
+  @Prop({ type: Boolean, default: false })
+  readonly completed: boolean
+
+  /**
    * Название текущего компонента для отображения контента
    */
   contentComponentName: string = ''
@@ -105,7 +113,9 @@ export default class TaskModal extends Mixins(TaskEventBusMixin) {
    * Посмотреть задание
    */
   viewTask(task: Task) {
-    this.setContent(task, 'TaskPreview', 'edit')
+    // Для выполненных заданий не показываем кнопку редактирования
+    const actionType = !this.completed ? 'edit' : ''
+    this.setContent(task, 'TaskPreview', actionType)
   }
 
   /**
@@ -130,6 +140,13 @@ export default class TaskModal extends Mixins(TaskEventBusMixin) {
   onModalClose() {
     this.contentComponentName = ''
     this.taskModel = null
+  }
+
+  /**
+   * Закрыть модальное окно
+   */
+  closeModal() {
+    this.modalWrapper.close()
   }
 }
 </script>

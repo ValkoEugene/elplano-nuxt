@@ -52,7 +52,10 @@
                       <v-icon class="pr-2">star_half</v-icon>
                       {{ $t('ratings.add') }}
                     </v-list-item>
-                    <v-list-item @click="addNewTaskInit(event.id)">
+                    <v-list-item
+                      v-if="event.eventable_type === 'student' || isPresidents"
+                      @click="addNewTaskInit(event.id)"
+                    >
                       <v-icon class="pr-2">work</v-icon>
                       {{ $t('tasks.add') }}
                     </v-list-item>

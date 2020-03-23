@@ -165,6 +165,8 @@ export default class TaskForm extends Vue {
       }
     }
 
+    if (!this.localModel.id) this.$emit('createdTask')
+
     this.localModel = { ...savedTask }
   }
 }

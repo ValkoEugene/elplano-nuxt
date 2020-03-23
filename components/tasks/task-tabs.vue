@@ -21,13 +21,15 @@ export enum TaskQuery {
 export default class TaskTabs extends Vue {
   tab = 1
 
-  taskTabs = [
-    { view: 'Просроченные', query: TaskQuery.outdated },
-    { view: 'Сегодня', query: TaskQuery.today },
-    { view: 'Завтра', query: TaskQuery.tomorrow },
-    { view: 'Ближайшие', query: TaskQuery.upcoming },
-    { view: 'Выполненные', query: TaskQuery.comleted }
-  ]
+  get taskTabs() {
+    return [
+      { view: this.$t('tasks.outdated'), query: TaskQuery.outdated },
+      { view: this.$t('tasks.today'), query: TaskQuery.today },
+      { view: this.$t('tasks.tomorrow'), query: TaskQuery.tomorrow },
+      { view: this.$t('tasks.upcoming'), query: TaskQuery.upcoming },
+      { view: this.$t('tasks.comleted'), query: TaskQuery.comleted }
+    ]
+  }
 
   @Watch('tab', { immediate: true })
   onTabChanged() {

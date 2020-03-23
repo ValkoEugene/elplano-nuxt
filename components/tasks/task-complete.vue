@@ -21,6 +21,7 @@
           :menu-props="{ bottom: true, offsetY: true, 'z-index': 202 }"
           :search-input.sync="search"
           :hint="search ? $t('ui.add-enter') : ''"
+          :rules="[$rules.url]"
           chips
           multiple
           deletable-chips
@@ -61,6 +62,12 @@ export default class TaskComplete extends Vue {
   readonly modalWrapper!: ModalWrapper
 
   /**
+   * Ссылка на компонент формы из vuetify
+   */
+  @Ref()
+  readonly form: { validate: () => boolean }
+
+  /**
    * Id задачи
    */
   id: string = ''
@@ -88,6 +95,7 @@ export default class TaskComplete extends Vue {
     try {
       this.id = id
       this.assigment = await taskApi.getCompletedInfo(id)
+      this.assigment.accomplished = true
       this.modalWrapper.open()
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
@@ -112,6 +120,8 @@ export default class TaskComplete extends Vue {
    */
   async completeTask() {
     try {
+      if (!this.form.validate()) return
+
       const id = this.id
       await taskApi.complete(id, this.assigment)
 

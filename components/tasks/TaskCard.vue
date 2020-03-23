@@ -2,15 +2,16 @@
 
 <template>
   <div class="task-card__wrapper">
-    <DayTag v-if="showDayTag" :date="dayTagDate" />
-
     <Card class="mb-5 task__card" small @click.native="showPreview(task)">
       <template #title>
         {{ task.title }}
       </template>
 
       <template v-if="taskEventTitle" #content>
-        <p class="mb-0">{{ taskEventTitle }}</p>
+        <p class="mb-0">
+          <span v-if="showDayTag" class="bold">{{ dayTagDate + ' | ' }}</span>
+          {{ taskEventTitle }}
+        </p>
       </template>
 
       <template #menu>
@@ -32,7 +33,7 @@
           @click="retrieveTask(task.id)"
         >
           <v-icon class="pr-2">undo</v-icon>
-          {{ $t('ui.retrieve') }}
+          {{ $t('actions.retrieve') }}
         </v-list-item>
 
         <EditButton :disabled="updating" @click="edit(task)" />
@@ -177,7 +178,7 @@ export default class TaskCard extends Mixins(TaskEventBusMixin) {
 .task-card__wrapper {
   /* min-height: 200px; */
   display: flex;
-  margin-left: 25px;
+  /* margin-left: 25px; */
 }
 
 .mobile .task-card__wrapper {

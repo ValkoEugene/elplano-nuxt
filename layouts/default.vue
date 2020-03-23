@@ -2,7 +2,10 @@
   <v-app
     light
     :style="cssVariblesFromTheme"
-    :class="[$vuetify.breakpoint.smAndDown ? 'mobile' : '']"
+    :class="[
+      $vuetify.breakpoint.smAndDown ? 'mobile' : '',
+      haveHeadersTabs ? 'have-header-tabs' : ''
+    ]"
   >
     <Sidebar :have-group="haveGroup" />
 
@@ -79,6 +82,15 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
   }
 
   /**
+   * Флаг наличия табов в хэдере
+   */
+  get haveHeadersTabs(): boolean {
+    const tabsRoutes = ['/tasks-tabs']
+
+    return tabsRoutes.includes(this.$route.path)
+  }
+
+  /**
    * Стили с css переменными из темы
    */
   get cssVariblesFromTheme() {
@@ -118,8 +130,12 @@ html {
 
 .v-content__wrap {
   background: #000ef30a;
-  max-height: calc(100vh - 104px);
+  max-height: calc(100vh - 64px);
   overflow: auto;
+}
+
+.have-header-tabs .v-content__wrap {
+  max-height: calc(100vh - 104px);
 }
 
 .nuxt-wrapper {
