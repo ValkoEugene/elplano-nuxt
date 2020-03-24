@@ -13,6 +13,7 @@
             <v-btn
               dark
               text
+              :loading="updating"
               :disabled="disableButtons"
               @click="$emit('action')"
               >{{ $t(`actions.${actionType}`) }}</v-btn
@@ -40,6 +41,12 @@ export default class ModalWrapper extends Vue {
    */
   @Prop({ type: Boolean, default: false })
   private readonly disableButtons: boolean
+
+  /**
+   * Флаг обновления
+   */
+  @Prop({ type: Boolean, default: false })
+  private readonly updating: boolean
 
   /**
    * Тип действия

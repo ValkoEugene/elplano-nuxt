@@ -1,5 +1,9 @@
 <template>
-  <vue-editor v-model="localValue" :editor-toolbar="customToolbar" />
+  <vue-editor
+    v-model="localValue"
+    :editor-toolbar="customToolbar"
+    class="custom-text-editor "
+  />
 </template>
 
 <script lang="ts">
@@ -77,6 +81,16 @@ export default class TextEditor extends Vue {
 
 <style>
 .custom-text-editor .tui-editor-defaultUI {
-  border-color: rgba(0, 0, 0, 0.42);
+  border-color: #aeaeae;
+}
+
+.custom-text-editor .ql-toolbar.ql-snow {
+  border: 1px solid #aeaeae;
+  border-radius: 4px 4px 0 0;
+}
+
+.custom-text-editor .ql-container.ql-snow {
+  border: 1px solid #aeaeae;
+  border-radius: 0 0 4px 4px;
 }
 </style>

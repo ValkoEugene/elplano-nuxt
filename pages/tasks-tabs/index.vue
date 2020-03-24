@@ -40,13 +40,20 @@
       <AddNew :president-access="false" @click="initAddingTask" />
     </div>
 
-    <Loader v-if="taskLoading" :show-form="true" :form-inputs-count="9" />
+    <template v-if="taskLoading">
+      <v-skeleton-loader
+        v-for="i in 7"
+        :key="i"
+        height="104"
+        type="list-item-two-line"
+        class="task-card-loader"
+      />
+    </template>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Mixins, Ref, Watch } from 'vue-property-decorator'
-import moment from '~/plugins/moment.js'
 import { Task } from '~/api/tasks.ts'
 import eventApi, { Event } from '~/api/events.ts'
 import CheckGroup from '~/mixins/CheckGroup.ts'
@@ -103,7 +110,7 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
   readonly modalEdit!: ModalEditComponent
 
   /**
-   *
+   * Ссылка на экземпляр компонента с выполнением задания
    */
   @Ref()
   readonly taskCompleteComponent!: TaskComplete
@@ -119,12 +126,7 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
   filtredEventId: string = ''
 
   /**
-   * Флаг загрузки
-   */
-  loading: boolean = true
-
-  /**
-   *
+   * Страница для пагинации
    */
   page: number = 1
 
@@ -136,7 +138,7 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
   }
 
   /**
-   * Флаг
+   * Флаг загрузки данных
    */
   get taskLoading(): boolean {
     return this.$vuexModules.Tasks.loading
@@ -149,22 +151,15 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
     return this.$vuexModules.Tasks.updating
   }
 
+  /**
+   * Флаг подгрузки данных
+   */
   get appending(): boolean {
     return this.$vuexModules.Tasks.appending
   }
 
-  get todayDate(): string {
-    return moment().format('dddd: DD MMMM YYYY')
-  }
-
-  get tomorrowDate(): string {
-    return moment()
-      .add(1, 'day')
-      .format('dddd: DD MMMM YYYY')
-  }
-
   /**
-   *
+   * Выбранный тип задач
    */
   get taskType(): TaskQuery {
     const tab = this.$route.query.tab
@@ -185,6 +180,9 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
     }
   }
 
+  /**
+   * Фильтры для запросов к api
+   */
   get apiFilters() {
     const filters: any = { limit: 15, page: this.page, appointed: true }
     if (this.filtredEventId) filters.event_id = Number(this.filtredEventId)
@@ -194,33 +192,30 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
     return { filters }
   }
 
-  get isToday(): boolean {
-    return this.taskType === TaskQuery.today
-  }
-
-  get isTomorrow(): boolean {
-    return this.taskType === TaskQuery.tomorrow
-  }
-
-  get isUpcoming(): boolean {
-    return this.taskType === TaskQuery.upcoming
-  }
-
+  /**
+   * Флаг что активный фильтр - Выполненные
+   */
   get isCompleted(): boolean {
     return this.taskType === TaskQuery.comleted
   }
 
+  /**
+   * Флаг что активный фильтр - Просроченные
+   */
   get isOutdated(): boolean {
     return this.taskType === TaskQuery.outdated
   }
 
   /**
-   *
+   * Флаг что все задачи загружены
    */
   get allTasksLoaded(): boolean {
     return this.$vuexModules.Tasks.allTaskLoaded
   }
 
+  /**
+   * При смене евента сбрасываем задачи и подгружаем актуальный список
+   */
   @Watch('filtredEventId')
   onEventidChange() {
     this.$vuexModules.Tasks.SET_TASKS([])
@@ -228,6 +223,9 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
     this.appendTasks()
   }
 
+  /**
+   * При смене типа задачи сбрасываем задачи и подгружаем актуальный список
+   */
   @Watch('taskType', { immediate: true })
   onTaskTypeChange() {
     this.$vuexModules.Tasks.SET_TASKS([])
@@ -236,7 +234,6 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
   }
 
   mounted() {
-    this.$vuexModules.Tasks.SET_TASKS([])
     this.loadData()
   }
 
@@ -255,9 +252,13 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
     return event ? event.title : ''
   }
 
+  /**
+   * Проверить необходимость подгрузки данных
+   * (При скроле если весь список еще не загружен и запрос еще не отправлен подгружаем)
+   */
   checkDataAppending() {
-    console.log('checkDataAppending')
     if (this.appending || this.allTasksLoaded) return
+
     this.appendTasks()
   }
 
@@ -271,15 +272,13 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
         this.$vuexModules.Tasks.loadTasks(this.apiFilters)
       ])
       this.events = eventsData.data
-
-      this.loading = false
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
 
   /**
-   *
+   * Подгрузить задания
    */
   appendTasks() {
     this.page += 1
@@ -306,5 +305,13 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
 
 .mobile .date-title {
   font-size: 1rem;
+}
+</style>
+
+<style>
+.task-card-loader .v-skeleton-loader__list-item-two-line {
+  height: 84px;
+  padding-left: 10px;
+  border-radius: 4px;
 }
 </style>

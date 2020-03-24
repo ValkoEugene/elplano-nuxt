@@ -36,10 +36,18 @@
           {{ $t('actions.retrieve') }}
         </v-list-item>
 
-        <EditButton :disabled="updating" @click="edit(task)" />
+        <EditButton
+          v-if="isOwnTask"
+          :disabled="updating"
+          :president-access="false"
+          @click="edit(task)"
+        />
+
         <DeleteButton
+          v-if="isOwnTask"
           :id="task.id"
           :disabled="updating"
+          :president-access="false"
           :confirm-text="$t('tasks.confirm')"
           @delete="deleteTask(task.id)"
         />
@@ -124,6 +132,17 @@ export default class TaskCard extends Mixins(TaskEventBusMixin) {
   get taskEventTitle(): string {
     const event = this.events.find((event) => event.id === this.task.event_id)
     return event ? event.title : ''
+  }
+
+  /**
+   * Флаг что задание назначенно студентом самому себе
+   */
+  get isOwnTask(): boolean {
+    const event = this.events.find((event) => event.id === this.task.event_id)
+
+    if (!event) return false
+
+    return event.creator_student_id === this.$vuexModules.User.studentInfo.id
   }
 
   /**

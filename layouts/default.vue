@@ -132,6 +132,7 @@ html {
   background: #000ef30a;
   max-height: calc(100vh - 64px);
   overflow: auto;
+  overflow-y: scroll;
 }
 
 .have-header-tabs .v-content__wrap {

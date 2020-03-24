@@ -6,6 +6,7 @@ type Day = 'MO' | 'TU' | 'WE' | 'TH' | 'FR' | 'SA' | 'SU'
 
 export interface Event {
   id?: string
+  creator_student_id: string
   eventable_id: string
   eventable_type: 'student' | 'group'
   course_id: string
@@ -51,6 +52,7 @@ const formatDataFromApi = (data: any): Event => {
   let course_id = ''
   let eventable_id = ''
   let eventable_type = ''
+  let creator_student_id = ''
   let label_ids = []
 
   if (relationships && relationships.course && relationships.course.data) {
@@ -75,8 +77,18 @@ const formatDataFromApi = (data: any): Event => {
     label_ids = relationships.labels.data.map(({ id }: { id: string }) => id)
   }
 
+  if (
+    relationships &&
+    relationships.creator &&
+    relationships.creator.data &&
+    relationships.creator.data.id
+  ) {
+    creator_student_id = relationships.creator.data.id
+  }
+
   return {
     id,
+    creator_student_id,
     ...attributes,
     label_ids,
     eventable_id,

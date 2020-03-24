@@ -24,9 +24,9 @@ export class Tasks extends VuexModule implements TasksStateI {
   public loading: boolean = true
 
   /**
-   *
+   * Флаг подгрузки данных
    */
-  public appending: boolean = true
+  public appending: boolean = false
 
   /**
    * Флаг что загруженны все задачи
@@ -82,20 +82,20 @@ export class Tasks extends VuexModule implements TasksStateI {
    * Установить флаг загрузки
    */
   @Mutation
-  private SET_LOADING(loading: boolean) {
+  public SET_LOADING(loading: boolean) {
     this.loading = loading
   }
 
   /**
-   * Установить флаг
+   * Установить флаг подгрузки данных
    */
   @Mutation
-  private SET_APPENDING(appending: boolean) {
+  public SET_APPENDING(appending: boolean) {
     this.appending = appending
   }
 
   /**
-   * Установить флаг загрузки
+   * Установить флаг загрузки всех
    */
   @Mutation
   private SET_ALL_TASKS_LOADED(allTaskLoaded: boolean) {
@@ -115,8 +115,9 @@ export class Tasks extends VuexModule implements TasksStateI {
    */
   @Action
   public async loadTasks(params?: any): Promise<void> {
+    if (this.appending) return
+
     try {
-      if (this.appending) return
       this.SET_ALL_TASKS_LOADED(false)
 
       this.SET_APPENDING(true)
@@ -128,7 +129,6 @@ export class Tasks extends VuexModule implements TasksStateI {
 
       if (meta) {
         const { current_page, total_pages } = meta
-        console.log(current_page, total_pages)
         if (total_pages === current_page) this.SET_ALL_TASKS_LOADED(true)
       }
     } catch (error) {
@@ -149,7 +149,6 @@ export class Tasks extends VuexModule implements TasksStateI {
     try {
       this.SET_UPDATING(true)
       const savedTask = await taskApi.create(task)
-      // this.ADD_TASK(savedTask)
 
       return savedTask
     } catch (error) {

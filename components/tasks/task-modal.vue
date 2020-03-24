@@ -2,6 +2,7 @@
   <ModalWrapper
     ref="modalWrapper"
     :action-type="actionType"
+    :updating="updating"
     @action="onActionHandler"
     @close="onModalClose"
   >
@@ -30,6 +31,7 @@ import { Task } from '~/api/tasks.ts'
 import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
 import ModalWrapper from '~/components/modal/modal-wrapper.vue'
 import TaskForm from '~/components/tasks/task-form.vue'
+import { Event } from '~/api/events.ts'
 
 @Component({
   components: {
@@ -84,6 +86,13 @@ export default class TaskModal extends Mixins(TaskEventBusMixin) {
    */
   taskModel: Task | null = null
 
+  /**
+   * Флаг обновления
+   */
+  get updating(): boolean {
+    return this.$vuexModules.Tasks.updating
+  }
+
   mounted() {
     this.subscribeViewTask(this.viewTask)
     this.subscribeEditTask(this.editTask)
@@ -110,11 +119,24 @@ export default class TaskModal extends Mixins(TaskEventBusMixin) {
   }
 
   /**
+   * Флаг что задание назначенно студентом самому себе
+   */
+  checkIsOwnTask(task: Task): boolean {
+    const event = this.events.find((event) => event.id === task.event_id)
+
+    if (!event) return false
+
+    return event.creator_student_id === this.$vuexModules.User.studentInfo.id
+  }
+
+  /**
    * Посмотреть задание
    */
   viewTask(task: Task) {
-    // Для выполненных заданий не показываем кнопку редактирования
-    const actionType = !this.completed ? 'edit' : ''
+    const isOwnTask = this.checkIsOwnTask(task)
+    // Для выполненных и назначенных старостой заданий не показываем кнопку редактирования
+    const actionType = !this.completed && isOwnTask ? 'edit' : ''
+
     this.setContent(task, 'TaskPreview', actionType)
   }
 

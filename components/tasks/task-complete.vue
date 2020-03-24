@@ -2,6 +2,7 @@
   <ModalWrapper
     ref="modalWrapper"
     action-type="complete"
+    :updating="updating"
     @action="completeTask"
     @close="onModalClose"
   >
@@ -72,7 +73,15 @@ export default class TaskComplete extends Vue {
    */
   id: string = ''
 
+  /**
+   * Строка поска для селекта
+   */
   search: string = ''
+
+  /**
+   * Флаг обновления
+   */
+  updating: boolean = false
 
   /**
    * Шаблон отчета о выполнении
@@ -111,6 +120,9 @@ export default class TaskComplete extends Vue {
     )
   }
 
+  /**
+   * Обработчик закрытия модального окна
+   */
   onModalClose() {
     this.assigment = { ...this.assigmentTemplate }
   }
@@ -121,6 +133,7 @@ export default class TaskComplete extends Vue {
   async completeTask() {
     try {
       if (!this.form.validate()) return
+      this.updating = true
 
       const id = this.id
       await taskApi.complete(id, this.assigment)
@@ -133,6 +146,8 @@ export default class TaskComplete extends Vue {
       this.$emit('taskCompleted')
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    } finally {
+      this.updating = false
     }
   }
 }
