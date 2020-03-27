@@ -10,7 +10,7 @@ export interface Task {
   updated_at?: string
   outdated?: boolean
   id?: string
-  student_ids: string[]
+  student_ids?: string[]
   attachments: any[]
 }
 
@@ -60,7 +60,8 @@ const formatDataFromApi = (data: { [key: string]: any }): Task => {
 
 export const taskApi = {
   /**
-   * Создать элемент
+   * Создать задание
+   * @param data - информация о задание
    */
   async create(data: Task): Promise<Task> {
     try {
@@ -76,11 +77,15 @@ export const taskApi = {
   },
 
   /**
-   * Обновить элемент
+   * Обновить задание
+   * @param data - информация о задание
+   * @param id - id задания
    */
   async update(data: Task, id: number | string): Promise<Task> {
     try {
       console.log('update')
+      // При обновление не изменяем список с id студентов
+      data.student_ids = undefined
       const response = await axios.put(`${restUrl}${id ? '/' + id : ''}`, {
         task: formatDataForApi(data)
       })
@@ -91,6 +96,10 @@ export const taskApi = {
     }
   },
 
+  /**
+   * Удалить задание
+   * @param {String} id - id задания
+   */
   async deleteById(id: string): Promise<void> {
     try {
       console.log('deleteById')
@@ -100,6 +109,9 @@ export const taskApi = {
     }
   },
 
+  /**
+   * Загрузить список заданий
+   */
   async loadData(
     params?: any
   ): Promise<{
@@ -121,6 +133,11 @@ export const taskApi = {
     }
   },
 
+  /**
+   * Обновить информацию о выполнение задания
+   * @param taskId - id задания
+   * @param assignment - информация о выполнение задания
+   */
   async complete(taskId: string, assignment: Assignment): Promise<void> {
     try {
       console.log('complete')
@@ -132,6 +149,10 @@ export const taskApi = {
     }
   },
 
+  /**
+   * Получить информацию о выполнение задания
+   * @param taskId - id задания
+   */
   async getCompletedInfo(taskId: string): Promise<Assignment> {
     try {
       console.log('getCompletedInfo')

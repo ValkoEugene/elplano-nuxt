@@ -8,6 +8,8 @@
     :rules="[$rules.required]"
     :chips="true"
     :multiple="true"
+    :loading="loading"
+    :disabled="disabled"
     outlined
     attach
     @input="$emit('input', $event)"
@@ -15,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Model } from 'vue-property-decorator'
+import { Component, Vue, Model, Prop } from 'vue-property-decorator'
 import { Student, getGroupUsers } from '~/api/group-users.ts'
 
 @Component({})
@@ -26,6 +28,12 @@ export default class StudentsSelect extends Vue {
    */
   @Model('input', { type: Array as () => string[], default: () => [] })
   readonly value!: string[]
+
+  /**
+   * Флаг блокировки поля
+   */
+  @Prop({ type: Boolean, default: false })
+  readonly disabled: boolean
 
   /**
    * Список всех студентов
@@ -39,6 +47,13 @@ export default class StudentsSelect extends Vue {
 
   mounted() {
     this.loadData()
+  }
+
+  /**
+   * Выбрать всех студентов
+   */
+  selectAll() {
+    this.$emit('input', this.students.map(({ id }) => id))
   }
 
   /**

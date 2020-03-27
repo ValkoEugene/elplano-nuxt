@@ -26,14 +26,24 @@
       :rules="[$rules.required]"
     />
 
-    <v-radio-group v-if="isPresident" v-model="grouped" row>
-      <v-radio :label="$t('ui.grouped')" :value="true" />
-      <v-radio :label="$t('ui.own')" :value="false" />
+    <v-radio-group
+      v-if="isPresident && !localModel.id"
+      v-model="studentsType"
+      row
+    >
+      <v-radio
+        v-for="sudentsType in sudentsTypes"
+        :key="sudentsType.value"
+        :label="sudentsType.view"
+        :value="sudentsType.value"
+      />
     </v-radio-group>
 
     <StudentsSelect
-      v-if="isPresident && grouped"
+      v-if="isPresident && studentsType && !localModel.id"
+      ref="studentsSelect"
       v-model="localModel.student_ids"
+      :disabled="studentsType === 'allGroup' || studentsType === 'own'"
     />
 
     <TextEditor v-model="localModel.description" />
@@ -46,6 +56,7 @@ import { Task } from '~/api/tasks.ts'
 import { Event } from '~/api/events.ts'
 import { TaskQuery } from '~/components/tasks/task-tabs.vue'
 import moment from '~/plugins/moment'
+import StudentsSelect from '~/components/UI-core/students-select.vue'
 
 @Component({
   components: {
@@ -71,6 +82,12 @@ export default class TaskForm extends Vue {
   readonly form: { validate: () => boolean }
 
   /**
+   * Ссылка на компонент с выбором сотрудников
+   */
+  @Ref()
+  readonly studentsSelect: StudentsSelect
+
+  /**
    * Задание
    */
   @Prop({ type: Object as () => Task, required: true })
@@ -88,9 +105,9 @@ export default class TaskForm extends Vue {
   localModel: Task = { ...this.task }
 
   /**
-   *
+   * Тип выбранных студентов
    */
-  grouped: boolean = true
+  studentsType: string = 'own'
 
   /**
    * Флаг что текущий полььзователь староста
@@ -115,17 +132,40 @@ export default class TaskForm extends Vue {
     )
   }
 
-  @Watch('grouped')
+  get /**
+   * Типы для выбора студентов
+   */
+  sudentsTypes() {
+    return [
+      { value: 'own', view: this.$t('ui.own') },
+      { value: 'allGroup', view: this.$t('ui.allGroup') },
+      { value: 'selectStudents', view: this.$t('ui.studentSelection') }
+    ]
+  }
+
+  /**
+   * При изменении типа актуализируем список студентов
+   */
+  @Watch('studentsType', { immediate: true })
   onGroupedChange() {
-    if (!this.grouped)
-      this.localModel.student_ids = [this.$vuexModules.User.studentInfo.id]
-    else this.localModel.student_ids = []
+    switch (this.studentsType) {
+      case 'selectStudents':
+        this.localModel.student_ids = []
+        return
+      case 'allGroup':
+        this.studentsSelect.selectAll()
+        return
+      case 'own':
+      default:
+        this.localModel.student_ids = [this.$vuexModules.User.studentInfo.id]
+    }
   }
 
   mounted() {
-    if (this.isPresident || this.localModel.id) return
-
-    this.localModel.student_ids = [this.$vuexModules.User.studentInfo.id]
+    if (!this.localModel.id) {
+      if (this.isPresident) this.studentsType = 'own'
+      else this.localModel.student_ids = [this.$vuexModules.User.studentInfo.id]
+    }
   }
 
   /**

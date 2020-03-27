@@ -76,7 +76,8 @@
   },
   "ui": {
     "own": "Own",
-    "grouped": "For all group",
+    "allGroup": "For all group",
+    "studentSelection": "Student selection",
     "loading": "Loading...",
     "cancel": "Cancel",
     "confirm": "Ok",
