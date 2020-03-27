@@ -35,6 +35,7 @@
     "vue-i18n": "^8.15.0",
     "vue-infinite-scroll": "^2.0.2",
     "vue-property-decorator": "^8.2.2",
+    "vue2-editor": "^2.10.2",
     "vuetify": "2.2.8",
     "vuex-shared-mutations": "1.0.2"
   },
@@ -45,7 +46,6 @@
     "@nuxtjs/eslint-module": "^1.1.0",
     "@nuxtjs/pwa": "^3.0.0-beta.19",
     "@nuxtjs/vuetify": "^1.9.0",
-    "@types/gapi": "^0.0.39",
     "@types/gapi.auth2": "^0.0.51",
     "@types/lodash.clonedeep": "^4.5.6",
     "@types/moment": "^2.13.0",

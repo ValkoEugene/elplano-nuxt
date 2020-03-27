@@ -2,7 +2,8 @@
   "rules": {
     "required": "Required field",
     "minLength": "Minimum characters - ",
-    "email": "Email must contain @"
+    "email": "Email must contain @",
+    "url": "Doesn't match url format"
   },
   "auth": {
     "or": "OR",
@@ -44,7 +45,9 @@
     "addTask": "Add task",
     "addRaiting": "Add rating",
     "edit": "Edit",
-    "send": "Send"
+    "send": "Send",
+    "complete": "Complete",
+    "retrieve": "Retrieve"
   },
   "field": {
     "loginField": "Login",
@@ -66,18 +69,26 @@
     "daysOfWeek": "Days",
     "number": "Number",
     "tags": "Tags",
-    "language": "Language"
+    "language": "Language",
+    "students": "Students",
+    "report": "Resport",
+    "links": "External links"
   },
   "ui": {
+    "own": "Own",
+    "allGroup": "For all group",
+    "studentSelection": "Student selection",
     "loading": "Loading...",
     "cancel": "Cancel",
     "confirm": "Ok",
+    "complete": "Complete",
     "edit": "Edit",
     "delete": "Delete",
     "add": "Add",
     "notready": "This page in progress",
     "a2hsButton": "Add to home screen",
     "no-data": "No results",
+    "add-enter": "Press enter to add",
     "card": {
       "badges": {
         "active": "Active"
@@ -105,7 +116,8 @@
     "own": "Own",
     "confirm": "Delete from schedule?",
     "prev": "Prev",
-    "next": "Next"
+    "next": "Next",
+    "eventsLabel": "Schedule"
   },
   "invites": {
     "empty": "No saved invites",
@@ -132,7 +144,14 @@
     "add": "Add rating"
   },
   "tasks": {
-    "add": "Add task"
+    "add": "Add task",
+    "confirm": "Delete task?",
+    "empty": "No saved tasks",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "outdated": "Outdated",
+    "upcoming": "Upcoming",
+    "comleted": "Comleted"
   },
   "tags": {
     "addNew": "Add tag",

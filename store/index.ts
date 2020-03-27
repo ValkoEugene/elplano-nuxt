@@ -10,6 +10,7 @@ import {
 } from '~/store/snackbars.ts'
 import { UserStateI, User, name as UserName } from '~/store/user.ts'
 import { Labels, LabelsStateI, name as LabelsName } from '~/store/labels.ts'
+import { Tasks, TasksStateI, name as TasksName } from '~/store/tasks.ts'
 
 export interface RootStateI {
   group: GroupStateI
@@ -17,6 +18,7 @@ export interface RootStateI {
   snackbars: SnackbarsStateI
   user: UserStateI
   labels: LabelsStateI
+  tasks: TasksStateI
 }
 
 Vue.use(Vuex)
@@ -40,7 +42,8 @@ const store = () =>
       [GroupName]: Group,
       [SnackbarsName]: Snackbars,
       [UserName]: User,
-      [LabelsName]: Labels
+      [LabelsName]: Labels,
+      [TasksName]: Tasks
     }
   })
 

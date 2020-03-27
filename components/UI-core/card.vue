@@ -23,6 +23,14 @@
     </div>
 
     <div
+      v-if="$scopedSlots.badges"
+      class="card__badges"
+      :class="[$scopedSlots.content ? 'mb-4' : '']"
+    >
+      <slot name="badges" />
+    </div>
+
+    <div
       v-if="$scopedSlots.content"
       class="card__content"
       :class="[avatarUrl ? 'd-flex' : '']"
@@ -30,10 +38,6 @@
       <img v-if="avatarUrl" :src="avatarUrl" class="card__content--avatar" />
 
       <slot name="content" />
-    </div>
-
-    <div v-if="$scopedSlots.badges" class="card__badges">
-      <slot name="badges" />
     </div>
 
     <div

@@ -5,6 +5,7 @@ import { I18n } from '~/store/i18n.ts'
 import { Snackbars } from '~/store/snackbars.ts'
 import { User } from '~/store/user.ts'
 import { Labels } from '~/store/labels.ts'
+import { Tasks } from '~/store/tasks.ts'
 
 declare module 'vue/types/vue' {
   interface Vue {
@@ -14,6 +15,7 @@ declare module 'vue/types/vue' {
       Snackbars: Snackbars
       I18n: I18n
       Labels: Labels
+      Tasks: Tasks
     }
   }
 }
@@ -26,6 +28,7 @@ declare module '@nuxt/types' {
       Snackbars: Snackbars
       I18n: I18n
       Labels: Labels
+      Tasks: Tasks
     }
   }
 }
@@ -37,7 +40,8 @@ const vuexDecaratorsModules: Plugin = (context, inject) => {
     User: getModule(User, store),
     Snackbars: getModule(Snackbars, store),
     I18n: getModule(I18n, store),
-    Labels: getModule(Labels, store)
+    Labels: getModule(Labels, store),
+    Tasks: getModule(Tasks, store)
   }
 
   inject('vuexModules', vuexModules)

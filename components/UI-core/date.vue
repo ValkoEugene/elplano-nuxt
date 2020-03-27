@@ -10,7 +10,11 @@
     />
 
     <v-dialog :value="active" persistent full-width width="290px">
-      <v-date-picker v-model="localDate" scrollable>
+      <v-date-picker
+        v-model="localDate"
+        :locale="$store.state.i18n.locale"
+        scrollable
+      >
         <v-btn text color="primary" @click="cancel">{{
           $t('ui.cancel')
         }}</v-btn>

@@ -22,6 +22,8 @@
         @modelChange="onModelChange"
       />
 
+      <TaskModal :events="events" />
+
       <AddNew :president-access="false" @click="edit(eventEmptyTemplate)" />
     </div>
   </div>
@@ -44,6 +46,10 @@ interface IncludedData {
 
 @Component({
   components: {
+    TaskModal: () =>
+      import(
+        '~/components/tasks/task-modal.vue' /* webpackChunkName: 'components/tasks/task-modal' */
+      ),
     Events: () =>
       import(
         '~/components/events/events.vue' /* webpackChunkName: 'components/events/events' */
@@ -82,6 +88,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
     end_at: '',
     eventable_type: 'student',
     eventable_id: '',
+    creator_student_id: '',
     label_ids: [],
     by_day: [],
     recurrence: [],
@@ -167,7 +174,6 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
           items: this.courses,
           itemValue: 'id',
           itemText: 'title',
-          rules: [this.$rules.required],
           label: this.$t('lesson.lesson')
         },
         {
@@ -242,7 +248,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
     const data = { ...model }
 
     if (!data.id) {
-      data.eventable_id = this.$vuexModules.User.userInfo.id
+      data.eventable_id = this.$vuexModules.User.studentInfo.id
     }
 
     this.editModel = data
@@ -341,7 +347,7 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
    */
   onModelChange(model: Event) {
     const ids = {
-      student: this.$vuexModules.User.userInfo.id,
+      student: this.$vuexModules.User.studentInfo.id,
       group: this.$vuexModules.Group.groupId
     } as { student: string; group: string }
 

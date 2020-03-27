@@ -213,6 +213,7 @@ export default class TagsField extends Vue {
     try {
       const { data } = await labelApi.loadData()
       this.labels = data
+      this.$vuexModules.Labels.SET_LABELS(data)
       this.loading = false
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)

@@ -6,6 +6,10 @@
       currentPageTitle
     }}</v-toolbar-title>
 
+    <template v-if="$route.path === '/tasks-tabs'" #extension>
+      <TaskTabsMenu />
+    </template>
+
     <v-spacer></v-spacer>
 
     <v-menu left bottom>
@@ -36,7 +40,14 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { TOGGLE_SIDEBAR_ROOT_LISTENER } from '~/layouts/sidebar.vue'
 
-@Component
+@Component({
+  components: {
+    TaskTabsMenu: () =>
+      import(
+        '~/components/tasks/task-tabs.vue' /* webpackChunkName: 'components/tasks/task-tabs' */
+      )
+  }
+})
 export default class Header extends Vue {
   /**
    * Заголовки страниц в i18n
@@ -47,6 +58,7 @@ export default class Header extends Vue {
     '/lecturers': 'teachers',
     '/group': 'group',
     '/tasks': 'tasks',
+    '/tasks-tabs': 'tasks',
     '/measure': 'measure',
     '/ratings': 'ratings',
     '/attachments': 'attachments',
