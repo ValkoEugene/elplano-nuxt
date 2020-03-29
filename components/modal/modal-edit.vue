@@ -36,6 +36,16 @@
                 outlined
               />
 
+              <v-textarea
+                v-if="field.type === 'v-textarea-field'"
+                :key="field.model"
+                v-model.trim="localModel[field.model]"
+                :label="field.label"
+                :rules="Array.isArray(field.rules) ? field.rules : undefined"
+                :rows="field.rows || 4"
+                outlined
+              />
+
               <labels-field
                 v-if="field.type === 'tags'"
                 :key="field.model"
@@ -53,6 +63,7 @@
                 :rules="Array.isArray(field.rules) ? field.rules : undefined"
                 :chips="field.multiple"
                 :multiple="field.multiple"
+                :menu-props="field.menuProps"
                 outlined
                 attach
               />

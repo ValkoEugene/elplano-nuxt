@@ -146,6 +146,9 @@ export default class Card extends Vue {
 
 .card__badges span {
   background: var(--primary-darken1);
+  max-height: 30px;
+  overflow: hidden;
+  display: inline-block;
   color: #fff;
   padding: 5px;
   border-radius: 4px;
