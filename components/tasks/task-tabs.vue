@@ -1,5 +1,5 @@
 <template>
-  <v-tabs v-model="tab" centered>
+  <v-tabs v-model="tab" :show-arrows="$vuetify.breakpoint.smAndDown" centered>
     <v-tab v-for="tab in taskTabs" :key="tab.view">
       {{ tab.view }}
     </v-tab>
