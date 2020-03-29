@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="select">
     <v-select
       v-model="localValue"
       :items="labels"
@@ -11,7 +11,13 @@
       :rules="rules"
       :chips="true"
       :multiple="true"
-      :menu-props="{ bottom: true, offsetY: true, 'z-index': 202 }"
+      :full-width="false"
+      :menu-props="{
+        bottom: true,
+        offsetY: true,
+        'z-index': 200,
+        'max-width': fieldWidth + 'px'
+      }"
       outlined
       @click:append="openEditingWindow()"
     >
@@ -36,6 +42,7 @@
             color: item.text_color || 'black'
           }"
           label
+          :title="item.title"
           small
         >
           {{ item.title }}
@@ -82,7 +89,8 @@
               v-if="editingLabel.title"
               :style="{
                 background: editingLabel.color,
-                color: editingLabel.text_color
+                color: editingLabel.text_color,
+                maxWidth: '80%'
               }"
               :title="editingLabel.description"
               label
@@ -107,7 +115,7 @@
 
         <template #actions>
           <v-btn text :disabled="saving" @click="editing = false">{{
-            $t('ui.cancel')
+            $t('ui.close')
           }}</v-btn>
 
           <v-btn color="primary" :disabled="saving" @click="save">{{
@@ -157,6 +165,11 @@ export default class TagsField extends Vue {
   labels: Label[] = []
 
   /**
+   * Длина тега
+   */
+  fieldWidth: number = 0
+
+  /**
    * Редактируемый тег
    */
   editingLabel: Label | null = null
@@ -204,6 +217,8 @@ export default class TagsField extends Vue {
   mounted() {
     this.localValue = [...this.value]
     this.loadData()
+    const select = this.$refs.select as HTMLElement
+    this.fieldWidth = select.clientWidth
   }
 
   /**
@@ -297,6 +312,7 @@ export default class TagsField extends Vue {
           (id: String) => id !== deletedId
         )
       }
+      this.$vuexModules.Labels.REMOVE_LABEL(deletedId)
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     }

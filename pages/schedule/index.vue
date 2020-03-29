@@ -177,11 +177,10 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
           label: this.$t('lesson.lesson')
         },
         {
-          type: 'v-text-field',
+          type: 'v-textarea-field',
           model: 'description',
           label: this.$t('field.description'),
-          placeholder: this.$t('field.description'),
-          inputType: 'text'
+          placeholder: this.$t('field.description')
         },
         {
           type: 'datepicker',
@@ -220,6 +219,9 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
           items: this.weekDayItems,
           rules: [this.$rules.required],
           multiple: true,
+          menuProps: {
+            top: true
+          },
           itemValue: 'value',
           itemText: 'view',
           label: this.$t('field.daysOfWeek')

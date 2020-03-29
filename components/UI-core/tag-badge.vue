@@ -1,5 +1,5 @@
 <template>
-  <span :title="description" :style="labelStyles">
+  <span v-if="title" :title="description" :style="labelStyles">
     {{ title }}
   </span>
 </template>
@@ -27,7 +27,7 @@ export default class TagBadge extends Vue {
    * Заголовок тега
    */
   get title(): string {
-    return this.label.title || '-'
+    return this.label.title || ''
   }
 
   /**

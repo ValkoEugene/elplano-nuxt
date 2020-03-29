@@ -40,4 +40,17 @@ export class Labels extends VuexModule implements LabelsStateI {
 
     this.labels = labels
   }
+
+  /**
+   * Убрать тег
+   */
+  @Mutation
+  REMOVE_LABEL(id: string) {
+    if (!this.labels[id]) return
+
+    const labels = { ...this.labels }
+    delete labels[id]
+
+    this.labels = labels
+  }
 }

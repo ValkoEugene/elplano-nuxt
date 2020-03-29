@@ -80,6 +80,7 @@
     "studentSelection": "Student selection",
     "loading": "Loading...",
     "cancel": "Cancel",
+    "close": "Close",
     "confirm": "Ok",
     "complete": "Complete",
     "edit": "Edit",
@@ -155,6 +156,7 @@
   },
   "tags": {
     "addNew": "Add tag",
-    "edit": "Edit tag"
+    "edit": "Edit tag",
+    "deleteConfirm": "Delete tag?"
   }
 }
