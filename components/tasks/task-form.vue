@@ -41,9 +41,9 @@
 
     <StudentsSelect
       v-if="isPresident && studentsType && !localModel.id"
+      v-show="studentsType === 'selectStudents'"
       ref="studentsSelect"
       v-model="localModel.student_ids"
-      :disabled="studentsType === 'allGroup' || studentsType === 'own'"
     />
 
     <TextEditor v-model="localModel.description" />
@@ -132,13 +132,12 @@ export default class TaskForm extends Vue {
     )
   }
 
-  get /**
+  /**
    * Типы для выбора студентов
    */
-  sudentsTypes() {
+  get sudentsTypes() {
     return [
       { value: 'own', view: this.$t('ui.own') },
-      { value: 'allGroup', view: this.$t('ui.allGroup') },
       { value: 'selectStudents', view: this.$t('ui.studentSelection') }
     ]
   }
@@ -151,9 +150,6 @@ export default class TaskForm extends Vue {
     switch (this.studentsType) {
       case 'selectStudents':
         this.localModel.student_ids = []
-        return
-      case 'allGroup':
-        this.studentsSelect.selectAll()
         return
       case 'own':
       default:

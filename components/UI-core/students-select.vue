@@ -13,7 +13,21 @@
     outlined
     attach
     @input="$emit('input', $event)"
-  />
+  >
+    <template #prepend-item>
+      <v-list-item ripple @click="toggleSelectAll">
+        <v-list-item-action>
+          <v-icon :color="value.length > 0 ? 'indigo darken-4' : ''">{{
+            selectAllIcon
+          }}</v-icon>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('ui.selectAll') }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-divider class="mt-2"></v-divider>
+    </template>
+  </v-select>
 </template>
 
 <script lang="ts">
@@ -45,15 +59,41 @@ export default class StudentsSelect extends Vue {
    */
   loading: boolean = true
 
+  /**
+   * Флаг что выбраны все студенты
+   */
+  get allStudentSelected(): boolean {
+    return this.value.length === this.students.length
+  }
+
+  /**
+   * Флаг что выбрано несколько студентов
+   */
+  get someStudentSelected(): boolean {
+    return this.value.length > 0 && !this.allStudentSelected
+  }
+
+  /**
+   * Текущая иконка выбора всех студентов
+   */
+  get selectAllIcon(): string {
+    if (this.allStudentSelected) return 'mdi-close-box'
+    if (this.someStudentSelected) return 'mdi-minus-box'
+    return 'mdi-checkbox-blank-outline'
+  }
+
   mounted() {
     this.loadData()
   }
 
   /**
-   * Выбрать всех студентов
+   * Выбрать/Сбросить всех
    */
-  selectAll() {
-    this.$emit('input', this.students.map(({ id }) => id))
+  toggleSelectAll() {
+    this.$emit(
+      'input',
+      this.allStudentSelected ? [] : this.students.map(({ id }) => id)
+    )
   }
 
   /**
