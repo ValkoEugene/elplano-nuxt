@@ -37,6 +37,7 @@ export default {
     '~/plugins/rules',
     '~/plugins/i18n',
     '~/plugins/helpers',
+    '~/plugins/composition-api',
     { src: '~/plugins/vuex-client-plugins.ts', mode: 'client' },
     { src: '~/plugins/a2hs.ts', mode: 'client' }
   ],
