@@ -1,7 +1,7 @@
 <template>
   <div class="login__wrapper">
     <div class="login__title">
-      <h1 :style="colorStyle">Welcom to ELplano</h1>
+      <logo :width="logoWidth" :height="logoHeight" />
     </div>
 
     <div class="login__content">
@@ -35,6 +35,8 @@ import SyncLogin from '~/mixins/SyncLogin.ts'
 @Component({
   layout: 'empty',
   components: {
+    Logo: () =>
+      import('~/components/logo.vue' /* webpackChunkName: 'components/logo' */),
     SocialNetworks: () =>
       import(
         '~/components/auth/social-networks/social-networks.vue' /* webpackChunkName: 'components/auth/login' */
@@ -76,6 +78,14 @@ export default class LoginPage extends Mixins(SyncLogin) {
     return this.currentComponent === 'Registration'
       ? 'sigunWithBtn'
       : 'loginWith'
+  }
+
+  get logoWidth(): number {
+    return this.$vuetify.breakpoint.mdAndDown ? 200 : 400
+  }
+
+  get logoHeight(): number {
+    return this.$vuetify.breakpoint.mdAndDown ? 25 : 50
   }
 
   /**
