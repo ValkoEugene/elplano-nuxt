@@ -2,8 +2,6 @@
   <div>
     <Card>
       <template v-slot:content>
-        <h3 class="login-card__title" :style="colorStyle">EL</h3>
-
         <v-form ref="form" :lazy-validation="true">
           <v-text-field
             v-model.trim="user.login"

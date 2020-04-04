@@ -6,6 +6,8 @@
     src="/images/sidebar_bg.jpg"
     class="drawer-background"
   >
+    <logo :width="200" :height="30" :white="true" class="sidebar__logo" />
+
     <v-list-item>
       <v-list-item-content>
         <img
@@ -55,7 +57,12 @@ import { Student } from '~/api/group-users.ts'
  */
 export const TOGGLE_SIDEBAR_ROOT_LISTENER = 'TOGGLE_SIDEBAR_ROOT_LISTENER'
 
-@Component
+@Component({
+  components: {
+    Logo: () =>
+      import('~/components/logo.vue' /* webpackChunkName: 'components/logo' */)
+  }
+})
 export default class Sidebar extends Vue {
   /**
    * Флаг наличия группы
@@ -174,5 +181,11 @@ export default class Sidebar extends Vue {
   padding: 5px;
   box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
     0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12) !important;
+}
+
+.sidebar__logo {
+  position: absolute;
+  bottom: 20px;
+  left: 30px;
 }
 </style>
