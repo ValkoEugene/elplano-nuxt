@@ -27,7 +27,7 @@
     />
 
     <v-radio-group
-      v-if="isPresident && !localModel.id"
+      v-if="isPresident && !localModel.id && !isOwnSelectedEvent"
       v-model="studentsType"
       row
     >
@@ -110,7 +110,7 @@ export default class TaskForm extends Vue {
   studentsType: string = 'own'
 
   /**
-   * Флаг что текущий полььзователь староста
+   * Флаг что текущий пользователь староста
    */
   get isPresident(): boolean {
     return this.$vuexModules.User.isPresident
@@ -140,6 +140,20 @@ export default class TaskForm extends Vue {
       { value: 'own', view: this.$t('ui.own') },
       { value: 'selectStudents', view: this.$t('ui.studentSelection') }
     ]
+  }
+
+  /**
+   * Флаг что выбранный евент собственный
+   */
+  get isOwnSelectedEvent(): boolean {
+    if (!this.localModel.event_id) return false
+
+    const event = this.events.find(
+      (item) => item.id === this.localModel.event_id
+    )
+    if (!event) return false
+
+    return event.eventable_type === 'student'
   }
 
   /**
