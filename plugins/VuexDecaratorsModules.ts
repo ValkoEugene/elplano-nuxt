@@ -7,29 +7,24 @@ import { User } from '~/store/user.ts'
 import { Labels } from '~/store/labels.ts'
 import { Tasks } from '~/store/tasks.ts'
 
+export interface VuexModules {
+  Group: Group
+  User: User
+  Snackbars: Snackbars
+  I18n: I18n
+  Labels: Labels
+  Tasks: Tasks
+}
+
 declare module 'vue/types/vue' {
   interface Vue {
-    $vuexModules: {
-      Group: Group
-      User: User
-      Snackbars: Snackbars
-      I18n: I18n
-      Labels: Labels
-      Tasks: Tasks
-    }
+    $vuexModules: VuexModules
   }
 }
 
 declare module '@nuxt/types' {
   interface NuxtAppOptions {
-    $vuexModules: {
-      Group: Group
-      User: User
-      Snackbars: Snackbars
-      I18n: I18n
-      Labels: Labels
-      Tasks: Tasks
-    }
+    $vuexModules: VuexModules
   }
 }
 

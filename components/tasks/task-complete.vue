@@ -1,6 +1,6 @@
 <template>
   <ModalWrapper
-    ref="modalWrapper"
+    v-model="visible"
     action-type="complete"
     :updating="updating"
     @action="completeTask"
@@ -48,25 +48,26 @@
 <script lang="ts">
 import { Component, Vue, Ref } from 'vue-property-decorator'
 import { taskApi, Assignment } from '~/api/tasks.ts'
-import ModalWrapper from '~/components/modal/modal-wrapper.vue'
 
 @Component({
   components: {
-    ModalWrapper
+    ModalWrapper: () =>
+      import(
+        '~/components/modal/modal-wrapper.vue' /* webpackChunkName: 'components/modal/modal-wrapper' */
+      )
   }
 })
 export default class TaskComplete extends Vue {
-  /**
-   * Ссылка на экземпляр компонента ModalWrapper
-   */
-  @Ref('modalWrapper')
-  readonly modalWrapper!: ModalWrapper
-
   /**
    * Ссылка на компонент формы из vuetify
    */
   @Ref()
   readonly form: { validate: () => boolean }
+
+  /**
+   * Флаг показа модального окна
+   */
+  visible: boolean = false
 
   /**
    * Id задачи
@@ -105,7 +106,7 @@ export default class TaskComplete extends Vue {
       this.id = id
       this.assigment = await taskApi.getCompletedInfo(id)
       this.assigment.accomplished = true
-      this.modalWrapper.open()
+      this.visible = true
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     }
@@ -142,7 +143,7 @@ export default class TaskComplete extends Vue {
         this.$vuexModules.Tasks.REMOVE_TASK(id)
       }
 
-      this.modalWrapper.close()
+      this.visible = false
       this.$emit('taskCompleted')
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)

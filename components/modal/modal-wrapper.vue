@@ -30,12 +30,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Model } from 'vue-property-decorator'
 
 @Component({
   components: {}
 })
 export default class ModalWrapper extends Vue {
+  @Model('input', { type: Boolean, required: true })
+  readonly visible!: boolean
+
   /**
    * Флаг блокировки кнопок
    */
@@ -54,11 +57,6 @@ export default class ModalWrapper extends Vue {
   @Prop({ type: String, default: 'save' })
   private readonly actionType: string
 
-  /**
-   * Флаг показа модального окна
-   */
-  visible: boolean = false
-
   mounted() {
     window.document.addEventListener('keydown', this.escHandler)
   }
@@ -71,14 +69,14 @@ export default class ModalWrapper extends Vue {
    * Открыть модальное окно
    */
   open() {
-    this.visible = true
+    this.$emit('input', true)
   }
 
   /**
    * Закрыть модально окно
    */
   close() {
-    this.visible = false
+    this.$emit('input', false)
     this.$emit('close')
   }
 

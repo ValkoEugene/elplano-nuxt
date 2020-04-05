@@ -7,5 +7,8 @@
 export const search = (v: string, s: string): boolean => {
   if (!v) v = ''
 
-  return Boolean(v.search(new RegExp(s, 'i')) !== -1)
+  // Экранируем спецсимволы
+  const validSearch = s.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')
+
+  return Boolean(v.search(new RegExp(validSearch, 'i')) !== -1)
 }
