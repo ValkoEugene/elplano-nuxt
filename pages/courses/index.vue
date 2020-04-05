@@ -29,28 +29,64 @@
       </v-flex>
     </v-layout>
 
-    <ModalEdit
-      ref="modalEdit"
-      :edit-model="editModel"
-      :edit-schema="editSchema"
-      :updating="updating"
-      @create="create"
-      @update="update"
-    />
+    <ModalWrapper v-model="visible" @action="save">
+      <template #content>
+        <v-form ref="form" :lazy-validation="true">
+          <v-checkbox
+            v-model="editModel.active"
+            :label="$t('ui.card.badges.active')"
+          />
+
+          <v-text-field
+            v-model.trim="editModel.title"
+            :label="$t('field.title')"
+            :rules="[$rules.required]"
+            type="text"
+            outlined
+          />
+
+          <v-select
+            v-model="editModel.lecturer_ids"
+            :items="lecturers"
+            item-value="id"
+            item-text="view"
+            :label="$t('lecturers.lecturers')"
+            multiple
+            outlined
+          />
+        </v-form>
+      </template>
+    </ModalWrapper>
 
     <AddNew @click="edit(courseEmptyModel)" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Ref } from 'vue-property-decorator'
-import { Course, courseApi } from '~/api/courses.ts'
-import CoursesList from '~/mixins/CoursesList.ts'
-import LecturersList from '~/mixins/LecturersList.ts'
-import CheckGroup from '~/mixins/CheckGroup.ts'
-import ModalEditComponent from '~/components/modal/modal-edit.vue'
+import { reactive, computed, toRefs, ref } from '@vue/composition-api'
+import { Course } from '~/api/courses.ts'
+import { useCourses } from '~/compositions/useCourses.ts'
+import { useLecturers } from '~/compositions/useLecturers.ts'
+import { search } from '~/utils/helpers.ts'
 
-@Component({
+interface StateI {
+  /** Строка поиска */
+  search: string
+  /** Пустая модель предмета */
+  courseEmptyModel: Course
+  /** Модель предмета для редактирования */
+  editModel: Course
+  /** Флаг показа модального окна */
+  visible: boolean
+}
+
+interface Form {
+  /** Функция валидации формы */
+  validate: () => boolean
+}
+
+export default {
+  name: 'CoursesPage',
   components: {
     Loader: () =>
       import(
@@ -68,181 +104,94 @@ import ModalEditComponent from '~/components/modal/modal-edit.vue'
       import(
         '~/components/courses/CourseCard.vue' /* webpackChunkName: 'components/courses' */
       ),
-    ModalEdit: () =>
+    ModalWrapper: () =>
       import(
-        '~/components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
+        '~/components/modal/modal-wrapper.vue' /*  webpackChunkName: 'components/modal/modal-wrapper' */
       )
-  }
-})
-export default class LessonsPage extends Mixins(
-  CheckGroup,
-  LecturersList,
-  CoursesList
-) {
-  /**
-   * Ссылка на экземпляр компонента ModalEdit
-   * @type {ModalEditComponent}
-   */
-  @Ref()
-  readonly modalEdit!: ModalEditComponent
+  },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setup(props, context) {
+    const vuexModules = context.root.$vuexModules
+    /** Ссылка на компонент с формой */
+    const form = ref<Form>(null)
 
-  /**
-   * Строка поиска
-   * @type {string}
-   */
-  search: string = ''
-
-  /**
-   * Пустая модель предмета
-   * @type {Course}
-   */
-  courseEmptyModel: Course = {
-    id: '',
-    active: true,
-    title: '',
-    lecturer_ids: []
-  }
-
-  /**
-   * Редактируемый предмет
-   * @type {Course}
-   */
-  editModel: Course = { ...this.courseEmptyModel }
-
-  /**
-   * Флаг обновления
-   * @type {boolean}
-   */
-  updating: boolean = false
-
-  /**
-   * Флаг загрузки
-   * @type {boolean}
-   */
-  get loading(): boolean {
-    return this.loadingCourses || this.loadingLecturers
-  }
-
-  /**
-   * Схема для редактирования
-   * @type {any}
-   */
-  get editSchema() {
-    return {
-      fields: [
-        {
-          model: 'active',
-          type: 'v-checkbox',
-          label: this.$t('ui.card.badges.active')
-        },
-        {
-          model: 'title',
-          type: 'v-text-field',
-          label: this.$t('field.title'),
-          placeholder: this.$t('field.title'),
-          rules: [this.$rules.required],
-          inputType: 'text'
-        },
-        {
-          model: 'lecturer_ids',
-          type: 'v-select',
-          multiple: true,
-          items: this.lecturers,
-          itemValue: 'id',
-          itemText: 'view',
-          label: this.$t('lecturers.lecturers')
-        }
-      ]
+    /** Пустая модель предмета */
+    const courseEmptyModel: Course = {
+      id: '',
+      active: true,
+      title: '',
+      lecturer_ids: []
     }
-  }
 
-  /**
-   * Отфильтрованные по строке поиска предметы
-   */
-  get filtredCourses(): Course[] {
-    if (!this.search) return this.courses
+    /** Состояние */
+    const state = reactive<StateI>({
+      search: '',
+      visible: false,
+      courseEmptyModel: { ...courseEmptyModel },
+      editModel: { ...courseEmptyModel }
+    })
 
-    return this.courses.filter((course) =>
-      this.$customHelpers.search(course.title, this.search)
+    const {
+      courses,
+      loading: loadingCourses,
+      updating,
+      update,
+      create,
+      deleteCourse
+    } = useCourses(vuexModules)
+    const { lecturers, loading: loadingLecturers } = useLecturers(vuexModules)
+
+    /** Флаг загрузки */
+    const loading = computed(
+      () => loadingCourses.value || loadingLecturers.value
     )
-  }
 
-  /**
-   * Получить отображение преподавателя
-   * @type {Function}
-   * @param {String} id
-   * @returns {String}
-   */
-  getLecturerView(id: string): string {
-    const lecturer = this.lecturers.find((item) => item.id === id)
+    /**  Отфильтрованные по строке поиска предметы */
+    const filtredCourses = computed(() => {
+      if (!state.search) return courses.value
 
-    return lecturer && lecturer.view ? lecturer.view : '-'
-  }
-
-  /**
-   * Редактировать предмет
-   * @type {Function}
-   * @param {Course} model - модель редакртируемого предмета
-   */
-  edit(model: Course): void {
-    this.editModel = { ...model }
-    this.modalEdit.open()
-  }
-
-  /**
-   * Создать пердмет
-   * @type {Function}
-   */
-  async create(data: Course): Promise<void> {
-    try {
-      this.updating = true
-      const course = await courseApi.create(data)
-      this.courses.push(course)
-
-      this.editModel = course
-    } catch (error) {
-      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
-    } finally {
-      this.updating = false
-    }
-  }
-
-  /**
-   * Обновить предмет
-   * @type {Function}
-   */
-  async update(data: Course): Promise<void> {
-    if (!data.id) return
-
-    try {
-      this.updating = true
-
-      const course = await courseApi.update(data, data.id)
-      this.courses = this.courses.map((item) =>
-        item.id === course.id ? course : item
+      return courses.value.filter((course) =>
+        search(course.title, state.search)
       )
-    } catch (error) {
-      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
-    } finally {
-      this.updating = false
+    })
+
+    /** Получить отображение преподавателя */
+    const getLecturerView = (id: string): string => {
+      const lecturer = lecturers.value.find((item) => item.id === id)
+
+      return lecturer && lecturer.view ? lecturer.view : '-'
     }
-  }
 
-  /**
-   * Удалить предмет
-   * @type {Function}
-   * @param {String} id - id предмета
-   */
-  async deleteCourse(id: string): Promise<void> {
-    try {
-      this.updating = true
+    /** Редактировать предмет  */
+    const edit = (model: Course): void => {
+      state.editModel = { ...model }
+      state.visible = true
+    }
 
-      await courseApi.deleteById(id)
-      this.courses = this.courses.filter((item) => item.id !== id)
-    } catch (error) {
-      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
-    } finally {
-      this.updating = false
+    /** Сохранить изменения предмета */
+    const save = async () => {
+      if (!form.value || !form.value.validate()) return
+
+      const response = state.editModel.id
+        ? await update(state.editModel)
+        : await create(state.editModel)
+
+      if (!response) return
+
+      state.editModel = { ...response }
+    }
+
+    return {
+      ...toRefs(state),
+      form,
+      filtredCourses,
+      loading,
+      updating,
+      lecturers,
+      getLecturerView,
+      edit,
+      save,
+      deleteCourse
     }
   }
 }

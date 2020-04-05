@@ -233,7 +233,7 @@ export default {
 
       if (!response) return
 
-      state.editModel = response
+      state.editModel = { ...response }
     }
 
     return {
