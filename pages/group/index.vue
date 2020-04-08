@@ -53,14 +53,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
+import { reactive, computed, onMounted, toRefs } from '@vue/composition-api'
 import { getGroupUsers, Student } from '~/api/group-users.ts'
-import CheckGroup from '~/mixins/CheckGroup.ts'
+import { search } from '~/utils/helpers.ts'
 
-/**
- * Компонент вывода списка студентов группы
- */
-@Component({
+interface StateI {
+  /** Строка поиска */
+  search: string
+  /** Флаг загрузки */
+  loading: Boolean
+  /** Список студентов */
+  students: Student[]
+}
+
+export default {
   components: {
     Loader: () =>
       import(
@@ -74,49 +80,38 @@ import CheckGroup from '~/mixins/CheckGroup.ts'
       import(
         '~/components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
       )
-  }
-})
-export default class GroupPage extends Mixins(CheckGroup) {
-  /**
-   * Строка поиска
-   */
-  search: string = ''
+  },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setup(props, context) {
+    /** Состояние */
+    const state = reactive<StateI>({
+      search: '',
+      loading: true,
+      students: []
+    })
 
-  /**
-   * Флаг загрузки
-   */
-  loading: boolean = true
+    /** Отфильтрованный список студентов */
+    const filtredStudents = computed<Student[]>(() => {
+      if (!state.search) return state.students
 
-  /**
-   * Список студентов
-   */
-  students: Student[] = []
+      return state.students.filter((student) =>
+        search(student.full_name || '', state.search)
+      )
+    })
 
-  /**
-   * Отфильтрованные по строке поиска студенты
-   */
-  get filtredStudents(): Student[] {
-    if (!this.search) return this.students
-
-    return this.students.filter((student) =>
-      this.$customHelpers.search(student.full_name || '', this.search)
-    )
-  }
-
-  mounted() {
-    this.loadData()
-  }
-
-  /**
-   * Загрузить данные
-   */
-  async loadData() {
-    try {
-      this.students = await getGroupUsers()
-      this.loading = false
-    } catch (error) {
-      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    /** Загрузить список студентов */
+    const loadData = async () => {
+      try {
+        state.students = await getGroupUsers()
+        state.loading = false
+      } catch (error) {
+        context.root.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+      }
     }
+
+    onMounted(() => loadData())
+
+    return { ...toRefs(state), filtredStudents }
   }
 }
 </script>

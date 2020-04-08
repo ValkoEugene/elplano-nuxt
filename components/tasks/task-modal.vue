@@ -1,6 +1,6 @@
 <template>
   <ModalWrapper
-    ref="modalWrapper"
+    v-model="visible"
     :action-type="actionType"
     :updating="updating"
     @action="onActionHandler"
@@ -29,13 +29,15 @@
 import { Component, Mixins, Ref, Prop } from 'vue-property-decorator'
 import { Task } from '~/api/tasks.ts'
 import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
-import ModalWrapper from '~/components/modal/modal-wrapper.vue'
 import TaskForm from '~/components/tasks/task-form.vue'
 import { Event } from '~/api/events.ts'
 
 @Component({
   components: {
-    ModalWrapper,
+    ModalWrapper: () =>
+      import(
+        '~/components/modal/modal-wrapper.vue' /* webpackChunkName: 'components/modal/modal-wrapper' */
+      ),
     TaskForm: () =>
       import(
         '~/components/tasks/task-form.vue' /* webpackChunkName: 'components/tasks/task-form' */
@@ -47,12 +49,6 @@ import { Event } from '~/api/events.ts'
   }
 })
 export default class TaskModal extends Mixins(TaskEventBusMixin) {
-  /**
-   * Ссылка на экземпляр компонента ModalWrapper
-   */
-  @Ref('modalWrapper')
-  readonly modalWrapper!: ModalWrapper
-
   /**
    * Компонент с формой
    */
@@ -70,6 +66,11 @@ export default class TaskModal extends Mixins(TaskEventBusMixin) {
    */
   @Prop({ type: Boolean, default: false })
   readonly completed: boolean
+
+  /**
+   * Флаг показа модального окна
+   */
+  visible: boolean = false
 
   /**
    * Название текущего компонента для отображения контента
@@ -115,7 +116,7 @@ export default class TaskModal extends Mixins(TaskEventBusMixin) {
     this.actionType = actionType
     this.taskModel = { ...task }
     this.contentComponentName = contentComponentName
-    this.modalWrapper.open()
+    this.visible = true
   }
 
   /**
@@ -168,7 +169,7 @@ export default class TaskModal extends Mixins(TaskEventBusMixin) {
    * Закрыть модальное окно
    */
   closeModal() {
-    this.modalWrapper.close()
+    this.visible = false
   }
 }
 </script>
