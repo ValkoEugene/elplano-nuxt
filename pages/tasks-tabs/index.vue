@@ -68,6 +68,7 @@ import { TaskQuery } from '~/components/tasks/task-tabs.vue'
 import cardScroll from '~/directives/card-scroll.js'
 import TaskComplete from '~/components/tasks/task-complete.vue'
 import { VuexModules } from '~/plugins/VuexDecaratorsModules.ts'
+import { useTaskEventBus } from '~/components/tasks/useTaskEventBus.ts'
 
 // import ModalEditComponent from '~/components/modal/modal-edit.vue'
 // import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
@@ -154,6 +155,7 @@ export default defineComponent({
   directives,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup(props, context) {
+    const { addNewTaskEmit } = useTaskEventBus(context)
     const vuexModules = context.root.$vuexModules
 
     const { taskLoading, updating, appending, allTasksLoaded } = useTaskFlags(
@@ -236,7 +238,7 @@ export default defineComponent({
 
     /** Инициализация создания нового задания */
     const initAddingTask = () => {
-      // this.addNewTaskEmit()
+      addNewTaskEmit()
     }
 
     return {
@@ -253,7 +255,8 @@ export default defineComponent({
       checkDataAppending,
       initAddingTask,
       appendTasks,
-      apiFilters
+      apiFilters,
+      taskCompleteComponent
     }
   }
 })
