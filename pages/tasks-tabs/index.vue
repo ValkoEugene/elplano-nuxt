@@ -53,116 +53,72 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Ref, Watch } from 'vue-property-decorator'
+import {
+  computed,
+  ref,
+  watch,
+  onMounted,
+  defineComponent,
+  // eslint-disable-next-line import/named
+  SetupContext
+} from '@vue/composition-api'
 import { Task } from '~/api/tasks.ts'
 import eventApi, { Event } from '~/api/events.ts'
-import CheckGroup from '~/mixins/CheckGroup.ts'
-import ModalEditComponent from '~/components/modal/modal-edit.vue'
-import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
 import { TaskQuery } from '~/components/tasks/task-tabs.vue'
 import cardScroll from '~/directives/card-scroll.js'
 import TaskComplete from '~/components/tasks/task-complete.vue'
+import { VuexModules } from '~/plugins/VuexDecaratorsModules.ts'
 
-@Component({
-  components: {
-    TaskModal: () =>
-      import(
-        '~/components/tasks/task-modal.vue' /* webpackChunkName: 'components/tasks/task-modal' */
-      ),
-    TaskComplete: () =>
-      import(
-        '~/components/tasks/task-complete.vue' /* webpackChunkName: 'components/tasks/task-complete'  */
-      ),
-    WeekInterval: () =>
-      import(
-        '~/components/UI-core/week-interal.vue' /* webpackChunkName: 'components/UI-core/week-interal' */
-      ),
-    Loader: () =>
-      import(
-        '~/components/UI-core/loaders/loader.vue' /* webpackChunkName: 'components/UI-core/loaders/loader' */
-      ),
-    TaskCard: () =>
-      import(
-        '~/components/tasks/TaskCard.vue' /* webpackChunkName: 'components/tasks/TaskCard' */
-      ),
-    Search: () =>
-      import(
-        '~/components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
-      ),
-    AddNew: () =>
-      import(
-        '~/components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
-      ),
-    ModalEdit: () =>
-      import(
-        '~/components/modal/modal-edit.vue' /*  webpackChunkName: 'components/modal/modal-edit' */
-      )
-  },
-  directives: {
-    'card-scroll': cardScroll
+// import ModalEditComponent from '~/components/modal/modal-edit.vue'
+// import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
+
+const components = {
+  TaskModal: () =>
+    import(
+      '~/components/tasks/task-modal.vue' /* webpackChunkName: 'components/tasks/task-modal' */
+    ),
+  TaskComplete: () =>
+    import(
+      '~/components/tasks/task-complete.vue' /* webpackChunkName: 'components/tasks/task-complete'  */
+    ),
+  TaskCard: () =>
+    import(
+      '~/components/tasks/TaskCard.vue' /* webpackChunkName: 'components/tasks/TaskCard' */
+    ),
+  AddNew: () =>
+    import(
+      '~/components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
+    )
+}
+
+const directives = {
+  'card-scroll': cardScroll
+}
+
+/** Информация о флагах для задач */
+const useTaskFlags = (vuexModules: VuexModules) => {
+  /** Флаг загрузки данных  */
+  const taskLoading = computed(() => vuexModules.Tasks.loading)
+  /** Флаг обновления */
+  const updating = computed(() => vuexModules.Tasks.updating)
+  /** Флаг подгрузки данных */
+  const appending = computed(() => vuexModules.Tasks.appending)
+  /** Флаг что все задачи загружены */
+  const allTasksLoaded = computed(() => vuexModules.Tasks.allTaskLoaded)
+
+  return {
+    taskLoading,
+    updating,
+    appending,
+    allTasksLoaded
   }
-})
-export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
-  /**
-   * Ссылка на экземпляр компонента ModalEdit
-   */
-  @Ref()
-  readonly modalEdit!: ModalEditComponent
+}
 
-  /**
-   * Ссылка на экземпляр компонента с выполнением задания
-   */
-  @Ref()
-  readonly taskCompleteComponent!: TaskComplete
-
-  /**
-   * Список евентов
-   */
-  events: Event[] = []
-
-  /**
-   * Выбранный евент для фильтрации
-   */
-  filtredEventId: string = ''
-
-  /**
-   * Страница для пагинации
-   */
-  page: number = 1
-
-  /**
-   * Список заданий
-   */
-  get tasks(): Task[] {
-    return this.$vuexModules.Tasks.tasks
-  }
-
-  /**
-   * Флаг загрузки данных
-   */
-  get taskLoading(): boolean {
-    return this.$vuexModules.Tasks.loading
-  }
-
-  /**
-   * Флаг обновления
-   */
-  get updating(): boolean {
-    return this.$vuexModules.Tasks.updating
-  }
-
-  /**
-   * Флаг подгрузки данных
-   */
-  get appending(): boolean {
-    return this.$vuexModules.Tasks.appending
-  }
-
-  /**
-   * Выбранный тип задач
-   */
-  get taskType(): TaskQuery {
-    const tab = this.$route.query.tab
+/** Информация о типах задач */
+const useTaskTypes = (context: SetupContext) => {
+  /** Выбранный тип задач  */
+  const taskType = computed(() => {
+    const tab = context.root.$route.query.tab
 
     switch (tab) {
       case TaskQuery.today:
@@ -178,120 +134,129 @@ export default class TasksPage extends Mixins(CheckGroup, TaskEventBusMixin) {
       default:
         return TaskQuery.today
     }
-  }
+  })
 
-  /**
-   * Фильтры для запросов к api
-   */
-  get apiFilters() {
-    const filters: any = { limit: 15, page: this.page, appointed: true }
-    if (this.filtredEventId) filters.event_id = Number(this.filtredEventId)
-    if (!this.isCompleted) filters.expiration = this.taskType
-    filters.accomplished = this.isCompleted
+  /** Флаг что активный фильтр - Выполненные */
+  const isCompleted = computed(() => taskType.value === TaskQuery.comleted)
+  /** Флаг что активный фильтр - Выполненные */
+  const isOutdated = computed(() => taskType.value === TaskQuery.outdated)
 
-    return { filters }
-  }
-
-  /**
-   * Флаг что активный фильтр - Выполненные
-   */
-  get isCompleted(): boolean {
-    return this.taskType === TaskQuery.comleted
-  }
-
-  /**
-   * Флаг что активный фильтр - Просроченные
-   */
-  get isOutdated(): boolean {
-    return this.taskType === TaskQuery.outdated
-  }
-
-  /**
-   * Флаг что все задачи загружены
-   */
-  get allTasksLoaded(): boolean {
-    return this.$vuexModules.Tasks.allTaskLoaded
-  }
-
-  /**
-   * При смене евента сбрасываем задачи и подгружаем актуальный список
-   */
-  @Watch('filtredEventId')
-  onEventidChange() {
-    this.$vuexModules.Tasks.SET_TASKS([])
-    this.page = 0
-    this.appendTasks()
-  }
-
-  /**
-   * При смене типа задачи сбрасываем задачи и подгружаем актуальный список
-   */
-  @Watch('taskType', { immediate: true })
-  onTaskTypeChange() {
-    this.$vuexModules.Tasks.SET_TASKS([])
-    this.page = 0
-    this.appendTasks()
-  }
-
-  mounted() {
-    this.loadData()
-  }
-
-  /**
-   * Инициализация выполнения задания
-   */
-  intiTaskComplete(id: string) {
-    this.taskCompleteComponent.initAssigment(id)
-  }
-
-  /**
-   * Отображения элемента расписания задачи
-   */
-  getTaskEventTitle(task: Task): string {
-    const event = this.events.find((event) => event.id === task.event_id)
-    return event ? event.title : ''
-  }
-
-  /**
-   * Проверить необходимость подгрузки данных
-   * (При скроле если весь список еще не загружен и запрос еще не отправлен подгружаем)
-   */
-  checkDataAppending() {
-    if (this.appending || this.allTasksLoaded) return
-
-    this.appendTasks()
-  }
-
-  /**
-   * Загрузить данные
-   */
-  async loadData() {
-    try {
-      const [eventsData] = await Promise.all([
-        eventApi.loadData(),
-        this.$vuexModules.Tasks.loadTasks(this.apiFilters)
-      ])
-      this.events = eventsData.data
-    } catch (error) {
-      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
-    }
-  }
-
-  /**
-   * Подгрузить задания
-   */
-  appendTasks() {
-    this.page += 1
-    this.$vuexModules.Tasks.loadTasks(this.apiFilters)
-  }
-
-  /**
-   * Инициализация создания нового задания
-   */
-  initAddingTask() {
-    this.addNewTaskEmit()
+  return {
+    taskType,
+    isCompleted,
+    isOutdated
   }
 }
+
+export default defineComponent({
+  name: 'TaskPage',
+  components,
+  directives,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setup(props, context) {
+    const vuexModules = context.root.$vuexModules
+
+    const { taskLoading, updating, appending, allTasksLoaded } = useTaskFlags(
+      vuexModules
+    )
+    const { taskType, isCompleted, isOutdated } = useTaskTypes(context)
+
+    /** Список событий */
+    const events = ref<Event[]>([])
+    /** Выбранный евент для фильтрации */
+    const filtredEventId = ref<string>('')
+    /** Страница для пагинации */
+    const page = ref<number>(1)
+
+    /** Список заданий  */
+    const tasks = computed(() => vuexModules.Tasks.tasks)
+
+    /** Фильтры для api */
+    const apiFilters = computed(() => {
+      const filters: any = { limit: 15, page: page.value, appointed: true }
+
+      if (filtredEventId.value) filters.event_id = Number(filtredEventId.value)
+      if (!isCompleted.value) filters.expiration = taskType.value
+      filters.accomplished = isCompleted.value
+
+      return { filters }
+    })
+
+    /** Подгрузить задания */
+    const appendTasks = () => {
+      page.value += 1
+      vuexModules.Tasks.loadTasks(apiFilters.value)
+    }
+    /** При изменении типа задачи или евента перезагружаем данные */
+    watch([taskType, filtredEventId], () => {
+      vuexModules.Tasks.SET_TASKS([])
+      page.value = 0
+      appendTasks()
+    })
+    /**
+     * Проверить необходимость подгрузки данных
+     * (При скроле если весь список еще не загружен и запрос еще не отправлен подгружаем)
+     */
+    const checkDataAppending = () => {
+      if (appending.value || allTasksLoaded.value) return
+
+      appendTasks()
+    }
+
+    /** Ссылка на экземпляр компонента с выполнением задания */
+    const taskCompleteComponent = ref<TaskComplete>(null)
+    /** Инициализация выполнения задания */
+    const intiTaskComplete = (id: string) => {
+      if (!taskCompleteComponent.value) return
+
+      taskCompleteComponent.value.initAssigment(id)
+    }
+
+    /** Отображения элемента расписания задачи */
+    const getTaskEventTitle = (task: Task) => {
+      const event = events.value.find((event) => event.id === task.event_id)
+      return event ? event.title : ''
+    }
+
+    /**
+     * Загрузить данные
+     */
+    const loadData = async () => {
+      try {
+        const [eventsData] = await Promise.all([
+          eventApi.loadData(),
+          vuexModules.Tasks.loadTasks(apiFilters.value)
+        ])
+        events.value = eventsData.data
+      } catch (error) {
+        vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+      }
+    }
+    onMounted(() => loadData())
+
+    /** Инициализация создания нового задания */
+    const initAddingTask = () => {
+      // this.addNewTaskEmit()
+    }
+
+    return {
+      events,
+      filtredEventId,
+      tasks,
+      taskLoading,
+      updating,
+      taskType,
+      isOutdated,
+      isCompleted,
+      intiTaskComplete,
+      getTaskEventTitle,
+      checkDataAppending,
+      initAddingTask,
+      appendTasks,
+      apiFilters
+    }
+  }
+})
 </script>
 
 <style scoped>

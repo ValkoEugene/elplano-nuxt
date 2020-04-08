@@ -57,9 +57,12 @@ import { reactive, computed, onMounted, toRefs } from '@vue/composition-api'
 import { getGroupUsers, Student } from '~/api/group-users.ts'
 import { search } from '~/utils/helpers.ts'
 
-interface GroupState {
+interface StateI {
+  /** Строка поиска */
   search: string
+  /** Флаг загрузки */
   loading: Boolean
+  /** Список студентов */
   students: Student[]
 }
 
@@ -80,12 +83,14 @@ export default {
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup(props, context) {
-    const state = reactive<GroupState>({
+    /** Состояние */
+    const state = reactive<StateI>({
       search: '',
       loading: true,
       students: []
     })
 
+    /** Отфильтрованный список студентов */
     const filtredStudents = computed<Student[]>(() => {
       if (!state.search) return state.students
 
@@ -94,6 +99,7 @@ export default {
       )
     })
 
+    /** Загрузить список студентов */
     const loadData = async () => {
       try {
         state.students = await getGroupUsers()
