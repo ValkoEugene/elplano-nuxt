@@ -2,7 +2,7 @@
 
 <template>
   <div class="task-card__wrapper">
-    <Card class="mb-5 task__card" small @click.native="showPreview(task)">
+    <Card class="mb-5 task__card" small @click.native="viewTaskEmit(task)">
       <template #title>
         {{ task.title }}
       </template>
@@ -40,7 +40,7 @@
           v-if="isOwnTask"
           :disabled="updating"
           :president-access="false"
-          @click="edit(task)"
+          @click="editTaskEmit(task)"
         />
 
         <DeleteButton
@@ -57,140 +57,143 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { computed, defineComponent } from '@vue/composition-api'
 import { Task, Assignment, taskApi } from '~/api/tasks.ts'
 import { Event } from '~/api/events.ts'
 import moment from '~/plugins/moment.js'
-import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
+import { useTaskEventBus } from '~/components/tasks/useTaskEventBus.ts'
 
-@Component({
-  components: {
-    DayTag: () =>
-      import(
-        '~/components/UI-core/day-tag.vue' /* webpackChunkName: 'components/UI-core/day-tag' */
-      ),
-    TextEditorView: () =>
-      import(
-        '~/components/UI-core/text-editor-view.vue' /* webpackChunkName: 'components/UI-core/text-editor-view' */
-      ),
-    DeleteButton: () =>
-      import(
-        '~/components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
-      ),
-    EditButton: () =>
-      import(
-        '~/components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
-      ),
-    Card: () =>
-      import(
-        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+const components = {
+  DayTag: () =>
+    import(
+      '~/components/UI-core/day-tag.vue' /* webpackChunkName: 'components/UI-core/day-tag' */
+    ),
+  TextEditorView: () =>
+    import(
+      '~/components/UI-core/text-editor-view.vue' /* webpackChunkName: 'components/UI-core/text-editor-view' */
+    ),
+  DeleteButton: () =>
+    import(
+      '~/components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
+    ),
+  EditButton: () =>
+    import(
+      '~/components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
+    ),
+  Card: () =>
+    import(
+      '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+    )
+}
+
+interface PropsI {
+  /** Задание  */
+  task: Task
+  /** Элементы расписания */
+  events: Event[]
+  /** Флаг процесса обновления  */
+  updating: boolean
+  /** Флаг показа тега с датой  */
+  showDayTag: boolean
+  /** Флаг что задача выполненна  */
+  completed: boolean
+}
+
+export default defineComponent({
+  name: 'TaskCard',
+  components,
+  props: {
+    task: {
+      type: Object as () => Task,
+      required: true
+    },
+    events: {
+      type: Array as () => Event[],
+      required: true
+    },
+    updating: {
+      type: Boolean,
+      required: true
+    },
+    showDayTag: {
+      type: Boolean,
+      default: true
+    },
+    completed: {
+      type: Boolean,
+      default: false
+    }
+  },
+  setup(props: PropsI, context) {
+    const { viewTaskEmit, editTaskEmit } = useTaskEventBus(context)
+
+    /** Дата для тега */
+    const dayTagDate = computed(() =>
+      moment(props.task.expired_at).format('DD.MM.YYYY')
+    )
+    /** Отображения элемента расписания задачи */
+    const taskEventTitle = computed(() => {
+      const event = props.events.find(
+        (event) => event.id === props.task.event_id
       )
-  }
-})
-export default class TaskCard extends Mixins(TaskEventBusMixin) {
-  /**
-   * Задание
-   */
-  @Prop({ type: Object as () => Task, required: true })
-  readonly task!: Task
+      return event ? event.title : ''
+    })
+    /** Флаг что задание назначенно студентом самому себе */
+    const isOwnTask = computed(() => {
+      const event = props.events.find(
+        (event) => event.id === props.task.event_id
+      )
 
-  /**
-   * Элементы расписания
-   */
-  @Prop({ type: Array as () => Event[], required: true })
-  readonly events!: Event[]
+      if (!event) return false
 
-  /**
-   * Флаг процесса обновления
-   * (При обновление какого либа задания блокируем кнопки)
-   */
-  @Prop({ type: Boolean, required: true })
-  readonly updating!: boolean
+      return (
+        event.creator_student_id ===
+        context.root.$vuexModules.User.studentInfo.id
+      )
+    })
 
-  /**
-   * Флаг показа тега с датой
-   */
-  @Prop({ type: Boolean, default: true })
-  readonly showDayTag: boolean
+    /** Удалить задание */
+    const deleteTask = (id: string) => {
+      context.root.$vuexModules.Tasks.deleteTask(id)
+    }
 
-  /**
-   * Флаг что задача выполненна
-   */
-  @Prop({ type: Boolean, default: false })
-  readonly completed: boolean
+    /** Выполнить задание */
+    const completeTask = (id: string) => {
+      context.emit('taskComplete', id)
+    }
 
-  /**
-   * Дата для тега
-   */
-  get dayTagDate(): string {
-    return moment(this.task.expired_at).format('DD.MM.YYYY')
-  }
+    /**
+     * Вернуть в работу
+     */
+    const retrieveTask = async (id: string) => {
+      try {
+        const assignment: Assignment = await taskApi.getCompletedInfo(id)
+        assignment.accomplished = false
 
-  /**
-   * Отображения элемента расписания задачи
-   */
-  get taskEventTitle(): string {
-    const event = this.events.find((event) => event.id === this.task.event_id)
-    return event ? event.title : ''
-  }
+        await taskApi.complete(id, assignment)
 
-  /**
-   * Флаг что задание назначенно студентом самому себе
-   */
-  get isOwnTask(): boolean {
-    const event = this.events.find((event) => event.id === this.task.event_id)
-
-    if (!event) return false
-
-    return event.creator_student_id === this.$vuexModules.User.studentInfo.id
-  }
-
-  /**
-   * Показать превью задачи
-   */
-  showPreview(task: Task) {
-    this.viewTaskEmit(task)
-  }
-
-  /**
-   * Удалить задание
-   */
-  deleteTask(id: string) {
-    this.$vuexModules.Tasks.deleteTask(id)
-  }
-
-  /**
-   * Редактировать задание
-   */
-  edit(task: Task) {
-    this.editTaskEmit(task)
-  }
-
-  /**
-   * Выполнить задание
-   */
-  completeTask(id: string) {
-    this.$emit('taskComplete', id)
-  }
-
-  /**
-   * Вернуть в работу
-   */
-  async retrieveTask(id: string) {
-    try {
-      const assignment: Assignment = await taskApi.getCompletedInfo(id)
-      assignment.accomplished = false
-
-      await taskApi.complete(id, assignment)
-
-      if (this.$vuexModules.Tasks.tasks.some((task) => task.id === id)) {
-        this.$vuexModules.Tasks.REMOVE_TASK(id)
+        if (
+          context.root.$vuexModules.Tasks.tasks.some((task) => task.id === id)
+        ) {
+          context.root.$vuexModules.Tasks.REMOVE_TASK(id)
+        }
+      } catch (error) {
+        context.root.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
       }
-    } catch (error) {
-      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    }
+
+    return {
+      dayTagDate,
+      taskEventTitle,
+      isOwnTask,
+      viewTaskEmit,
+      editTaskEmit,
+      deleteTask,
+      completeTask,
+      retrieveTask
     }
   }
-}
+})
 </script>
 
 <style scoped>

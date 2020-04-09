@@ -53,7 +53,13 @@
 </template>
 
 <script lang="ts">
-import { reactive, computed, onMounted, toRefs } from '@vue/composition-api'
+import {
+  reactive,
+  computed,
+  onMounted,
+  toRefs,
+  defineComponent
+} from '@vue/composition-api'
 import { getGroupUsers, Student } from '~/api/group-users.ts'
 import { search } from '~/utils/helpers.ts'
 
@@ -66,7 +72,7 @@ interface StateI {
   students: Student[]
 }
 
-export default {
+export default defineComponent({
   components: {
     Loader: () =>
       import(
@@ -113,5 +119,5 @@ export default {
 
     return { ...toRefs(state), filtredStudents }
   }
-}
+})
 </script>

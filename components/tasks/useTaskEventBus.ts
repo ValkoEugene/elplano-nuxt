@@ -78,6 +78,7 @@ export const useTaskEventBus = (vm: SetupContext) => {
 
   return {
     viewTaskEmit,
+    editTaskEmit,
     subscribeViewTask,
     unsubscribeViewTask,
     addNewTaskEmit,

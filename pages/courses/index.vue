@@ -63,7 +63,13 @@
 </template>
 
 <script lang="ts">
-import { reactive, computed, toRefs, ref } from '@vue/composition-api'
+import {
+  reactive,
+  computed,
+  toRefs,
+  ref,
+  defineComponent
+} from '@vue/composition-api'
 import { Course } from '~/api/courses.ts'
 import { useCourses } from '~/compositions/useCourses.ts'
 import { useLecturers } from '~/compositions/useLecturers.ts'
@@ -85,7 +91,7 @@ interface Form {
   validate: () => boolean
 }
 
-export default {
+export default defineComponent({
   name: 'CoursesPage',
   components: {
     Loader: () =>
@@ -194,5 +200,5 @@ export default {
       deleteCourse
     }
   }
-}
+})
 </script>
