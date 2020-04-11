@@ -56,6 +56,8 @@
         :label="$t('field.language')"
         outlined
       />
+
+      <v-switch v-model="useDarkTheme" :label="$t('field.useDarkTheme')" />
     </template>
 
     <template v-slot:actions>
@@ -122,6 +124,16 @@ export default class StudentPage extends Mixins(CheckGroup) {
    */
   get studentInfo(): Student {
     return this.$vuexModules.User.studentInfo
+  }
+
+  /**
+   * Флаг использования темной темы
+   */
+  get useDarkTheme(): boolean {
+    return this.$vuexModules.User.useDarkTheme
+  }
+  set useDarkTheme(value: boolean) {
+    this.$vuexModules.User.SET_USE_DARK_THEME(value)
   }
 
   @Watch('studentInfo')

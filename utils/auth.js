@@ -10,6 +10,13 @@ export function setTokensInCookie({ access_token, refresh_token }) {
 }
 
 /**
+ * Установить флаг использования темной темы в cookie
+ */
+export function setUseDarkThemeInCookie(useDarkTheme) {
+  Cookie.set('use_dark_theme', useDarkTheme)
+}
+
+/**
  * Удалить токены в Cookie
  */
 export function resetTokensInCookie() {
@@ -22,7 +29,7 @@ export function resetTokensInCookie() {
  * @param {Request} req
  * @param {String} name
  */
-function getFromCookieByName(req, name) {
+export function getFromCookieByName(req, name) {
   const cookie = req ? req.headers.cookie : window.document.cookie
   // Проверка наличия Cookies
   if (!cookie) return
@@ -35,6 +42,13 @@ function getFromCookieByName(req, name) {
 
   // Получение и парсинг токена
   return cookieByName.split('=')[1]
+}
+
+/**
+ * Получить флаг использования темной темы из Cookie
+ */
+export const getUseDarkThemeFromCookie = (req) => {
+  return getFromCookieByName(req, 'use_dark_theme') || false
 }
 
 /**

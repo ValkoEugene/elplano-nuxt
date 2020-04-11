@@ -17,7 +17,7 @@
     <template #prepend-item>
       <v-list-item ripple @click="toggleSelectAll">
         <v-list-item-action>
-          <v-icon :color="value.length > 0 ? 'indigo darken-4' : ''">{{
+          <v-icon :color="value.length > 0 ? 'indigo' : ''">{{
             selectAllIcon
           }}</v-icon>
         </v-list-item-action>

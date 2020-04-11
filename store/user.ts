@@ -10,6 +10,7 @@ import { Group } from '~/store/group.ts'
 import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow.ts'
 import { signInByProvider, Identity } from '~/api/users-identities.ts'
 import { I18n } from '~/store/i18n.ts'
+import { setUseDarkThemeInCookie } from '~/utils/auth'
 
 export const name = 'user'
 
@@ -32,6 +33,7 @@ export interface UserStateI {
   access_token: string
   refresh_token: string
   showA2hsButton: boolean
+  useDarkTheme: boolean
 }
 
 const userTemplate = {
@@ -102,6 +104,11 @@ export class User extends VuexModule implements UserStateI {
    */
   showA2hsButton: boolean = false
 
+  /**
+   * Флаг использования темной темы
+   */
+  useDarkTheme: boolean = false
+
   get isAuth(): boolean {
     return Boolean(this.access_token && this.refresh_token)
   }
@@ -119,6 +126,17 @@ export class User extends VuexModule implements UserStateI {
   }
 
   /**
+   * Установить флаг использования темной темы
+   */
+  @Mutation
+  SET_USE_DARK_THEME(value: boolean) {
+    if (value === this.useDarkTheme) return
+
+    this.useDarkTheme = value
+    setUseDarkThemeInCookie(value)
+  }
+
+  /**
    * Установить флаг процесса авторизации
    */
   @Mutation
@@ -127,7 +145,7 @@ export class User extends VuexModule implements UserStateI {
   }
 
   /**
-   * Установить инцформацию о пользоавтеле
+   * Установить информацию о пользователе
    */
   @Mutation
   SET_USER(userInfo: UserI) {
@@ -135,7 +153,7 @@ export class User extends VuexModule implements UserStateI {
   }
 
   /**
-   * Установить инцформацию о студенте
+   * Установить информацию о студенте
    */
   @Mutation
   SET_STUDENT(student: Student) {

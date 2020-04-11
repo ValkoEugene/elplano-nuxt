@@ -1,13 +1,13 @@
 <template>
   <div class="calendar-picker__wrapper">
-    <v-btn small dark fab class="white text-primary" @click="prevWeek">
+    <v-btn small dark fab class="text-primary" @click="prevWeek">
       <v-icon>navigate_before</v-icon>
     </v-btn>
 
     <p class="title calendar-picker__interval px-6">
       {{ weekDates[0] }} - {{ weekDates[6] }}
     </p>
-    <v-btn small dark fab class="white text-primary" @click="nextWeek">
+    <v-btn small dark fab class="text-primary" @click="nextWeek">
       <v-icon>navigate_next</v-icon>
     </v-btn>
   </div>

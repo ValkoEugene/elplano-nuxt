@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { User as UserI } from '~/api/admin-user.ts'
 import SyncLogin from '~/mixins/SyncLogin.ts'
 
@@ -88,6 +88,27 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
     const tabsRoutes = ['/tasks-tabs']
 
     return tabsRoutes.includes(this.$route.path)
+  }
+
+  /**
+   * Флаг использования темной темы
+   */
+  get useDarkTheme(): boolean {
+    return this.$vuexModules.User.useDarkTheme
+  }
+  @Watch('useDarkTheme')
+  onUseDarkTheme() {
+    console.log('---onUseDarkTheme---', this.useDarkTheme)
+    this.$vuetify.theme.dark = this.useDarkTheme
+  }
+
+  beforeCreate() {
+    console.log(
+      '---beforeCreate',
+      this.$vuetify.theme.dark,
+      this.$vuexModules.User.useDarkTheme
+    )
+    this.$vuetify.theme.dark = this.$vuexModules.User.useDarkTheme
   }
 
   /**

@@ -72,7 +72,8 @@
     "language": "Language",
     "students": "Students",
     "report": "Resport",
-    "links": "External links"
+    "links": "External links",
+    "useDarkTheme": "Use Dark Theme"
   },
   "ui": {
     "own": "Own",
