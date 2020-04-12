@@ -6,6 +6,7 @@
       $vuetify.breakpoint.smAndDown ? 'mobile' : '',
       haveHeadersTabs ? 'have-header-tabs' : ''
     ]"
+    class="default-layout"
   >
     <Sidebar :have-group="haveGroup" />
 
@@ -139,13 +140,21 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
 
   mounted() {
     this.$vuexModules.User.getUserInfo()
+    window.document.body.classList.add('default-layout')
+    window.document.documentElement.classList.add('default-layout')
+  }
+
+  beforeDestroy() {
+    window.document.body.classList.remove('default-layout')
+    window.document.documentElement.classList.remove('default-layout')
   }
 }
 </script>
 
 <style>
-body,
-html {
+.default-layout {
+  /* html */
+  /* { */
   overflow: hidden;
 }
 

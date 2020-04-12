@@ -81,7 +81,15 @@
 .v-application.theme--dark .v-list,
 .v-application.theme--dark .v-picker__body,
 .v-application.theme--dark .v-tabs-items,
-.v-application.theme--dark .v-data-table {
+.v-application.theme--dark .v-data-table,
+.v-application.theme--dark .v-skeleton-loader .v-skeleton-loader__article,
+.v-application.theme--dark .v-skeleton-loader .v-skeleton-loader__list-item,
+.v-application.theme--dark
+  .v-skeleton-loader
+  .v-skeleton-loader__list-item-two-line,
+.v-application.theme--dark .v-skeleton-loader .v-skeleton-loader__table-heading,
+.v-application.theme--dark .v-skeleton-loader .v-skeleton-loader__table-thead,
+.v-application.theme--dark .v-skeleton-loader .v-skeleton-loader__table-tbody {
   background-color: #2c2b4a !important;
 }
 .v-application.theme--dark .v-navigation-drawer .v-list {
@@ -104,4 +112,15 @@
 .v-btn--absolute.v-btn--right,
 .v-btn--fixed.v-btn--right {
   right: 25px !important;
+}
+
+.v-application.theme--dark input:-webkit-autofill,
+.v-application.theme--dark input:-webkit-autofill:hover,
+.v-application.theme--dark
+  input:-webkit-autofill:focus
+  .v-application.theme--dark
+  input:-webkit-autofill {
+  -webkit-text-fill-color: #fff;
+  -webkit-box-shadow: 0 0 0px 1000px #322f54 inset;
+  transition: background-color 5000s ease-in-out 0s;
 }

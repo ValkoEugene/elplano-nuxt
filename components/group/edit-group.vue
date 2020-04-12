@@ -1,8 +1,9 @@
 <template>
-  <Loader
+  <v-skeleton-loader
     v-if="loadInMounted && loading"
-    :show-form="true"
-    :form-inputs-count="2"
+    :height="278"
+    type="article"
+    class="edit-group__loader elevation-2"
   />
 
   <card v-else>
@@ -47,10 +48,6 @@ import { GroupI } from '~/api/group.ts'
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
-      ),
-    Loader: () =>
-      import(
-        '~/components/UI-core/loaders/loader.vue' /* webpackChunkName: 'components/UI-core/loaders/loader' */
       )
   }
 })
@@ -118,3 +115,9 @@ export default class EditGroup extends Vue {
   }
 }
 </script>
+
+<style>
+.edit-group__loader > div:first-child {
+  height: 278px;
+}
+</style>

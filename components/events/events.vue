@@ -416,7 +416,6 @@ export default class Events extends Mixins(TaskEventBusMixin) {
 <style scoped>
 .day__wrapper {
   display: flex;
-  margin-bottom: 25px;
 }
 
 .day__events {

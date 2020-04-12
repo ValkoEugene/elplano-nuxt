@@ -48,7 +48,7 @@ export function getFromCookieByName(req, name) {
  * Получить флаг использования темной темы из Cookie
  */
 export const getUseDarkThemeFromCookie = (req) => {
-  return getFromCookieByName(req, 'use_dark_theme') || false
+  return getFromCookieByName(req, 'use_dark_theme') || true
 }
 
 /**
