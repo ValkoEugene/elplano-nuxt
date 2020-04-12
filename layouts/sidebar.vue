@@ -164,6 +164,10 @@ export default class Sidebar extends Vue {
   background-image: linear-gradient(45deg, rgb(31, 71, 160), rgb(31, 71, 160));
 }
 
+.theme--dark .drawer-background {
+  background-image: linear-gradient(45deg, rgb(51, 46, 86), rgb(51, 46, 86));
+}
+
 .v-navigation-drawer__image {
   opacity: 0.05;
 }

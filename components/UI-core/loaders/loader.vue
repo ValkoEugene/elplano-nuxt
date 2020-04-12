@@ -1,16 +1,11 @@
 <template>
   <div v-if="contentWidth" class="loader_wrapper">
-    <content-loader
+    <v-skeleton-loader
       v-if="showSearch"
-      :height="50"
-      :width="isMobile ? contentWidth : contentWidth - sidebarWidth"
-      :speed="2"
-      :primary-color="primaryColor"
-      :secondary-color="secondaryColor"
-      class="loader__search px-3 mb-4"
-    >
-      <rect x="0" y="0" rx="0" ry="0" :width="contentWidth" :height="50" />
-    </content-loader>
+      height="50"
+      type="list-item"
+      class="loader__search elevation-2"
+    />
 
     <content-loader
       v-if="showForm"
@@ -37,11 +32,20 @@
       />
     </content-loader>
 
-    <div v-if="showCards" class="loader__cards--wrapper">
+    <v-layout v-if="showCards" row wrap class="loader__cards--wrapper">
       <!-- eslint-disable-next-line -->
       <template v-for="n in [1, 2, 3, 4, 5, 6]">
+        <v-flex :key="n" xs12 sm12 md4 class="pa-3">
+          <v-skeleton-loader
+            :key="n"
+            :height="isMobile ? 165 : 200"
+            type="article"
+            class="elevation-2"
+          />
+        </v-flex>
+
         <!-- eslint-disable-next-line -->
-        <FacebookLoader
+        <!-- <FacebookLoader
           :key="n"
           :height="200"
           :width="
@@ -53,9 +57,9 @@
           class="loader_card"
           :primary-color="primaryColor"
           :secondary-color="secondaryColor"
-        />
+        /> -->
       </template>
-    </div>
+    </v-layout>
   </div>
 </template>
 
@@ -134,14 +138,12 @@ export default class Loader extends Vue {
 .loader__search {
   height: 50px;
   width: 100%;
+  margin-bottom: 16px;
 }
+</style>
 
-.loader__cards--wrapper {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.loader_card {
-  padding: 12px;
+<style>
+.loader__cards--wrapper .v-skeleton-loader__article.v-skeleton-loader__bone {
+  height: 200px;
 }
 </style>

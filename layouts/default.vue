@@ -6,6 +6,7 @@
       $vuetify.breakpoint.smAndDown ? 'mobile' : '',
       haveHeadersTabs ? 'have-header-tabs' : ''
     ]"
+    class="default-layout"
   >
     <Sidebar :have-group="haveGroup" />
 
@@ -33,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { User as UserI } from '~/api/admin-user.ts'
 import SyncLogin from '~/mixins/SyncLogin.ts'
 
@@ -91,6 +92,27 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
   }
 
   /**
+   * Флаг использования темной темы
+   */
+  get useDarkTheme(): boolean {
+    return this.$vuexModules.User.useDarkTheme
+  }
+  @Watch('useDarkTheme')
+  onUseDarkTheme() {
+    console.log('---onUseDarkTheme---', this.useDarkTheme)
+    this.$vuetify.theme.dark = this.useDarkTheme
+  }
+
+  beforeCreate() {
+    console.log(
+      '---beforeCreate',
+      this.$vuetify.theme.dark,
+      this.$vuexModules.User.useDarkTheme
+    )
+    this.$vuetify.theme.dark = this.$vuexModules.User.useDarkTheme
+  }
+
+  /**
    * Стили с css переменными из темы
    */
   get cssVariblesFromTheme() {
@@ -118,13 +140,21 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
 
   mounted() {
     this.$vuexModules.User.getUserInfo()
+    window.document.body.classList.add('default-layout')
+    window.document.documentElement.classList.add('default-layout')
+  }
+
+  beforeDestroy() {
+    window.document.body.classList.remove('default-layout')
+    window.document.documentElement.classList.remove('default-layout')
   }
 }
 </script>
 
 <style>
-body,
-html {
+.default-layout {
+  /* html */
+  /* { */
   overflow: hidden;
 }
 

@@ -44,6 +44,11 @@ export default class DayTag extends Vue {
   color: rgba(0, 0, 0, 0.25);
 }
 
+.theme--dark .day__date--ddd,
+.theme--dark .day__date--DD {
+  color: #aeaeae !important;
+}
+
 .day__date--DD {
   font-size: 1.5rem;
 }

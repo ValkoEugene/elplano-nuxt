@@ -53,3 +53,74 @@
 .mobile .v-timeline--dense:not(.v-timeline--reverse):before {
   display: none;
 }
+
+.theme--dark.v-application {
+  background: #1d1f33 !important;
+}
+.v-application.theme--dark .v-app-bar.v-toolbar.v-sheet,
+.v-application.theme--dark .v-btn--absolute.v-btn--right,
+.v-application.theme--dark .v-btn--fixed.v-btn--right,
+.v-application.theme--dark
+  .v-btn:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+  background: #322f54 !important;
+}
+.v-application.theme--dark
+  .v-text-field--solo
+  > .v-input__control
+  > .v-input__slot {
+  background: #2c2b4a !important;
+}
+
+.v-application.theme--dark .v-btn.v-btn--icon,
+.v-application.theme--dark .v-input input,
+.v-application.theme--dark .v-icon,
+.v-application.theme--dark .v-select .v-select__selection--comma {
+  color: #aeaeae !important;
+}
+.v-application.theme--dark .v-card,
+.v-application.theme--dark .v-list,
+.v-application.theme--dark .v-picker__body,
+.v-application.theme--dark .v-tabs-items,
+.v-application.theme--dark .v-data-table,
+.v-application.theme--dark .v-skeleton-loader .v-skeleton-loader__article,
+.v-application.theme--dark .v-skeleton-loader .v-skeleton-loader__list-item,
+.v-application.theme--dark
+  .v-skeleton-loader
+  .v-skeleton-loader__list-item-two-line,
+.v-application.theme--dark .v-skeleton-loader .v-skeleton-loader__table-heading,
+.v-application.theme--dark .v-skeleton-loader .v-skeleton-loader__table-thead,
+.v-application.theme--dark .v-skeleton-loader .v-skeleton-loader__table-tbody {
+  background-color: #2c2b4a !important;
+}
+.v-application.theme--dark .v-navigation-drawer .v-list {
+  background-color: inherit !important;
+}
+
+.v-application.theme--dark .info {
+  background-color: #2c2b4a !important;
+  color: #aeaeae !important;
+}
+
+.v-application.theme--dark .v-btn.v-btn--icon {
+  color: #aeaeae !important;
+}
+
+.v-application.theme--dark .quillWrapper .ql-snow.ql-toolbar {
+  background: #aeaeae !important;
+}
+
+.v-btn--absolute.v-btn--right,
+.v-btn--fixed.v-btn--right {
+  right: 25px !important;
+}
+
+.v-application.theme--dark input:-webkit-autofill,
+.v-application.theme--dark input:-webkit-autofill:hover,
+.v-application.theme--dark
+  input:-webkit-autofill:focus
+  .v-application.theme--dark
+  input:-webkit-autofill {
+  -webkit-text-fill-color: #fff;
+  -webkit-box-shadow: 0 0 0px 1000px #322f54 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}

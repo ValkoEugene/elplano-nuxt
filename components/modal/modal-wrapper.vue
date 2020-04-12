@@ -106,6 +106,12 @@ export default class ModalWrapper extends Vue {
   height: 100vh;
 }
 
+@media (max-width: 1280px) {
+  .modal-edit {
+    width: 50vw;
+  }
+}
+
 .card-edit__content {
   max-height: calc(100vh - 64px);
   overflow: auto;

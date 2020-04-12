@@ -1,6 +1,19 @@
 <template>
   <div>
-    <Loader v-if="loading" :show-search="true" :show-cards="true" />
+    <div v-if="loading" class="events-loader">
+      <div class="events-loader__heading">
+        <v-skeleton-loader :height="40" :width="355" type="button" />
+      </div>
+
+      <template v-for="n in 12">
+        <v-skeleton-loader
+          :key="n"
+          :height="65"
+          type="list-item"
+          class="events-loader__event-item elevation-2"
+        />
+      </template>
+    </div>
 
     <div v-else>
       <Events
@@ -361,3 +374,24 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
   }
 }
 </script>
+
+<style>
+.events-loader__heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.events-loader .v-skeleton-loader__list-item.v-skeleton-loader__bone {
+  height: 65px;
+}
+
+.events-loader .v-skeleton-loader__button.v-skeleton-loader__bone {
+  width: 355px;
+}
+
+.events-loader__event-item {
+  margin-bottom: 20px;
+}
+</style>

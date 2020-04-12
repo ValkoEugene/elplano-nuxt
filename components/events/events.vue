@@ -1,14 +1,14 @@
 <template>
   <div class="events">
     <div class="events__actions">
-      <v-btn small dark fab class="white text-primary" @click="prevWeek">
+      <v-btn small fab class="text-primary" @click="prevWeek">
         <v-icon>navigate_before</v-icon>
       </v-btn>
 
       <p class="title week-title px-6">
         {{ weekDates[0] }} - {{ weekDates[6] }}
       </p>
-      <v-btn small dark fab class="white text-primary" @click="nextWeek">
+      <v-btn small fab class="text-primary" @click="nextWeek">
         <v-icon>navigate_next</v-icon>
       </v-btn>
     </div>
@@ -416,7 +416,6 @@ export default class Events extends Mixins(TaskEventBusMixin) {
 <style scoped>
 .day__wrapper {
   display: flex;
-  margin-bottom: 25px;
 }
 
 .day__events {
@@ -429,6 +428,10 @@ export default class Events extends Mixins(TaskEventBusMixin) {
   justify-content: center;
   align-items: center;
   margin-bottom: 15px;
+}
+
+.theme--dark .events__actions {
+  color: #aeaeae;
 }
 
 .events__actions p {

@@ -1,6 +1,16 @@
 <template>
-  <div v-if="loading">
-    <Loader :show-form="true" :form-inputs-count="1" class="mb-6" />
+  <div v-if="loading" class="invites-admin__loaders">
+    <v-skeleton-loader
+      :height="192"
+      type="article"
+      class="send-invite__loader mb-6 elevation-2"
+    />
+
+    <v-skeleton-loader
+      :height="275"
+      type="table"
+      class="invites-table__loader elevation-2"
+    />
   </div>
 
   <div v-else>
@@ -43,10 +53,6 @@ export interface TableHeader {
 @Component({
   components: {
     SendInvite: () => import('./send-invite.vue'),
-    Loader: () =>
-      import(
-        '~/components/UI-core/loaders/loader.vue' /* webpackChunkName: 'components/UI-core/loaders/loader' */
-      ),
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
@@ -111,5 +117,13 @@ export default class InvitesAdmin extends Vue {
 <style>
 .v-data-table-header.v-data-table-header-mobile {
   display: none;
+}
+
+.invites-admin__loaders .send-invite__loader > div:first-child {
+  height: 192px;
+}
+
+.invites-admin__loaders .invites-table__loader > div:first-child {
+  height: 275px;
 }
 </style>

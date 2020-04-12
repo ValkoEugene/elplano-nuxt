@@ -1,7 +1,9 @@
 <template>
   <div class="login__wrapper">
     <div class="login__title">
-      <logo :width="logoWidth" :height="logoHeight" />
+      <client-only>
+        <logo :width="logoWidth" :height="logoHeight" />
+      </client-only>
     </div>
 
     <div class="login__content">
@@ -172,7 +174,18 @@ export default class LoginPage extends Mixins(SyncLogin) {
     align-items: center;
     width: 100vw;
     height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .v-application:not(.theme--dark) .login__wrapper {
     background: url(~assets/images/login-bg.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .v-application.theme--dark .login__wrapper {
+    background: url(~assets/images/login-bg-dark.png);
     background-size: cover;
     background-repeat: no-repeat;
   }
