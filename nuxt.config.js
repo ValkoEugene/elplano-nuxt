@@ -46,9 +46,9 @@ export default {
    */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
+    '@nuxt/typescript-build',
     '@nuxtjs/eslint-module',
-    '@nuxtjs/vuetify',
-    '@nuxt/typescript-build'
+    '@nuxtjs/vuetify'
   ],
   /**
    *
