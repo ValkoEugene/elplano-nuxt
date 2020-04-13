@@ -4,13 +4,16 @@ import { getUserInfo, updateStudentInfo } from '~/api/user.ts'
 import { User as UserI } from '~/api/admin-user.ts'
 import { Student } from '~/api/group-users.ts'
 import getRouter from '~/plugins/getRouter.ts'
-import { setTokensInCookie, resetTokensInCookie } from '~/utils/auth'
+import {
+  setTokensInCookie,
+  resetTokensInCookie,
+  setUseDarkThemeInCookie
+} from '~/utils/auth'
 import { Snackbars } from '~/store/snackbars.ts'
 import { Group } from '~/store/group.ts'
 import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow.ts'
 import { signInByProvider, Identity } from '~/api/users-identities.ts'
 import { I18n } from '~/store/i18n.ts'
-import { setUseDarkThemeInCookie } from '~/utils/auth'
 
 export const name = 'user'
 
@@ -85,7 +88,7 @@ export class User extends VuexModule implements UserStateI {
     full_name: '',
     phone: '',
     president: false,
-    social_networks: {},
+    social_networks: [],
     updated_at: ''
   }
 
@@ -347,11 +350,12 @@ export class User extends VuexModule implements UserStateI {
 
       this.SET_USER(user)
       if (student) this.SET_STUDENT(student)
-      this.SET_UPDATING(false)
     } catch (error) {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.snackbarErrors
       )
+    } finally {
+      this.SET_UPDATING(false)
     }
   }
 }

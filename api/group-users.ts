@@ -1,5 +1,10 @@
 import axios from '~/plugins/axios.ts'
 
+export interface SocialNetwork {
+  network: string
+  url: string
+}
+
 export interface Student {
   id: string
   locale: string | null
@@ -9,7 +14,7 @@ export interface Student {
   full_name: string | null
   phone: string | null
   president: boolean
-  social_networks: { [key: string]: string }
+  social_networks: SocialNetwork[]
   updated_at: string
 }
 

@@ -73,7 +73,9 @@
     "students": "Students",
     "report": "Resport",
     "links": "External links",
-    "useDarkTheme": "Use Dark Theme"
+    "useDarkTheme": "Use Dark Theme",
+    "socialNetworks": "Social networks",
+    "network": "Network"
   },
   "ui": {
     "own": "Own",
