@@ -35,11 +35,9 @@
               <p>Email: {{ student.email || '-' }}</p>
               <p>{{ $t('field.number') }}: {{ student.phone || '-' }}</p>
 
-              <template
-                v-for="(social_network, name) in student.social_networks"
-              >
-                <p v-if="social_network" :key="name">
-                  {{ name }}: {{ social_network }}
+              <template v-for="social_network in student.social_networks">
+                <p v-if="social_network" :key="social_network.network">
+                  {{ social_network.network }}: {{ social_network.url }}
                 </p>
               </template>
 

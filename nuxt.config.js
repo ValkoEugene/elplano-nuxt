@@ -60,7 +60,8 @@ export default {
     name: 'EL Plano app',
     short_name: 'EL Plano',
     description: 'Student schedule management applications',
-    theme_color: '#1976d2',
+    theme_color: '#100a40',
+    background_color: '#100a40',
     start_url: '/schedule',
     icons: [
       {
@@ -103,7 +104,6 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
       themes: {
         light: {
           primary: {
