@@ -1,6 +1,6 @@
 <template>
   <v-tabs v-model="tab" :show-arrows="$vuetify.breakpoint.smAndDown" centered>
-    <v-tab v-for="tab in taskTabs" :key="tab.view">
+    <v-tab v-for="tab in taskTabs" :key="tab.view" :disabled="loading">
       {{ tab.view }}
     </v-tab>
   </v-tabs>
@@ -29,6 +29,10 @@ export default class TaskTabs extends Vue {
       { view: this.$t('tasks.upcoming'), query: TaskQuery.upcoming },
       { view: this.$t('tasks.comleted'), query: TaskQuery.comleted }
     ]
+  }
+
+  get loading(): boolean {
+    return this.$vuexModules.Tasks.loading
   }
 
   @Watch('tab', { immediate: true })

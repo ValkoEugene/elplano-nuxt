@@ -121,7 +121,7 @@ export class Tasks extends VuexModule implements TasksStateI {
       this.SET_ALL_TASKS_LOADED(false)
 
       this.SET_APPENDING(true)
-      this.SET_LOADING(true)
+      if (params.filters.page === 1) this.SET_LOADING(true)
 
       const { data, meta } = await taskApi.loadData(params)
 
@@ -136,7 +136,7 @@ export class Tasks extends VuexModule implements TasksStateI {
         error.snackbarErrors
       )
     } finally {
-      this.SET_LOADING(false)
+      if (params.filters.page === 1) this.SET_LOADING(false)
       this.SET_APPENDING(false)
     }
   }

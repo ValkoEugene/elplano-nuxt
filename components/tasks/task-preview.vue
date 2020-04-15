@@ -27,20 +27,23 @@
       <div class="content__item">
         {{ $t('field.report') }}: {{ completedInfo.report || '-' }}
       </div>
+    </div>
 
-      <div v-if="completedInfo.extra_links.length">
-        <div class="content__item mt-3">{{ $t('field.links') }}</div>
+    <div v-if="allExtraLinks.length">
+      <CustomTitle class="my-3"> {{ $t('field.links') }} </CustomTitle>
 
-        <template v-for="(link, index) in completedInfo.extra_links">
-          <a
-            :key="link + `--${index}`"
-            :href="link"
-            target="_blank"
-            class="item__link"
-          >
-            {{ link }}
-          </a>
-        </template>
+      <div
+        v-for="(extraLink, index) in allExtraLinks"
+        :key="extraLink.url + `--${index}`"
+        class="mb-3"
+      >
+        <a :href="extraLink.url" target="_blank" class="item__link">
+          {{ extraLink.url }}
+        </a>
+
+        <p v-if="extraLink.description">
+          {{ $t('field.description') }} : {{ extraLink.description }}
+        </p>
       </div>
     </div>
   </div>
@@ -54,6 +57,10 @@ import moment from '~/plugins/moment'
 
 @Component({
   components: {
+    CustomTitle: () =>
+      import(
+        '~/components/UI-core/custom-title.vue' /* webpackChunkName: 'components/UI-core/custom-title' */
+      ),
     TextEditorView: () =>
       import(
         '~/components/UI-core/text-editor-view.vue' /* webpackChunkName: 'components/UI-core/text-editor-view' */
@@ -106,6 +113,13 @@ export default class TaskPreview extends Vue {
    */
   get formatedDate(): string {
     return moment(this.task.expired_at).format('DD.MM.YYYY')
+  }
+
+  /**
+   * Все внешние ссылки
+   */
+  get allExtraLinks() {
+    return [...this.task.extra_links, ...this.completedInfo.extra_links]
   }
 
   mounted() {

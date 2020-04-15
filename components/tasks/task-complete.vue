@@ -15,31 +15,7 @@
           outlined
         />
 
-        <v-combobox
-          v-model="assigment.extra_links"
-          :items="assigment.extra_links"
-          :label="$t('field.links')"
-          :menu-props="{ bottom: true, offsetY: true, 'z-index': 202 }"
-          :search-input.sync="search"
-          :hint="search ? $t('ui.add-enter') : ''"
-          :rules="[$rules.url]"
-          chips
-          multiple
-          deletable-chips
-          outlined
-        >
-          <template v-slot:item="{ item }">
-            <v-chip label small>
-              {{ item }}
-            </v-chip>
-            <v-spacer></v-spacer>
-            <v-list-item-action @click.stop>
-              <v-btn icon @click.stop.prevent="removeLink(item)">
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-            </v-list-item-action>
-          </template>
-        </v-combobox>
+        <extra-links v-model="assigment.extra_links" />
       </v-form>
     </template>
   </ModalWrapper>
@@ -54,6 +30,10 @@ import { taskApi, Assignment } from '~/api/tasks.ts'
     ModalWrapper: () =>
       import(
         '~/components/modal/modal-wrapper.vue' /* webpackChunkName: 'components/modal/modal-wrapper' */
+      ),
+    ExtraLinks: () =>
+      import(
+        '~/components/UI-core/fields/extra-links.vue' /* webpackChunkName: 'components/UI-core/fields/extra-links'  */
       )
   }
 })
@@ -110,15 +90,6 @@ export default class TaskComplete extends Vue {
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     }
-  }
-
-  /**
-   * Удалить ссылку
-   */
-  removeLink(link: string) {
-    this.assigment.extra_links = this.assigment.extra_links.filter(
-      (item) => item !== link
-    )
   }
 
   /**

@@ -24,7 +24,8 @@ export const useTaskEventBus = (vm: SetupContext) => {
     student_ids: [],
     description: '',
     created_at: '',
-    updated_at: ''
+    updated_at: '',
+    extra_links: []
   }
 
   /**
