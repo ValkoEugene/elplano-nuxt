@@ -47,6 +47,8 @@
     />
 
     <TextEditor v-model="localModel.description" />
+
+    <extra-links v-model="localModel.extra_links" class="mt-6" />
   </v-form>
 </template>
 
@@ -71,6 +73,10 @@ import StudentsSelect from '~/components/UI-core/students-select.vue'
     Date: () =>
       import(
         '~/components/UI-core/date.vue' /* webpackChunkName: 'components/UI-core/date' */
+      ),
+    ExtraLinks: () =>
+      import(
+        '~/components/UI-core/fields/extra-links.vue' /* webpackChunkName: 'components/UI-core/fields/extra-links'  */
       )
   }
 })

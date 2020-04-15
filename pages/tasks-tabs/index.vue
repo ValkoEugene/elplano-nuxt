@@ -9,7 +9,7 @@
         :label="$t('events.eventsLabel')"
         :chips="false"
         :multiple="false"
-        :disabled="taskLoading"
+        :disabled="appending"
         attach
         solo
         clearable
@@ -40,9 +40,9 @@
       <AddNew :president-access="false" @click="initAddingTask" />
     </div>
 
-    <template v-if="taskLoading">
+    <template v-if="appending">
       <v-skeleton-loader
-        v-for="i in 7"
+        v-for="i in 2"
         :key="i"
         height="104"
         type="list-item-two-line"
@@ -246,6 +246,7 @@ export default defineComponent({
       filtredEventId,
       tasks,
       taskLoading,
+      appending,
       updating,
       taskType,
       isOutdated,

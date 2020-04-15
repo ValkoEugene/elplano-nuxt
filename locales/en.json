@@ -75,7 +75,8 @@
     "links": "External links",
     "useDarkTheme": "Use Dark Theme",
     "socialNetworks": "Social networks",
-    "network": "Network"
+    "network": "Network",
+    "extraLinks": "Extra links"
   },
   "ui": {
     "own": "Own",

@@ -1,6 +1,11 @@
 import axios from '~/plugins/axios.ts'
 import moment from '~/plugins/moment'
 
+export interface ExtraLink {
+  description: string
+  url: string
+}
+
 export interface Task {
   title: string
   description?: string
@@ -12,15 +17,16 @@ export interface Task {
   id?: string
   student_ids?: string[]
   attachments: any[]
+  extra_links: ExtraLink[]
 }
 
 export interface Assignment {
   id?: string
   accomplished: boolean
   report: string
-  extra_links: string[]
   created_at?: string
   updated_at?: string
+  extra_links: ExtraLink[]
 }
 
 const restUrl = '/tasks'
@@ -36,7 +42,8 @@ const formatDataFromApi = (data: { [key: string]: any }): Task => {
       created_at,
       updated_at,
       student_ids,
-      outdated
+      outdated,
+      extra_links
     },
     relationships: { event, attachments }
   } = data
@@ -50,6 +57,7 @@ const formatDataFromApi = (data: { [key: string]: any }): Task => {
     created_at,
     updated_at,
     outdated,
+    extra_links: extra_links || [],
     event_id: event && event.data && event.data.id,
     attachments:
       attachments &&
