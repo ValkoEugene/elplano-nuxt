@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
+import { computed, watch, defineComponent } from '@vue/composition-api'
 
 export enum TaskQuery {
   outdated = 'outdated',
@@ -17,27 +17,56 @@ export enum TaskQuery {
   comleted = 'comleted'
 }
 
-@Component
-export default class TaskTabs extends Vue {
-  tab = 1
+export default defineComponent({
+  name: 'TaskTypes',
+  setup(_, context) {
+    /** Список с фильтрами задач для табов */
+    const taskTabs = computed(() => {
+      return [
+        { view: context.root.$t('tasks.outdated'), query: TaskQuery.outdated },
+        { view: context.root.$t('tasks.today'), query: TaskQuery.today },
+        { view: context.root.$t('tasks.tomorrow'), query: TaskQuery.tomorrow },
+        { view: context.root.$t('tasks.upcoming'), query: TaskQuery.upcoming }
+      ]
+    })
 
-  get taskTabs() {
-    return [
-      { view: this.$t('tasks.outdated'), query: TaskQuery.outdated },
-      { view: this.$t('tasks.today'), query: TaskQuery.today },
-      { view: this.$t('tasks.tomorrow'), query: TaskQuery.tomorrow },
-      { view: this.$t('tasks.upcoming'), query: TaskQuery.upcoming },
-      { view: this.$t('tasks.comleted'), query: TaskQuery.comleted }
-    ]
-  }
+    /** Текущий тип задач */
+    const currentTaskType = computed(() => context.root.$route.query.tab)
 
-  get loading(): boolean {
-    return this.$vuexModules.Tasks.loading
-  }
+    /** Текущий таб */
+    const tab = computed({
+      get: (): number => {
+        const index = taskTabs.value.findIndex(
+          (tab) => tab.query === currentTaskType.value
+        )
 
-  @Watch('tab', { immediate: true })
-  onTabChanged() {
-    this.$router.replace({ query: { tab: this.taskTabs[this.tab].query } })
+        return index !== -1 ? index : 1
+      },
+      set: (index: number) => {
+        context.root.$router.replace({
+          query: { tab: taskTabs.value[index].query }
+        })
+      }
+    })
+
+    /** При смене таба подставляем значение в роут */
+    watch(tab, () => {
+      const newTab = taskTabs.value[tab.value].query
+      if (newTab === currentTaskType.value) return
+
+      context.root.$router.replace({
+        query: { tab: taskTabs.value[tab.value].query }
+      })
+    })
+
+    /** Флаг загрузки данных */
+    const loading = computed(() => context.root.$vuexModules.Tasks.loading)
+
+    return {
+      tab,
+      taskTabs,
+      loading
+    }
   }
-}
+})
 </script>
