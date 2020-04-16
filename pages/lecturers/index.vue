@@ -97,6 +97,7 @@
             :label="$t('lesson.lessons')"
             multiple
             outlined
+            attach
           />
         </v-form>
       </template>

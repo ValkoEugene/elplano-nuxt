@@ -9,14 +9,14 @@
         <slot name="title" />
       </div>
 
-      <v-menu v-if="$scopedSlots.menu" left bottom>
+      <v-menu v-if="$scopedSlots.menu" left bottom attach>
         <template v-slot:activator="{ on }">
           <v-btn icon class="card__menu" v-on="on">
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
 
-        <v-list :min-width="200">
+        <v-list :min-width="210">
           <slot name="menu" />
         </v-list>
       </v-menu>

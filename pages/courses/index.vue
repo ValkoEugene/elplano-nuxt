@@ -53,6 +53,7 @@
             :label="$t('lecturers.lecturers')"
             multiple
             outlined
+            attach
           />
         </v-form>
       </template>
