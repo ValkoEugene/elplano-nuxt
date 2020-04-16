@@ -9,7 +9,7 @@
       @focus="active = true"
     />
 
-    <v-dialog :value="active" persistent full-width width="290px">
+    <v-dialog :value="active" persistent width="290px">
       <v-date-picker
         v-model="localDate"
         :locale="$store.state.i18n.locale"

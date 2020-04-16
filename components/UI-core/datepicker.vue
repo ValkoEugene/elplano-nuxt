@@ -9,7 +9,7 @@
       @focus="active = true"
     />
 
-    <v-dialog :value="active" persistent full-width width="290px">
+    <v-dialog :value="active" persistent width="290px">
       <v-card>
         <v-tabs v-model="tab" right grow show-arrows>
           <v-tab>

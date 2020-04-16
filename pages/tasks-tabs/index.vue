@@ -70,9 +70,6 @@ import TaskComplete from '~/components/tasks/task-complete.vue'
 import { VuexModules } from '~/plugins/VuexDecaratorsModules.ts'
 import { useTaskEventBus } from '~/components/tasks/useTaskEventBus.ts'
 
-// import ModalEditComponent from '~/components/modal/modal-edit.vue'
-// import TaskEventBusMixin from '~/components/tasks/task-event-bus-mixin.ts'
-
 const components = {
   TaskModal: () =>
     import(

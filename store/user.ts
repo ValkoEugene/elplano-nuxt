@@ -257,8 +257,6 @@ export class User extends VuexModule implements UserStateI {
         access_token,
         refresh_token
       })
-
-      getRouter().replace('/schedule')
     } catch (error) {
       getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
         error.response.data.errors.map(({ detail }: { detail: string }) => ({
