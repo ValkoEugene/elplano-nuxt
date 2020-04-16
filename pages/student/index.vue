@@ -56,6 +56,7 @@
               item-text="view"
               :label="$t('field.language')"
               outlined
+              attach
             />
 
             <v-switch

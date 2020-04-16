@@ -13,11 +13,9 @@
       :multiple="true"
       :full-width="false"
       :menu-props="{
-        bottom: true,
-        offsetY: true,
-        'z-index': 200,
         'max-width': fieldWidth + 'px'
       }"
+      attach
       outlined
       @click:append="openEditingWindow()"
     >
