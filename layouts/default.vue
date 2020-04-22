@@ -99,16 +99,10 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
   }
   @Watch('useDarkTheme')
   onUseDarkTheme() {
-    console.log('---onUseDarkTheme---', this.useDarkTheme)
     this.$vuetify.theme.dark = this.useDarkTheme
   }
 
   beforeCreate() {
-    console.log(
-      '---beforeCreate',
-      this.$vuetify.theme.dark,
-      this.$vuexModules.User.useDarkTheme
-    )
     this.$vuetify.theme.dark = this.$vuexModules.User.useDarkTheme
   }
 
@@ -165,8 +159,10 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
   overflow-y: scroll;
 }
 
-.have-header-tabs .v-content__wrap {
-  max-height: calc(100vh - 104px);
+@media (max-width: 960px) {
+  .v-content__wrap {
+    max-height: calc(100vh - 56px);
+  }
 }
 
 .nuxt-wrapper {

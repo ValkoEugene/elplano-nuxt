@@ -7,6 +7,12 @@
         {{ task.title }}
       </template>
 
+      <template #badges>
+        <span v-if="isOwnTask">
+          {{ $t('events.own') }}
+        </span>
+      </template>
+
       <template v-if="taskEventTitle" #content>
         <p class="mb-0">
           <span v-if="showDayTag" class="bold">{{ dayTagDate + ' | ' }}</span>
@@ -16,21 +22,32 @@
 
       <template #menu>
         <v-list-item
+          class="text-primary"
+          :disabled="updating"
+          icon
+          @click.stop="viewTaskEmit(task)"
+        >
+          <v-icon class="pr-2">visibility</v-icon>
+          {{ $t('actions.preview') }}
+        </v-list-item>
+
+        <v-list-item
           v-if="!completed"
           class="text-primary"
           :disabled="updating"
           icon
-          @click="completeTask(task.id)"
+          @click.stop="completeTask(task.id)"
         >
           <v-icon class="pr-2">done</v-icon>
           {{ $t('ui.complete') }}
         </v-list-item>
+
         <v-list-item
           v-else
           class="text-primary"
           :disabled="updating"
           icon
-          @click="retrieveTask(task.id)"
+          @click.stop="retrieveTask(task.id)"
         >
           <v-icon class="pr-2">undo</v-icon>
           {{ $t('actions.retrieve') }}
@@ -40,7 +57,7 @@
           v-if="isOwnTask"
           :disabled="updating"
           :president-access="false"
-          @click="editTaskEmit(task)"
+          @click.stop="editTaskEmit(task)"
         />
 
         <DeleteButton
@@ -49,6 +66,7 @@
           :disabled="updating"
           :president-access="false"
           :confirm-text="$t('tasks.confirm')"
+          @click.native.stop="() => {}"
           @delete="deleteTask(task.id)"
         />
       </template>

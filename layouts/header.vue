@@ -6,10 +6,6 @@
       currentPageTitle
     }}</v-toolbar-title>
 
-    <template v-if="$route.path === '/tasks-tabs'" #extension>
-      <TaskTabsMenu />
-    </template>
-
     <v-spacer></v-spacer>
 
     <v-menu left bottom>
@@ -40,14 +36,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { TOGGLE_SIDEBAR_ROOT_LISTENER } from '~/layouts/sidebar.vue'
 
-@Component({
-  components: {
-    TaskTabsMenu: () =>
-      import(
-        '~/components/tasks/task-tabs.vue' /* webpackChunkName: 'components/tasks/task-tabs' */
-      )
-  }
-})
+@Component({})
 export default class Header extends Vue {
   /**
    * Заголовки страниц в i18n
@@ -148,10 +137,12 @@ export default class Header extends Vue {
         if (choiceResult.outcome === 'accepted') {
           this.$vuexModules.User.SET_SHOW_A2HS_BUTTON(false)
         } else {
+          // eslint-disable-next-line no-console
           console.log('User dismissed the A2HS prompt')
         }
       })
       .catch((err: any) => {
+        // eslint-disable-next-line no-console
         console.log(err)
       })
   }

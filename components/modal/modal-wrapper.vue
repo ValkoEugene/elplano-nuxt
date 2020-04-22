@@ -96,7 +96,7 @@ export default class ModalWrapper extends Vue {
 }
 </script>
 
-<style>
+<style scoped>
 .modal-edit {
   position: fixed;
   right: 0;

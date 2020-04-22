@@ -57,8 +57,8 @@ export default class TaskEventBus extends Vue {
   /**
    * Отправить событие на создание новой задачи
    */
-  addNewTaskEmit(event_id: string = '') {
-    this.editTaskEmit({ ...this.taskEmptyModel, event_id })
+  addNewTaskEmit(event_id: string = '', expired_at: string = '') {
+    this.editTaskEmit({ ...this.taskEmptyModel, event_id, expired_at })
   }
 
   /**

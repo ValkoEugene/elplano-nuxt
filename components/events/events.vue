@@ -54,7 +54,7 @@
                     </v-list-item>
                     <v-list-item
                       v-if="event.eventable_type === 'student' || isPresidents"
-                      @click="addNewTaskInit(event.id)"
+                      @click="addNewTaskInit(event.id, weekDates[dayIndex])"
                     >
                       <v-icon class="pr-2">work</v-icon>
                       {{ $t('tasks.add') }}
@@ -262,8 +262,8 @@ export default class Events extends Mixins(TaskEventBusMixin) {
   /**
    * Добавить задание
    */
-  addNewTaskInit(event_id: string) {
-    this.addNewTaskEmit(event_id)
+  addNewTaskInit(event_id: string, expired_at: string) {
+    this.addNewTaskEmit(event_id, expired_at)
   }
 
   /**

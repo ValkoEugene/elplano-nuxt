@@ -4,7 +4,7 @@
     icon
     class="text-primary"
     :disabled="disabled"
-    @click="$emit('click')"
+    @click="$emit('click', $event)"
   >
     <v-icon class="pr-2">edit</v-icon>
     {{ $t('ui.edit') }}

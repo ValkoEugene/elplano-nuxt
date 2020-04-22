@@ -59,8 +59,8 @@ export const useTaskEventBus = (vm: SetupContext) => {
   /**
    * Отправить событие на создание новой задачи
    */
-  const addNewTaskEmit = (event_id: string = '') => {
-    editTaskEmit({ ...taskEmptyModel, event_id })
+  const addNewTaskEmit = (event_id: string = '', expired_at: string = '') => {
+    editTaskEmit({ ...taskEmptyModel, event_id, expired_at })
   }
 
   /**
