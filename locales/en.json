@@ -47,7 +47,8 @@
     "edit": "Edit",
     "send": "Send",
     "complete": "Complete",
-    "retrieve": "Retrieve"
+    "retrieve": "Retrieve",
+    "preview": "Preview"
   },
   "field": {
     "loginField": "Login",

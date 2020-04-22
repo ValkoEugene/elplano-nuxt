@@ -43,7 +43,7 @@
             </div>
           </template>
 
-          <template v-slot:menu>
+          <template v-if="isPresident" v-slot:menu>
             <EditButton :disabled="updating" @click="edit(lecturer)" />
 
             <DeleteButton
@@ -208,6 +208,11 @@ export default defineComponent({
       () => loadingCourses.value || loadingLecturers.value
     )
 
+    /** Флаг что пользователь является старостой */
+    const isPresident = computed(
+      () => context.root.$vuexModules.User.isPresident
+    )
+
     /** Отфильтрованный список преподавателей */
     const filtredLecturers = computed(() => {
       if (!state.search) return lecturers.value
@@ -250,6 +255,7 @@ export default defineComponent({
       lecturers,
       filtredLecturers,
       courses,
+      isPresident,
       edit,
       getCourseView,
       create,

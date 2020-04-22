@@ -5,6 +5,7 @@
       class="card__title--wrapper"
       :style="titleStyle"
     >
+      <img v-if="avatarUrl" :src="avatarUrl" class="card__content--avatar" />
       <div v-if="$scopedSlots.title" class="card__title--text">
         <slot name="title" />
       </div>
@@ -16,18 +17,10 @@
           </v-btn>
         </template>
 
-        <v-list :min-width="210">
+        <v-list :min-width="240">
           <slot name="menu" />
         </v-list>
       </v-menu>
-    </div>
-
-    <div
-      v-if="$scopedSlots.badges"
-      class="card__badges"
-      :class="[$scopedSlots.content ? 'mb-4' : '']"
-    >
-      <slot name="badges" />
     </div>
 
     <div
@@ -35,9 +28,15 @@
       class="card__content"
       :class="[avatarUrl ? 'd-flex' : '']"
     >
-      <img v-if="avatarUrl" :src="avatarUrl" class="card__content--avatar" />
-
       <slot name="content" />
+    </div>
+
+    <div
+      v-if="$scopedSlots.badges"
+      class="card__badges"
+      :class="[$scopedSlots.actions ? 'mb-4' : '']"
+    >
+      <slot name="badges" />
     </div>
 
     <div
@@ -158,8 +157,6 @@ export default class Card extends Vue {
   padding: 5px;
   border-radius: 4px;
   margin-right: 5px;
-  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
-    0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12) !important;
 }
 .theme--dark .card__badges span {
   color: #aeaeae;
@@ -205,8 +202,6 @@ export default class Card extends Vue {
   height: 100px;
   margin-right: 10px;
   border-radius: 50%;
-  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
-    0px 5px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 14px 0px rgba(0, 0, 0, 0.12) !important;
 }
 
 .mobile .card__content--avatar {

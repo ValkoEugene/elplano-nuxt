@@ -47,7 +47,8 @@
     "edit": "Редактировать",
     "send": "Отправить",
     "complete": "Выполнить",
-    "retrieve": "Вернуть"
+    "retrieve": "Вернуть",
+    "preview": "Просмотр"
   },
   "field": {
     "loginField": "Логин",

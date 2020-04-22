@@ -393,5 +393,6 @@ export default class EventsPage extends Mixins(CoursesList, CheckGroup) {
 
 .events-loader__event-item {
   margin-bottom: 20px;
+  margin-left: 37px;
 }
 </style>

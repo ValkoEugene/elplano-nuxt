@@ -1,5 +1,10 @@
 <template>
-  <v-tabs v-model="tab" :show-arrows="$vuetify.breakpoint.smAndDown" centered>
+  <v-tabs
+    v-model="tab"
+    :show-arrows="$vuetify.breakpoint.smAndDown"
+    centered
+    class="mb-3 task-tabs"
+  >
     <v-tab v-for="tab in taskTabs" :key="tab.view" :disabled="loading">
       {{ tab.view }}
     </v-tab>
@@ -26,7 +31,8 @@ export default defineComponent({
         { view: context.root.$t('tasks.outdated'), query: TaskQuery.outdated },
         { view: context.root.$t('tasks.today'), query: TaskQuery.today },
         { view: context.root.$t('tasks.tomorrow'), query: TaskQuery.tomorrow },
-        { view: context.root.$t('tasks.upcoming'), query: TaskQuery.upcoming }
+        { view: context.root.$t('tasks.upcoming'), query: TaskQuery.upcoming },
+        { view: context.root.$t('tasks.comleted'), query: TaskQuery.comleted }
       ]
     })
 
@@ -70,3 +76,9 @@ export default defineComponent({
   }
 })
 </script>
+
+<style>
+.task-tabs.v-tabs > .v-tabs-bar {
+  background-color: inherit;
+}
+</style>

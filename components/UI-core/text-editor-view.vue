@@ -1,6 +1,7 @@
 <template>
   <div class="ql-snow">
     <div class="ql-editor">
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-html="value" />
     </div>
   </div>

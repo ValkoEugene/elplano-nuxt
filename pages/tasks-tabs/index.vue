@@ -1,5 +1,7 @@
 <template>
   <div v-card-scroll:200="checkDataAppending">
+    <TaskTabsMenu />
+
     <div>
       <v-select
         v-model="filtredEventId"
@@ -71,6 +73,10 @@ import { VuexModules } from '~/plugins/VuexDecaratorsModules.ts'
 import { useTaskEventBus } from '~/components/tasks/useTaskEventBus.ts'
 
 const components = {
+  TaskTabsMenu: () =>
+    import(
+      '~/components/tasks/task-tabs.vue' /* webpackChunkName: 'components/tasks/task-tabs' */
+    ),
   TaskModal: () =>
     import(
       '~/components/tasks/task-modal.vue' /* webpackChunkName: 'components/tasks/task-modal' */

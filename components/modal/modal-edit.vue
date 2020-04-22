@@ -61,7 +61,6 @@
                 :item-text="field.itemText"
                 :label="field.label"
                 :rules="Array.isArray(field.rules) ? field.rules : undefined"
-                :chips="field.multiple"
                 :multiple="field.multiple"
                 :menu-props="field.menuProps"
                 outlined
@@ -306,7 +305,7 @@ export default class ModalEdit extends Vue {
 }
 </script>
 
-<style>
+<style scoped>
 .modal-edit {
   position: fixed;
   right: 0;

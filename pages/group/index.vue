@@ -27,13 +27,15 @@
           </template>
 
           <template v-slot:title>
-            {{ student.full_name }}
+            {{ student.full_name || student.email }}
           </template>
 
           <template v-slot:content>
             <div>
-              <p>Email: {{ student.email || '-' }}</p>
-              <p>{{ $t('field.number') }}: {{ student.phone || '-' }}</p>
+              <p v-if="student.email">Email: {{ student.email }}</p>
+              <p v-if="student.phone">
+                {{ $t('field.number') }}: {{ student.phone }}
+              </p>
 
               <template v-for="social_network in student.social_networks">
                 <p v-if="social_network" :key="social_network.network">
@@ -41,7 +43,9 @@
                 </p>
               </template>
 
-              <p>{{ $t('field.about') }}: {{ student.about || '-' }}</p>
+              <p v-if="student.about">
+                {{ $t('field.about') }}: {{ student.about }}
+              </p>
             </div>
           </template>
         </Card>
@@ -71,6 +75,7 @@ interface StateI {
 }
 
 export default defineComponent({
+  name: 'GroupPage',
   components: {
     Loader: () =>
       import(
