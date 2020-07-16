@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { Course, courseApi } from '~/api/courses.ts'
+import { CourseIndex, courseApi } from '~/api/courses.ts'
 
 /**
  * Миксин загрузки списка предметов
@@ -8,9 +8,9 @@ import { Course, courseApi } from '~/api/courses.ts'
 export default class CoursesList extends Vue {
   /**
    * Список предметов
-   * @type {Course[]}
+   * @type {CourseIndex[]}
    */
-  public courses: Course[] = []
+  public courses: CourseIndex[] = []
 
   /**
    * Флаг загрузки списка предметов
@@ -28,7 +28,7 @@ export default class CoursesList extends Vue {
    */
   private async loadCourses(): Promise<void> {
     try {
-      const { data } = await courseApi.loadData()
+      const data = await courseApi.loadData()
 
       this.courses = data
       this.loadingCourses = false

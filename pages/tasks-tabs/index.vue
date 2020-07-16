@@ -178,13 +178,14 @@ export default defineComponent({
 
     /** Фильтры для api */
     const apiFilters = computed(() => {
-      const filters: any = { limit: 15, page: page.value, appointed: true }
+      const filters: any = { appointed: true }
+      const pages: any = { size: 15, number: page.value }
 
       if (filtredEventId.value) filters.event_id = Number(filtredEventId.value)
       if (!isCompleted.value) filters.expiration = taskType.value
       filters.accomplished = isCompleted.value
 
-      return { filters }
+      return { filters, pages }
     })
 
     /** Подгрузить задания */

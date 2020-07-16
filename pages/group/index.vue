@@ -1,69 +1,62 @@
 <template>
-  <Loader v-if="loading" :show-search="true" :show-cards="true" />
+  <v-skeleton-loader
+    v-if="loading"
+    :height="500"
+    type="table"
+    class="elevation-2"
+  />
 
   <div v-else>
-    <v-layout row wrap>
-      <Search v-model="search" />
-
-      <v-flex v-if="!filtredStudents.length" xs12 class="pa-3">
-        <v-alert type="info" prominent>
-          <span>{{ $t('group.empty') }}</span>
-        </v-alert>
-      </v-flex>
-
-      <v-flex
-        v-for="student in filtredStudents"
-        :key="student.id"
-        xs12
-        sm12
-        md4
-        class="pa-3"
-      >
-        <Card avatar-url="/images/writer.png">
-          <template v-slot:badges>
-            <span v-if="student.president">
-              {{ $t('students.president') }}
-            </span>
+    <Card class="group__wrapper">
+      <template v-slot:content>
+        <v-data-table
+          :headers="headers"
+          :items="students"
+          :items-per-page="10"
+          :footer-props="footerProps"
+          :single-expand="true"
+          :expanded.sync="expanded"
+          show-expand
+        >
+          <template #item.full_name="{ item }">
+            <span class="table-row-title">{{
+              item.full_name || item.email
+            }}</span>
           </template>
 
-          <template v-slot:title>
-            {{ student.full_name || student.email }}
+          <template #expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              <div class="group__info">
+                <v-img src="/images/writer.png" width="100" max-width="100" />
+
+                <div class="group__contact">
+                  <div>{{ $t('field.about') }}: {{ item.about || '-' }}</div>
+                  <div>{{ $t('field.phone') }}: {{ item.phone || '-' }}</div>
+                  <template v-for="social_network in item.social_networks">
+                    <div v-if="social_network" :key="social_network.network">
+                      {{ social_network.network }}: {{ social_network.url }}
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </td>
           </template>
-
-          <template v-slot:content>
-            <div>
-              <p v-if="student.email">Email: {{ student.email }}</p>
-              <p v-if="student.phone">
-                {{ $t('field.number') }}: {{ student.phone }}
-              </p>
-
-              <template v-for="social_network in student.social_networks">
-                <p v-if="social_network" :key="social_network.network">
-                  {{ social_network.network }}: {{ social_network.url }}
-                </p>
-              </template>
-
-              <p v-if="student.about">
-                {{ $t('field.about') }}: {{ student.about }}
-              </p>
-            </div>
-          </template>
-        </Card>
-      </v-flex>
-    </v-layout>
+        </v-data-table>
+      </template>
+    </Card>
   </div>
 </template>
 
 <script lang="ts">
 import {
   reactive,
-  computed,
   onMounted,
   toRefs,
+  computed,
   defineComponent
 } from '@vue/composition-api'
 import { getGroupUsers, Student } from '~/api/group-users.ts'
-import { search } from '~/utils/helpers.ts'
+import { useDataTableFooterProps } from '~/compositions/useDataTableFooterProps.ts'
 
 interface StateI {
   /** Строка поиска */
@@ -72,41 +65,47 @@ interface StateI {
   loading: Boolean
   /** Список студентов */
   students: Student[]
+  /**  Список открытых строк таблицы */
+  expanded: Student[]
 }
 
 export default defineComponent({
   name: 'GroupPage',
   components: {
-    Loader: () =>
-      import(
-        '~/components/UI-core/loaders/loader.vue' /* webpackChunkName: 'components/UI-core/loaders/loader' */
-      ),
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       ),
-    Search: () =>
+    ModalWrapper: () =>
       import(
-        '~/components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
+        '~/components/modal/modal-wrapper.vue' /*  webpackChunkName: 'components/modal/modal-wrapper' */
       )
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setup(props, context) {
+  setup(_, context) {
     /** Состояние */
     const state = reactive<StateI>({
       search: '',
       loading: true,
-      students: []
+      students: [],
+      expanded: []
     })
 
-    /** Отфильтрованный список студентов */
-    const filtredStudents = computed<Student[]>(() => {
-      if (!state.search) return state.students
+    /** Настройки для пагинации с локализацией */
+    const footerProps = useDataTableFooterProps(context)
 
-      return state.students.filter((student) =>
-        search(student.full_name || '', state.search)
-      )
-    })
+    /** Заголовки таблицы */
+    const headers = computed(() => [
+      {
+        text: context.root.$t('field.fullName'),
+        sortable: false,
+        value: 'full_name'
+      },
+      {
+        text: 'Email',
+        sortable: false,
+        value: 'email'
+      }
+    ])
 
     /** Загрузить список студентов */
     const loadData = async () => {
@@ -120,7 +119,20 @@ export default defineComponent({
 
     onMounted(() => loadData())
 
-    return { ...toRefs(state), filtredStudents }
+    return { ...toRefs(state), footerProps, headers }
   }
 })
 </script>
+
+<style scoped>
+.group__info {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.group__contact {
+  margin-left: 15px;
+}
+</style>

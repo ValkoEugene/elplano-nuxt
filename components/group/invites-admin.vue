@@ -20,7 +20,12 @@
       <template v-slot:title>{{ $t(`invites.invites`) }}</template>
 
       <template v-slot:content>
-        <v-data-table :headers="headers" :items="invites" :items-per-page="5">
+        <v-data-table
+          :headers="headers"
+          :items="invites"
+          :items-per-page="5"
+          :footer-props="footerProps"
+        >
           <template v-slot:item.status="{ item }">
             <v-chip class="ma-2" :color="colors[item.status]" label>{{
               $t(`invites.statuses.${item.status}`)
@@ -37,81 +42,91 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import {
+  defineComponent,
+  computed,
+  reactive,
+  toRefs,
+  onMounted
+} from '@vue/composition-api'
 import moment from '~/plugins/moment'
 import { getInvites, GroupInviteI } from '~/api/admin-invites.ts'
+import { useDataTableFooterProps } from '~/compositions/useDataTableFooterProps.ts'
+
+interface StateI {
+  /** Список приглашений */
+  invites: GroupInviteI[]
+  /** Флаг загрузки */
+  loading: boolean
+}
 
 export interface TableHeader {
   value: string
-  text: string
+  text: any
   sortable: boolean
 }
 
-/**
- * Компонент с списком приглашенных в группу
- */
-@Component({
+export default defineComponent({
   components: {
     SendInvite: () => import('./send-invite.vue'),
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
-  }
-})
-export default class InvitesAdmin extends Vue {
-  /**
-   * Заголовки таблицы
-   */
-  headers: TableHeader[] = [
-    { text: 'Email', sortable: false, value: 'email' },
-    { text: 'Статус', sortable: false, value: 'status' },
-    { text: 'Отправлено', sortable: false, value: 'sent_at' }
-  ]
+  },
+  setup(_, context) {
+    const state = reactive<StateI>({
+      invites: [],
+      loading: true
+    })
 
-  /**
-   * Цвета статусов
-   */
-  colors = {
-    pending: 'warning',
-    accepted: 'success'
-  }
+    /** Заголовки таблицы */
+    const headers = computed<TableHeader[]>(() => {
+      return [
+        { text: 'Email', sortable: false, value: 'email' },
+        {
+          text: context.root.$t('ui.status'),
+          sortable: false,
+          value: 'status'
+        },
+        { text: context.root.$t('ui.send'), sortable: false, value: 'sent_at' }
+      ]
+    })
 
-  /**
-   * Список приглашений
-   */
-  invites: GroupInviteI[] = []
+    /** Цвета статусов */
+    const colors = {
+      pending: 'warning',
+      accepted: 'success'
+    }
 
-  /**
-   * Флаг загрузки
-   */
-  loading: boolean = true
+    /** Загрузить список приглашений */
+    const loadData = async () => {
+      try {
+        state.invites = await getInvites()
+        state.loading = false
+      } catch (error) {
+        context.root.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+      }
+    }
+    onMounted(() => loadData())
 
-  mounted() {
-    this.loadData()
-  }
+    /** Форматировать дату */
+    const formatDate = (date: string): string => {
+      return date ? moment(date).format('DD.MM.YYYY') : '-'
+    }
 
-  /**
-   * Загрузить список приглашений
-   */
-  async loadData() {
-    try {
-      this.invites = await getInvites()
-      this.loading = false
-    } catch (error) {
-      this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+    const footerProps = useDataTableFooterProps(context)
+
+    return {
+      headers,
+      colors,
+      ...toRefs(state),
+      formatDate,
+      loadData,
+      footerProps
     }
   }
-
-  /**
-   * Форматировать дату
-   * @param {String} date - дата
-   * @returns {String}
-   */
-  formatDate(date: string): string {
-    return date ? moment(date).format('DD.MM.YYYY') : '-'
-  }
-}
+})
 </script>
 
 <style>

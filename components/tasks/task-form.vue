@@ -22,6 +22,7 @@
 
     <Date
       v-model.trim="localModel.expired_at"
+      :min="today"
       :label="$t('field.endAt')"
       :rules="[$rules.required]"
     />
@@ -104,6 +105,9 @@ export default class TaskForm extends Vue {
    */
   @Prop({ type: Array as () => Event[], required: true })
   readonly events!: Event[]
+
+  /** Текущая дата */
+  today = moment().toISOString()
 
   /**
    * Локальная модель Задания
@@ -196,9 +200,10 @@ export default class TaskForm extends Vue {
 
     if (!savedTask) return
 
+    const taskType = this.$route.query.tab
+
     // Проверяем попадает ли созданное задание под текущий фильтр
     if (!this.localModel.id) {
-      const taskType = this.$route.query.tab
       if (
         taskType === TaskQuery.today &&
         moment().isSame(savedTask.expired_at, 'day')
@@ -221,8 +226,32 @@ export default class TaskForm extends Vue {
       }
     }
 
-    if (!this.localModel.id) this.$emit('createdTask')
+    // Проверяем нужно ли убрать из списка обновленную задачу с учетом фильтров
+    if (this.localModel.id) {
+      if (
+        taskType === TaskQuery.today &&
+        !moment().isSame(savedTask.expired_at, 'day')
+      ) {
+        this.$vuexModules.Tasks.REMOVE_TASK(savedTask.id!)
+      } else if (
+        taskType === TaskQuery.tomorrow &&
+        !moment()
+          .add(1, 'd')
+          .isSame(savedTask.expired_at, 'day')
+      ) {
+        this.$vuexModules.Tasks.REMOVE_TASK(savedTask.id!)
+      } else if (
+        taskType === TaskQuery.upcoming &&
+        !moment()
+          .add(1, 'd')
+          .isBefore(moment(savedTask.expired_at))
+      ) {
+        this.$vuexModules.Tasks.REMOVE_TASK(savedTask.id!)
+      }
+    }
 
+    if (!this.localModel.id) this.$emit('createdTask')
+    this.$emit('onSave')
     this.localModel = { ...savedTask }
   }
 }

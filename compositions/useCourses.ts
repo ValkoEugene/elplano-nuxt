@@ -1,10 +1,15 @@
 import { reactive, onMounted, toRefs } from '@vue/composition-api'
-import { Course, courseApi } from '~/api/courses.ts'
+import {
+  CourseIndex,
+  CourseEditModel,
+  CourseShow,
+  courseApi
+} from '~/api/courses.ts'
 import { VuexModules } from '~/plugins/VuexDecaratorsModules.ts'
 
 interface CoursesState {
   /** Список предметов */
-  courses: Course[]
+  courses: CourseIndex[]
   /** Флаг загрузки */
   loading: boolean
   /** Флаг процесса обновления */
@@ -26,7 +31,7 @@ export const useCourses = (vuexState: VuexModules) => {
   /** Загрузить список предметов */
   const loadData = async () => {
     try {
-      const { data } = await courseApi.loadData()
+      const data = await courseApi.loadData()
 
       state.courses = data
       state.loading = false
@@ -37,12 +42,14 @@ export const useCourses = (vuexState: VuexModules) => {
   onMounted(() => loadData())
 
   /** Установить список предметов */
-  const setCourses = (courses: Course[]): void => {
+  const setCourses = (courses: CourseIndex[]): void => {
     state.courses = courses
   }
 
   /** Создать предмет */
-  const create = async (data: Course): Promise<Course | undefined> => {
+  const create = async (
+    data: CourseEditModel
+  ): Promise<CourseShow | undefined> => {
     try {
       state.updating = true
       const course = await courseApi.create(data)
@@ -57,11 +64,13 @@ export const useCourses = (vuexState: VuexModules) => {
   }
 
   /** Обновить предмет */
-  const update = async (data: Course): Promise<Course | undefined> => {
+  const update = async (
+    data: CourseEditModel
+  ): Promise<CourseShow | undefined> => {
     try {
       state.updating = true
 
-      const course = await courseApi.update(data, data.id!)
+      const course = await courseApi.update(data)
       state.courses = state.courses.map((item) =>
         item.id === course.id ? course : item
       )

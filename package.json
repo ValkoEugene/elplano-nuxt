@@ -29,7 +29,7 @@
     "lodash.clonedeep": "^4.5.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.27",
-    "nuxt": "2.12.1",
+    "nuxt": "2.13.3",
     "nuxt-material-design-icons": "^1.0.4",
     "shrink-ray-current": "^4.1.2",
     "vue-content-loader": "^0.2.2",

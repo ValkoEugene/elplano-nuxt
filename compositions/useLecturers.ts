@@ -1,10 +1,15 @@
 import { reactive, onMounted, toRefs } from '@vue/composition-api'
-import { Lecturer, lecturersApi } from '~/api/lecturers.ts'
+import {
+  LecturerIndex,
+  lecturersApi,
+  LecturersEditModel,
+  LecturerShow
+} from '~/api/lecturers.ts'
 import { VuexModules } from '~/plugins/VuexDecaratorsModules.ts'
 
 interface LecturersState {
   /** Список преподавателей */
-  lecturers: Lecturer[]
+  lecturers: LecturerIndex[]
   /** Флаг загрузки */
   loading: boolean
   /** Флаг процесса обновления */
@@ -14,8 +19,12 @@ interface LecturersState {
 /**
  * Композиция для преподавателей
  * @param vuexState - хранилище vuex TODO через useStore
+ * @param loadOnMount - флаг что необходимо подгружать список при маунте
  */
-export const useLecturers = (vuexState: VuexModules) => {
+export const useLecturers = (
+  vuexState: VuexModules,
+  loadOnMount: boolean = true
+) => {
   /** Состояние */
   const state = reactive<LecturersState>({
     lecturers: [],
@@ -28,9 +37,7 @@ export const useLecturers = (vuexState: VuexModules) => {
    */
   const loadData = async () => {
     try {
-      const { data } = await lecturersApi.loadData()
-
-      state.lecturers = data
+      state.lecturers = await lecturersApi.loadData()
       state.loading = false
     } catch (error) {
       vuexState.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
@@ -38,7 +45,9 @@ export const useLecturers = (vuexState: VuexModules) => {
   }
 
   /** Создать преподавателя */
-  const create = async (data: Lecturer): Promise<Lecturer | undefined> => {
+  const create = async (
+    data: LecturersEditModel
+  ): Promise<LecturerShow | undefined> => {
     try {
       state.updating = true
       const lecturer = await lecturersApi.create(data)
@@ -53,11 +62,13 @@ export const useLecturers = (vuexState: VuexModules) => {
   }
 
   /** Обновить преподавателя */
-  const update = async (data: Lecturer): Promise<Lecturer | undefined> => {
+  const update = async (
+    data: LecturersEditModel
+  ): Promise<LecturerShow | undefined> => {
     try {
       state.updating = true
 
-      const lecturer = await lecturersApi.update(data, data.id!)
+      const lecturer = await lecturersApi.update(data)
       state.lecturers = state.lecturers.map((item) =>
         item.id === lecturer.id ? lecturer : item
       )
@@ -84,11 +95,13 @@ export const useLecturers = (vuexState: VuexModules) => {
   }
 
   /** Установить преподавателей */
-  const setLecturers = (lecturers: Lecturer[]): void => {
+  const setLecturers = (lecturers: LecturerIndex[]): void => {
     state.lecturers = lecturers
   }
 
-  onMounted(() => loadData())
+  onMounted(() => {
+    if (loadOnMount) loadData()
+  })
 
   return {
     ...toRefs(state),

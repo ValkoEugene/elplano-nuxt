@@ -27,7 +27,7 @@ export class Snackbars extends VuexModule implements SnackbarsStateI {
   }
 
   @Mutation
-  public ADD_SNACKBARS(snackbars: SnackbarI[]) {
+  public ADD_SNACKBARS(snackbars: SnackbarI[] = []) {
     this.snackbars = [...this.snackbars, ...snackbars]
   }
 }
