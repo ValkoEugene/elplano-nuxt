@@ -91,6 +91,7 @@ const rulesPlugin: Plugin = (context, inject) => {
      * Валидатор проверки на соответствие строки валидному email
      */
     email(v: any): string | true {
+      if (!v) return true
       if (typeof v !== 'string') return 'error validation type'
       return v && !v.includes('@') ? getErrorText('email') : true
     },

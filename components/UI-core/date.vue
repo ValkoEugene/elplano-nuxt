@@ -14,13 +14,16 @@
         v-model="localDate"
         :locale="$store.state.i18n.locale"
         scrollable
+        :min="min"
+        :max="max"
       >
-        <v-btn text color="primary" @click="cancel">{{
-          $t('ui.cancel')
-        }}</v-btn>
-        <v-btn text color="primary" :disabled="!localDate" @click="save"
-          >OK</v-btn
-        >
+        <v-btn text color="primary" @click="cancel">
+          {{ $t('ui.cancel') }}
+        </v-btn>
+
+        <v-btn text color="primary" :disabled="!localDate" @click="save">
+          OK
+        </v-btn>
       </v-date-picker>
     </v-dialog>
   </div>
@@ -53,6 +56,14 @@ export default class Date extends Vue {
    */
   @Prop({ type: Array as () => Rule[], default: () => [] })
   readonly rules!: Rule[]
+
+  /** Ограничение по мин. дате */
+  @Prop({ type: String, default: '' })
+  readonly min: string
+
+  /** Ограничение по макс. дате */
+  @Prop({ type: String, default: '' })
+  readonly max: string
 
   /**
    * Локальная дата

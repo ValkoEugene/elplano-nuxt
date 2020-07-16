@@ -12,7 +12,7 @@
       {{ course.title }}
     </template>
 
-    <template v-slot:content>
+    <!-- <template v-slot:content>
       <div>
         <span class="font-weight-bold">{{ $t('lecturers.lecturers') }}:</span>
         <span v-if="!course.lecturer_ids.length">-</span>
@@ -26,7 +26,7 @@
           </div>
         </template>
       </div>
-    </template>
+    </template> -->
 
     <template v-slot:menu>
       <v-list-item :disabled="true">
@@ -50,7 +50,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Course } from '~/api/courses.ts'
+import { CourseIndex } from '~/api/courses.ts'
 
 @Component({
   components: {
@@ -72,8 +72,8 @@ export default class CourseCard extends Vue {
   /**
    * Предмет
    */
-  @Prop({ type: Object as () => Course, required: true })
-  readonly course!: Course
+  @Prop({ type: Object as () => CourseIndex, required: true })
+  readonly course!: CourseIndex
 
   /**
    * Флаг процесса обновления
@@ -99,7 +99,7 @@ export default class CourseCard extends Vue {
   /**
    * Редактировать предметт
    */
-  edit(course: Course) {
+  edit(course: CourseIndex) {
     this.$emit('editCourse', course)
   }
 }

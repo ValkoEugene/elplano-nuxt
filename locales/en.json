@@ -81,6 +81,9 @@
   },
   "ui": {
     "own": "Own",
+    "actions": "Actions",
+    "status": "Status",
+    "send": "Sended",
     "allGroup": "For all group",
     "studentSelection": "Student selection",
     "selectAll": "Select all",
@@ -96,10 +99,17 @@
     "a2hsButton": "Add to home screen",
     "no-data": "No results",
     "add-enter": "Press enter to add",
+    "yes": "Yes",
+    "no": "No",
     "card": {
       "badges": {
         "active": "Active"
       }
+    },
+    "dataTable": {
+      "itemsPerPageAll": "All",
+      "itemsPerPageText": "Rows per page:",
+      "pageText": "{0}-{1} of {2}"
     }
   },
   "student": {

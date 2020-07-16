@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { Lecturer, lecturersApi } from '~/api/lecturers.ts'
+import { LecturerIndex, lecturersApi } from '~/api/lecturers.ts'
 
 /**
  * Миксин загрузки списка преподавателей
@@ -10,7 +10,7 @@ export default class LecturersList extends Vue {
    * Список преподавателей
    * @type {Lecturer[]}
    */
-  public lecturers: Lecturer[] = []
+  public lecturers: LecturerIndex[] = []
 
   /**
    * Флаг загрузки списка преподавателей
@@ -28,9 +28,7 @@ export default class LecturersList extends Vue {
    */
   private async loadLecturers(): Promise<void> {
     try {
-      const { data } = await lecturersApi.loadData()
-
-      this.lecturers = data
+      this.lecturers = await lecturersApi.loadData()
       this.loadingLecturers = false
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)

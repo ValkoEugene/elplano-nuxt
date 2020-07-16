@@ -13,6 +13,7 @@
         :task="taskModel"
         :events="events"
         @createdTask="closeModal"
+        @onSave="visible = false"
       />
 
       <TaskPreview

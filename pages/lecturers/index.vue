@@ -1,63 +1,67 @@
 <template>
-  <Loader v-if="loading" :show-search="true" :show-cards="true" />
+  <v-skeleton-loader
+    v-if="loading"
+    :height="500"
+    type="table"
+    class="elevation-2"
+  />
 
   <div v-else>
-    <v-layout row wrap>
-      <Search v-model="search" />
-
-      <v-flex v-if="!filtredLecturers.length" xs12 class="pa-3">
-        <v-alert type="info" prominent>
-          <span>{{ $t('lecturers.empty') }}</span>
-        </v-alert>
-      </v-flex>
-
-      <v-flex
-        v-for="lecturer in filtredLecturers"
-        :key="lecturer.id"
-        xs12
-        sm12
-        md4
-        class="pa-3"
-      >
-        <Card avatar-url="/images/professor.png">
-          <template v-slot:badges>
-            <span v-if="lecturer.active">
-              {{ $t('ui.card.badges.active') }}
-            </span>
+    <Card class="lecturer__wrapper">
+      <template v-slot:content>
+        <v-data-table
+          :headers="headers"
+          :items="lecturers"
+          :items-per-page="10"
+          :footer-props="footerProps"
+          :single-expand="true"
+          :expanded.sync="expanded"
+          show-expand
+        >
+          <template #item.view="{ item }">
+            <span class="table-row-title">{{ item.view }}</span>
           </template>
 
-          <template v-slot:title>
-            {{ lecturer.view }}
+          <template #item.active="{ item }">
+            <v-chip
+              class="ma-2"
+              :color="item.active ? 'success' : 'warning'"
+              label
+            >
+              {{ $t(`ui.${item.active ? 'yes' : 'no'}`) }}
+            </v-chip>
           </template>
 
-          <template v-slot:content>
-            <div>
-              <span class="font-weight-bold">{{ $t('lesson.lessons') }}:</span>
-              <span v-if="!lecturer.course_ids.length">-</span>
-
-              <template v-else>
-                <div v-for="id in lecturer.course_ids" :key="id" class="mb-1">
-                  {{ getCourseView(id) }}
-                </div>
-              </template>
-            </div>
+          <template #expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              <lecturer-courses
+                :key="item.id"
+                :lecturer-id="item.id"
+                :courses="courses"
+              />
+            </td>
           </template>
 
-          <template v-if="isPresident" v-slot:menu>
-            <EditButton :disabled="updating" @click="edit(lecturer)" />
+          <template v-if="isPresident" #item.actions="{ item }">
+            <v-icon small @click.stop="edit(item)">
+              mdi-pencil
+            </v-icon>
 
-            <DeleteButton
-              :id="lecturer.id"
-              :disabled="updating"
+            <table-delete-icon
+              :row-id="item.id"
               :confirm-text="$t('lecturers.confirm')"
-              @delete="deleteLecturer(lecturer.id)"
+              @onDelete="(id) => deleteLecturer(id)"
             />
           </template>
-        </Card>
-      </v-flex>
-    </v-layout>
+        </v-data-table>
+      </template>
+    </Card>
 
-    <ModalWrapper v-model="visible" @action="save">
+    <ModalWrapper v-model="visible">
+      <template #action>
+        <v-btn dark text @click="save">{{ $t(`actions.save`) }}</v-btn>
+      </template>
+
       <template #content>
         <v-form ref="form" :lazy-validation="true">
           <v-checkbox
@@ -89,6 +93,22 @@
             outlined
           />
 
+          <v-text-field
+            v-model.trim="editModel.phone"
+            :label="$t('field.phone')"
+            :rules="[]"
+            type="text"
+            outlined
+          />
+
+          <v-text-field
+            v-model.trim="editModel.email"
+            label="Email"
+            :rules="[$rules.email]"
+            type="text"
+            outlined
+          />
+
           <v-select
             v-model="editModel.course_ids"
             :items="courses"
@@ -103,7 +123,7 @@
       </template>
     </ModalWrapper>
 
-    <AddNew @click="edit(lectureEmptyModel)" />
+    <AddNew @click="addNew" />
   </div>
 </template>
 
@@ -115,20 +135,57 @@ import {
   ref,
   defineComponent
 } from '@vue/composition-api'
-import { Lecturer } from '~/api/lecturers.ts'
+import {
+  LecturerIndex,
+  lecturersApi,
+  LecturersEditModel
+} from '~/api/lecturers.ts'
 import { useCourses } from '~/compositions/useCourses.ts'
 import { useLecturers } from '~/compositions/useLecturers.ts'
-import { search } from '~/utils/helpers.ts'
+import { useDataTableFooterProps } from '~/compositions/useDataTableFooterProps.ts'
 
-interface LecturersState {
-  /** Строка поиска */
-  search: string
+const components = {
+  AddNew: () =>
+    import(
+      '~/components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
+    ),
+  DeleteButton: () =>
+    import(
+      '~/components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
+    ),
+  EditButton: () =>
+    import(
+      '~/components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
+    ),
+  Card: () =>
+    import(
+      '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+    ),
+  ModalWrapper: () =>
+    import(
+      '~/components/modal/modal-wrapper.vue' /*  webpackChunkName: 'components/modal/modal-wrapper' */
+    ),
+  LecturerCourses: () =>
+    import(
+      '~/components/lecturers/lecturer-courses.vue' /* webpackChunkName: 'components/lecturers/lecturer-courses' */
+    ),
+  TableDeleteIcon: () =>
+    import(
+      '~/components/UI-core/table-delete-icon.vue' /* webpackChunkName: 'components/UI-core/table-delete-icon' */
+    )
+}
+
+interface StateI {
   /** Пустая модель преподавателя */
-  lectureEmptyModel: Lecturer
+  lectureEmptyModel: LecturersEditModel
   /** Модель преподавателя на редактирование  */
-  editModel: Lecturer
+  editModel: LecturersEditModel
   /** Флаг показа модального окна */
   visible: boolean
+  /** Флаг загрузки информации о преподавателе */
+  loadLecturerInfo: boolean
+  /** Список открытых строк таблицы */
+  expanded: LecturerIndex[]
 }
 
 interface Form {
@@ -138,40 +195,44 @@ interface Form {
 
 export default defineComponent({
   name: 'LecturersPage',
-  components: {
-    Loader: () =>
-      import(
-        '~/components/UI-core/loaders/loader.vue' /* webpackChunkName: 'components/UI-core/loaders/loader' */
-      ),
-    Search: () =>
-      import(
-        '~/components/UI-core/search.vue' /* webpackChunkName: 'components/UI-core/search' */
-      ),
-    AddNew: () =>
-      import(
-        '~/components/UI-core/add-new.vue' /* webpackChunkName: 'components/UI-core/add-new' */
-      ),
-    DeleteButton: () =>
-      import(
-        '~/components/UI-core/delete-button.vue' /* webpackChunkName: 'components/UI-core/delete-button' */
-      ),
-    EditButton: () =>
-      import(
-        '~/components/UI-core/edit-button.vue' /* webpackChunkName: 'components/UI-core/edit-button' */
-      ),
-    Card: () =>
-      import(
-        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
-      ),
-    ModalWrapper: () =>
-      import(
-        '~/components/modal/modal-wrapper.vue' /*  webpackChunkName: 'components/modal/modal-wrapper' */
-      )
-  },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setup(props, context) {
+  components,
+  setup(_, context) {
+    const vuexModules = context.root.$vuexModules
+
+    /** Настройки для пагинации с локализацией */
+    const footerProps = useDataTableFooterProps(context)
+
     /** Ссылка на компонент с формой */
     const form = ref<Form>(null)
+
+    /** Флаг что пользователь является старостой */
+    const isPresident = vuexModules.User.isPresident
+
+    /** Заголовки таблицы */
+    const headers = computed(() => {
+      const headers = [
+        {
+          text: context.root.$t('field.fullName'),
+          sortable: false,
+          value: 'view',
+          width: isPresident ? '70%' : '80%'
+        },
+        {
+          text: context.root.$t('ui.card.badges.active'),
+          sortable: false,
+          value: 'active'
+        }
+      ]
+
+      if (isPresident)
+        headers.push({
+          text: context.root.$t('ui.actions'),
+          value: 'actions',
+          sortable: false
+        })
+
+      return headers
+    })
 
     const {
       lecturers,
@@ -181,6 +242,7 @@ export default defineComponent({
       update,
       deleteLecturer
     } = useLecturers(context.root.$vuexModules)
+
     const { courses, loading: loadingCourses } = useCourses(
       context.root.$vuexModules
     )
@@ -192,35 +254,24 @@ export default defineComponent({
       last_name: '',
       patronymic: '',
       avatar: '',
+      email: '',
+      phone: '',
       course_ids: []
     }
 
     /** Состояние компонента */
-    const state = reactive<LecturersState>({
-      search: '',
+    const state = reactive<StateI>({
       lectureEmptyModel: { ...lectureEmptyModel },
       editModel: { ...lectureEmptyModel },
-      visible: false
+      visible: false,
+      expanded: [],
+      loadLecturerInfo: false
     })
 
     /** Флаг загрузки данных */
     const loading = computed(
-      () => loadingCourses.value || loadingLecturers.value
+      () => (isPresident && loadingCourses.value) || loadingLecturers.value
     )
-
-    /** Флаг что пользователь является старостой */
-    const isPresident = computed(
-      () => context.root.$vuexModules.User.isPresident
-    )
-
-    /** Отфильтрованный список преподавателей */
-    const filtredLecturers = computed(() => {
-      if (!state.search) return lecturers.value
-
-      return lecturers.value.filter((lecturer) =>
-        search(lecturer.view || '', state.search)
-      )
-    })
 
     /** Получить отображение предмета по id */
     const getCourseView = (id: string): string => {
@@ -229,23 +280,35 @@ export default defineComponent({
       return course ? course.title : '-'
     }
 
-    /** Инициализировать редактирование преподавателя */
-    const edit = (model: Lecturer): void => {
-      state.editModel = { ...model }
+    /** Добавить новый предмет */
+    const addNew = () => {
+      state.editModel = { ...state.lectureEmptyModel }
       state.visible = true
+    }
+
+    /** Редактировать предмет */
+    const edit = async (lecturer: LecturerIndex) => {
+      try {
+        state.loadLecturerInfo = true
+        state.expanded = []
+        state.editModel = await lecturersApi.show(lecturer.id!)
+        state.visible = true
+      } catch (error) {
+        vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
+      } finally {
+        state.loadLecturerInfo = false
+      }
     }
 
     /** Сохранить изменения преподавателя */
     const save = async () => {
       if (!form.value || !form.value.validate()) return
 
-      const response = state.editModel.id
+      state.editModel.id
         ? await update(state.editModel)
         : await create(state.editModel)
 
-      if (!response) return
-
-      state.editModel = { ...response }
+      state.visible = false
     }
 
     return {
@@ -253,7 +316,6 @@ export default defineComponent({
       loading,
       updating,
       lecturers,
-      filtredLecturers,
       courses,
       isPresident,
       edit,
@@ -262,8 +324,26 @@ export default defineComponent({
       update,
       deleteLecturer,
       form,
-      save
+      save,
+      footerProps,
+      addNew,
+      headers
     }
   }
 })
 </script>
+
+<style>
+.table-row-title {
+  font-size: 16px;
+}
+
+/** Добавляем отступ чтобы кнопка добавления не захадила на таблицу */
+.lecturer__wrapper {
+  margin-bottom: 65px;
+}
+
+.lecturer__wrapper .v-data-table-header.v-data-table-header-mobile {
+  display: none;
+}
+</style>

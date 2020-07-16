@@ -121,9 +121,19 @@ export class Tasks extends VuexModule implements TasksStateI {
       this.SET_ALL_TASKS_LOADED(false)
 
       this.SET_APPENDING(true)
-      if (params.filters.page === 1) this.SET_LOADING(true)
+      if (params.pages.number === 1) this.SET_LOADING(true)
+      const { filters, pages } = params
+      const formatedParams: { [key: string]: any } = {}
 
-      const { data, meta } = await taskApi.loadData(params)
+      for (const key in filters) {
+        formatedParams[`filter[${key}]`] = filters[key]
+      }
+
+      for (const key in pages) {
+        formatedParams[`page[${key}]`] = pages[key]
+      }
+
+      const { data, meta } = await taskApi.loadData(formatedParams)
 
       this.ADD_TASKS(data)
 
@@ -136,7 +146,7 @@ export class Tasks extends VuexModule implements TasksStateI {
         error.snackbarErrors
       )
     } finally {
-      if (params.filters.page === 1) this.SET_LOADING(false)
+      if (params.pages.number === 1) this.SET_LOADING(false)
       this.SET_APPENDING(false)
     }
   }

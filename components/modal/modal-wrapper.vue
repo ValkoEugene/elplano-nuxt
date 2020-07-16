@@ -9,8 +9,11 @@
             <v-icon>close</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
-          <v-toolbar-items v-if="actionType">
+          <v-toolbar-items>
+            <slot v-if="$scopedSlots.action" name="action" />
+
             <v-btn
+              v-else-if="actionType && !hideDefaultAction"
               dark
               text
               :loading="updating"
@@ -56,6 +59,12 @@ export default class ModalWrapper extends Vue {
    */
   @Prop({ type: String, default: 'save' })
   private readonly actionType: string
+
+  /**
+   * Флаг скрытия кнопки действий по умолчанию
+   */
+  @Prop({ type: Boolean, default: false })
+  private readonly hideDefaultAction: boolean
 
   mounted() {
     window.document.addEventListener('keydown', this.escHandler)
