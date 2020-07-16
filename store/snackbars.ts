@@ -1,4 +1,4 @@
-import { VuexModule, Module, Mutation, getModule } from 'vuex-module-decorators'
+import { VuexModule, Module, Mutation } from 'vuex-module-decorators'
 
 export const name = 'snackbars'
 

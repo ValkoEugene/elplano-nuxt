@@ -1,5 +1,6 @@
+// eslint-disable-next-line import/no-unresolved
 import { Plugin } from '@nuxt/types'
-import { search } from '~/utils/helpers'
+import { search } from '~/utils/helpers.ts'
 
 declare module 'vue/types/vue' {
   interface Vue {

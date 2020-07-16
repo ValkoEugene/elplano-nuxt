@@ -1,5 +1,5 @@
 import { User } from '~/store/user.ts'
-import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow'
+import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow.ts'
 
 declare global {
   interface Window {

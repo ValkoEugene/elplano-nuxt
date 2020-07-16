@@ -97,6 +97,7 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
   get useDarkTheme(): boolean {
     return this.$vuexModules.User.useDarkTheme
   }
+
   @Watch('useDarkTheme')
   onUseDarkTheme() {
     this.$vuetify.theme.dark = this.useDarkTheme
@@ -133,6 +134,7 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
   }
 
   mounted() {
+    console.log('mounted loyout')
     this.$vuexModules.User.getUserInfo()
     window.document.body.classList.add('default-layout')
     window.document.documentElement.classList.add('default-layout')

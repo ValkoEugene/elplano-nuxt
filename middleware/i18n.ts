@@ -1,5 +1,6 @@
+// eslint-disable-next-line import/no-unresolved
 import { Context } from '@nuxt/types'
-import { Locales } from '~/store/i18n'
+import { Locales } from '~/store/i18n.ts'
 
 export default function({ isHMR, app, store, route, error }: Context) {
   const defaultLocale = app.i18n.fallbackLocale

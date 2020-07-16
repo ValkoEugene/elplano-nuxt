@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { Plugin } from '@nuxt/types'
 import { getModule } from 'vuex-module-decorators'
 import { Group } from '~/store/group.ts'

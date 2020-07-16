@@ -30,7 +30,7 @@ const store = () =>
     state: {},
     actions: {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      async nuxtServerInit({ commit }, { route, req, $vuetify }: Context) {
+      nuxtServerInit({ commit }, { route, req, $vuetify }: Context) {
         console.log(
           'nuxtServerInit ',
           route.fullPath,

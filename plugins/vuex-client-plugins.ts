@@ -1,5 +1,5 @@
 import createMutationsSharer from 'vuex-shared-mutations'
-// import createPersistedState from 'vuex-persistedstate'
+// eslint-disable-next-line import/no-unresolved
 import { Plugin } from '@nuxt/types'
 
 const vuexClientPlugins: Plugin = (context) => {

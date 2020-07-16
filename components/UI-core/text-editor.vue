@@ -40,6 +40,7 @@ export default class TextEditor extends Vue {
 
     ['clean']
   ]
+
   /**
    * Локальная копия значения
    */
