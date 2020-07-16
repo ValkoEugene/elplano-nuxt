@@ -1,5 +1,5 @@
 import baseAxios from 'axios'
-import axios from '~/plugins/axios'
+import axios from '~/plugins/axios.ts'
 
 export type AdminAbout = {
   app_title: string

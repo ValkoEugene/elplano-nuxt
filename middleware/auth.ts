@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { Context } from '@nuxt/types'
 import {
   getAccessTokenFromCookie,

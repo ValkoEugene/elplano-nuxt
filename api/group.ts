@@ -1,5 +1,5 @@
-import axios from '~/plugins/axios'
-import ApiCRUD, { ApiCRUDConfig } from './ApiCRUD'
+import axios from '~/plugins/axios.ts'
+import ApiCRUD, { ApiCRUDConfig } from '~/api/ApiCRUD.ts'
 
 export interface GroupI {
   id?: string
@@ -26,6 +26,7 @@ const formatDataForApi = (data: GroupI): { group: GroupI } => ({
  * Переопределеяем show и update т.к. у групп не используется id в url
  */
 class GoupApi extends ApiCRUD<GroupI> {
+  // eslint-disable-next-line no-useless-constructor
   constructor(config: ApiCRUDConfig<GroupI>) {
     super(config)
   }

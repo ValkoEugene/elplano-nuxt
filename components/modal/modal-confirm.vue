@@ -83,6 +83,7 @@ export default class ModalConfirm extends Vue {
   mounted() {
     this.$root.$on(ModalConfirmRootEvent.SHOW_CONFIRM, this.showConfirmation)
   }
+
   destroyed() {
     this.$root.$off(ModalConfirmRootEvent.SHOW_CONFIRM, this.showConfirmation)
   }

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
+// eslint-disable-next-line import/no-unresolved
 import { Context } from '@nuxt/types'
 
 Vue.use(VueI18n)
