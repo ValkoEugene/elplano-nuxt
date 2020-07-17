@@ -1,13 +1,43 @@
 <template>
-  <v-skeleton-loader
-    v-if="loading"
-    :height="500"
-    type="table"
-    class="elevation-2"
-  />
+  <div v-if="loading">
+    <v-skeleton-loader
+      v-for="i in 10"
+      :key="i"
+      :height="68"
+      type="list-item"
+      class="elevation-2 mb-2"
+    />
+  </div>
 
-  <div v-else>
-    <Card class="course__wrapper">
+  <div v-else class="course__wrapper">
+    <v-expansion-panels v-model="expanded">
+      <v-expansion-panel
+        v-for="(course, index) in courses"
+        :key="course.id"
+        class="mb-2"
+      >
+        <v-expansion-panel-header>
+          <div class="header">
+            <div>{{ course.title }}</div>
+            <v-chip v-if="course.active" class="ma-2" color="info" label>
+              {{ $t(`ui.card.badges.active`) }}
+            </v-chip>
+          </div>
+        </v-expansion-panel-header>
+
+        <v-expansion-panel-content>
+          <course-info
+            v-if="index === expanded"
+            :key="course.id"
+            :course-id="course.id"
+            @onEdit="edit(course)"
+            @onDelete="(id) => deleteCourse(id)"
+          />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
+    <Card v-if="false">
       <template v-slot:content>
         <v-data-table
           :headers="headers"
@@ -105,7 +135,6 @@ import {
 import { CourseEditModel, CourseIndex, courseApi } from '~/api/courses.ts'
 import { useCourses } from '~/compositions/useCourses.ts'
 import { useLecturers } from '~/compositions/useLecturers.ts'
-import { useDataTableFooterProps } from '~/compositions/useDataTableFooterProps.ts'
 
 const components = {
   Card: () =>
@@ -120,13 +149,9 @@ const components = {
     import(
       '~/components/modal/modal-wrapper.vue' /*  webpackChunkName: 'components/modal/modal-wrapper' */
     ),
-  CourseLecturers: () =>
+  CourseInfo: () =>
     import(
-      '~/components/courses/course-lecturers.vue' /* webpackChunkName: 'components/courses/course-lecturers' */
-    ),
-  CourseDelete: () =>
-    import(
-      '~/components/courses/course-delete.vue' /* webpackChunkName: 'components/courses/course-delete' */
+      '~/components/courses/course-info.vue' /* webpackChunkName: 'components/courses/course-info' */
     )
 }
 
@@ -139,8 +164,8 @@ interface StateI {
   visibleForm: boolean
   /** Флаг загрузки информации о предмете */
   loadCourseInfo: boolean
-  /** Список открытых строк таблицы */
-  expanded: CourseIndex[]
+  /** Индекс открытого на просмотр элемента */
+  expanded: number | undefined
 }
 
 interface Form {
@@ -154,40 +179,11 @@ export default defineComponent({
   setup(_, context) {
     const vuexModules = context.root.$vuexModules
 
-    /** Настройки для пагинации с локализацией */
-    const footerProps = useDataTableFooterProps(context)
-
     /** Ссылка на компонент с формой */
     const form = ref<Form>(null)
 
     /** Флаг что пользователь является старостой */
     const isPresident = vuexModules.User.isPresident
-
-    /** Заголовки таблицы */
-    const headers = computed(() => {
-      const headers = [
-        {
-          text: context.root.$t('lesson.lessons'),
-          sortable: false,
-          value: 'title',
-          width: isPresident ? '70%' : '80%'
-        },
-        {
-          text: context.root.$t('ui.card.badges.active'),
-          sortable: false,
-          value: 'active'
-        }
-      ]
-
-      if (isPresident)
-        headers.push({
-          text: context.root.$t('ui.actions'),
-          value: 'actions',
-          sortable: false
-        })
-
-      return headers
-    })
 
     /** Пустая модель предмета */
     const courseEmptyModel: CourseEditModel = {
@@ -203,7 +199,7 @@ export default defineComponent({
       courseEmptyModel: { ...courseEmptyModel },
       editModel: { ...courseEmptyModel },
       loadCourseInfo: false,
-      expanded: []
+      expanded: undefined
     })
 
     const {
@@ -246,7 +242,7 @@ export default defineComponent({
     const edit = async (course: CourseIndex) => {
       try {
         state.loadCourseInfo = true
-        state.expanded = []
+        state.expanded = undefined
         state.editModel = await courseApi.show(course.id!)
         state.visibleForm = true
       } catch (error) {
@@ -265,27 +261,29 @@ export default defineComponent({
       lecturers,
       save,
       deleteCourse,
-      headers,
       edit,
       addNew,
-      isPresident,
-      footerProps
+      isPresident
     }
   }
 })
 </script>
 
-<style>
-.table-row-title {
-  font-size: 16px;
+<style scoped>
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+}
+
+.mobile .header {
+  flex-direction: column-reverse;
+  align-items: center;
 }
 
 /** Добавляем отступ чтобы кнопка добавления не захадила на таблицу */
 .course__wrapper {
   margin-bottom: 65px;
-}
-
-.course__wrapper .v-data-table-header.v-data-table-header-mobile {
-  display: none;
 }
 </style>

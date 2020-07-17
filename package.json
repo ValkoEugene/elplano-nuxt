@@ -38,7 +38,7 @@
     "vue-infinite-scroll": "^2.0.2",
     "vue-property-decorator": "^8.2.2",
     "vue2-editor": "^2.10.2",
-    "vuetify": "2.2.21",
+    "vuetify": "2.3.4",
     "vuex-persistedstate": "^3.0.1",
     "vuex-shared-mutations": "1.0.2"
   },
