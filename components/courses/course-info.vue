@@ -1,9 +1,9 @@
 <template>
   <div class="course__lecturers-list">
-    <v-skeleton-loader
-      v-if="loadCourseInfo"
-      type="list-item-avatar-three-line"
-    />
+    <template v-if="loadInfo">
+      <v-skeleton-loader type="text" :width="150" />
+      <v-skeleton-loader type="list-item-avatar-three-line" />
+    </template>
 
     <div v-else-if="!showenModel.lecturers.length">
       {{ $t('lecturers.empty') }}
@@ -11,6 +11,10 @@
 
     <div v-else class="course-lecturers__content">
       <v-list>
+        <v-subheader class="courses__subheader">{{
+          $t('lecturers.lecturers')
+        }}</v-subheader>
+
         <div
           v-for="(lecturer, index) in showenModel.lecturers"
           :key="lecturer.id"
@@ -25,7 +29,13 @@
 
             <v-list-item-content>
               <v-list-item-title>
-                <v-chip v-if="lecturer.active" class="mb-2" color="info" label>
+                <v-chip
+                  v-if="lecturer.active"
+                  small
+                  class="mb-2"
+                  color="info"
+                  label
+                >
                   {{ $t('ui.card.badges.active') }}
                 </v-chip>
 
@@ -42,6 +52,23 @@
         </div>
       </v-list>
     </div>
+
+    <div v-if="isPresident" class="courses__actions">
+      <template v-if="loadInfo">
+        <v-skeleton-loader type="button" class="mr-2" />
+        <v-skeleton-loader type="button" />
+      </template>
+
+      <template v-else>
+        <v-btn class="mr-2" small color="primary" @click="edit">
+          {{ $t('ui.edit') }}
+        </v-btn>
+
+        <v-btn text small color="error" @click="confirmDelete">
+          {{ $t('ui.delete') }}
+        </v-btn>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -53,10 +80,11 @@ import {
   onMounted
 } from '@vue/composition-api'
 import { CourseShow, courseApi } from '~/api/courses.ts'
+import { useConfirmDelete } from '~/compositions/useConfirmDelete.ts'
 
 interface StateI {
   /** Флаг загрузки информации о предмете */
-  loadCourseInfo: Boolean
+  loadInfo: Boolean
   /** Модель предмета на просмотр */
   showenModel: CourseShow | null
 }
@@ -84,7 +112,7 @@ export default defineComponent({
     const vuexModules = context.root.$vuexModules
 
     const state = reactive<StateI>({
-      loadCourseInfo: true,
+      loadInfo: true,
       showenModel: null
     })
 
@@ -92,12 +120,12 @@ export default defineComponent({
     const show = async () => {
       try {
         state.showenModel = null
-        state.loadCourseInfo = true
+        state.loadInfo = true
         state.showenModel = await courseApi.show(props.courseId)
       } catch (error) {
         vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
       } finally {
-        state.loadCourseInfo = false
+        state.loadInfo = false
       }
     }
 
@@ -105,16 +133,36 @@ export default defineComponent({
       show()
     })
 
+    /** Флаг что пользователь является старостой */
+    const isPresident = context.root.$vuexModules.User.isPresident
+
+    const { confirmDelete } = useConfirmDelete(context, {
+      text: context.root.$t('lesson.confirm') as string,
+      id: props.courseId
+    })
+
+    /** Редактировать преподавателя */
+    const edit = () => {
+      context.emit('onEdit')
+    }
+
     return {
       ...toRefs(state),
-      show
+      show,
+      isPresident,
+      confirmDelete,
+      edit
     }
   }
 })
 </script>
 
 <style scoped>
-.course__lecturers-list {
-  padding: 15px;
+.courses__subheader {
+  height: 20px;
+}
+
+.courses__actions {
+  display: flex;
 }
 </style>

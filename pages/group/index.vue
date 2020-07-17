@@ -1,49 +1,43 @@
 <template>
-  <v-skeleton-loader
-    v-if="loading"
-    :height="500"
-    type="table"
-    class="elevation-2"
-  />
+  <div v-if="loading">
+    <v-skeleton-loader
+      v-for="i in 10"
+      :key="i"
+      :height="48"
+      type="list-item"
+      class="elevation-2 mb-2"
+    />
+  </div>
 
   <div v-else>
-    <Card class="group__wrapper">
-      <template v-slot:content>
-        <v-data-table
-          :headers="headers"
-          :items="students"
-          :items-per-page="10"
-          :footer-props="footerProps"
-          :single-expand="true"
-          :expanded.sync="expanded"
-          show-expand
-        >
-          <template #item.full_name="{ item }">
-            <span class="table-row-title">{{
-              item.full_name || item.email
-            }}</span>
-          </template>
+    <v-expansion-panels>
+      <v-expansion-panel
+        v-for="student in students"
+        :key="student.id"
+        class="mb-2"
+      >
+        <v-expansion-panel-header>{{
+          student.full_name || student.email
+        }}</v-expansion-panel-header>
 
-          <template #expanded-item="{ headers, item }">
-            <td :colspan="headers.length">
-              <div class="group__info">
-                <v-img src="/images/writer.png" width="100" max-width="100" />
+        <v-expansion-panel-content>
+          <div class="group__info">
+            <v-img src="/images/writer.png" width="100" max-width="100" />
 
-                <div class="group__contact">
-                  <div>{{ $t('field.about') }}: {{ item.about || '-' }}</div>
-                  <div>{{ $t('field.phone') }}: {{ item.phone || '-' }}</div>
-                  <template v-for="social_network in item.social_networks">
-                    <div v-if="social_network" :key="social_network.network">
-                      {{ social_network.network }}: {{ social_network.url }}
-                    </div>
-                  </template>
+            <div class="group__contact">
+              <div>Email: {{ student.email || '-' }}</div>
+              <div>{{ $t('field.about') }}: {{ student.about || '-' }}</div>
+              <div>{{ $t('field.phone') }}: {{ student.phone || '-' }}</div>
+              <template v-for="social_network in student.social_networks">
+                <div v-if="social_network" :key="social_network.network">
+                  {{ social_network.network }}: {{ social_network.url }}
                 </div>
-              </div>
-            </td>
-          </template>
-        </v-data-table>
-      </template>
-    </Card>
+              </template>
+            </div>
+          </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </div>
 </template>
 
@@ -52,60 +46,37 @@ import {
   reactive,
   onMounted,
   toRefs,
-  computed,
   defineComponent
 } from '@vue/composition-api'
 import { getGroupUsers, Student } from '~/api/group-users.ts'
-import { useDataTableFooterProps } from '~/compositions/useDataTableFooterProps.ts'
+
+const components = {
+  Card: () =>
+    import(
+      '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
+    ),
+  ModalWrapper: () =>
+    import(
+      '~/components/modal/modal-wrapper.vue' /*  webpackChunkName: 'components/modal/modal-wrapper' */
+    )
+}
 
 interface StateI {
-  /** Строка поиска */
-  search: string
   /** Флаг загрузки */
   loading: Boolean
   /** Список студентов */
   students: Student[]
-  /**  Список открытых строк таблицы */
-  expanded: Student[]
 }
 
 export default defineComponent({
   name: 'GroupPage',
-  components: {
-    Card: () =>
-      import(
-        '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
-      ),
-    ModalWrapper: () =>
-      import(
-        '~/components/modal/modal-wrapper.vue' /*  webpackChunkName: 'components/modal/modal-wrapper' */
-      )
-  },
+  components,
   setup(_, context) {
     /** Состояние */
     const state = reactive<StateI>({
-      search: '',
       loading: true,
-      students: [],
-      expanded: []
+      students: []
     })
-
-    /** Настройки для пагинации с локализацией */
-    const footerProps = useDataTableFooterProps(context)
-
-    /** Заголовки таблицы */
-    const headers = computed(() => [
-      {
-        text: context.root.$t('field.fullName'),
-        sortable: false,
-        value: 'full_name'
-      },
-      {
-        text: 'Email',
-        sortable: false,
-        value: 'email'
-      }
-    ])
 
     /** Загрузить список студентов */
     const loadData = async () => {
@@ -119,7 +90,7 @@ export default defineComponent({
 
     onMounted(() => loadData())
 
-    return { ...toRefs(state), footerProps, headers }
+    return { ...toRefs(state) }
   }
 })
 </script>
@@ -131,8 +102,15 @@ export default defineComponent({
   align-items: center;
   margin-bottom: 15px;
 }
+.mobile .group__info {
+  flex-direction: column;
+}
 
 .group__contact {
   margin-left: 15px;
+}
+.mobile .group__contact {
+  margin-left: 0;
+  margin-top: 15px;
 }
 </style>
