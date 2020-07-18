@@ -8,6 +8,8 @@
 
     <v-spacer></v-spacer>
 
+    <task-statstics />
+
     <v-menu left bottom>
       <template v-slot:activator="{ on }">
         <v-btn icon v-on="on">
@@ -36,7 +38,14 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { TOGGLE_SIDEBAR_ROOT_LISTENER } from '~/layouts/sidebar.vue'
 
-@Component({})
+@Component({
+  components: {
+    TaskStatstics: () =>
+      import(
+        '~/components/tasks/task-statistics.vue' /* webpackChunkName: 'components/tasks/task-statistics' */
+      )
+  }
+})
 export default class Header extends Vue {
   /**
    * Заголовки страниц в i18n

@@ -133,11 +133,14 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
     }
   }
 
-  mounted() {
+  async mounted() {
     console.log('mounted loyout')
-    this.$vuexModules.User.getUserInfo()
+
     window.document.body.classList.add('default-layout')
     window.document.documentElement.classList.add('default-layout')
+
+    await this.$vuexModules.User.getUserInfo()
+    this.$vuexModules.Tasks.loadStatistics()
   }
 
   beforeDestroy() {
