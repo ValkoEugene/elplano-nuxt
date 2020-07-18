@@ -5,9 +5,13 @@
     centered
     class="mb-3 task-tabs"
   >
-    <v-tab v-for="tab in taskTabs" :key="tab.view" :disabled="loading">
-      {{ tab.view }}
-    </v-tab>
+    <template v-for="tab in taskTabs">
+      <v-tab :key="tab.view" :disabled="loading">
+        <v-badge :content="`${tasksStatistics[tab.type]}`">
+          {{ tab.view }}
+        </v-badge>
+      </v-tab>
+    </template>
   </v-tabs>
 </template>
 
@@ -25,14 +29,39 @@ export enum TaskQuery {
 export default defineComponent({
   name: 'TaskTypes',
   setup(_, context) {
+    /** Статистика по заданиям */
+    const tasksStatistics = computed(
+      () => context.root.$vuexModules.Tasks.taskStatistics
+    )
+
     /** Список с фильтрами задач для табов */
     const taskTabs = computed(() => {
       return [
-        { view: context.root.$t('tasks.outdated'), query: TaskQuery.outdated },
-        { view: context.root.$t('tasks.today'), query: TaskQuery.today },
-        { view: context.root.$t('tasks.tomorrow'), query: TaskQuery.tomorrow },
-        { view: context.root.$t('tasks.upcoming'), query: TaskQuery.upcoming },
-        { view: context.root.$t('tasks.comleted'), query: TaskQuery.comleted }
+        {
+          view: context.root.$t('tasks.outdated'),
+          query: TaskQuery.outdated,
+          type: 'outdated_count'
+        },
+        {
+          view: context.root.$t('tasks.today'),
+          query: TaskQuery.today,
+          type: 'today_count'
+        },
+        {
+          view: context.root.$t('tasks.tomorrow'),
+          query: TaskQuery.tomorrow,
+          type: 'tomorrow_count'
+        },
+        {
+          view: context.root.$t('tasks.upcoming'),
+          query: TaskQuery.upcoming,
+          type: 'upcoming_count'
+        },
+        {
+          view: context.root.$t('tasks.comleted'),
+          query: TaskQuery.comleted,
+          type: 'accomplished_count'
+        }
       ]
     })
 
@@ -71,7 +100,8 @@ export default defineComponent({
     return {
       tab,
       taskTabs,
-      loading
+      loading,
+      tasksStatistics
     }
   }
 })

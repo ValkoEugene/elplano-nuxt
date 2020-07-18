@@ -168,7 +168,8 @@
     "tomorrow": "Tomorrow",
     "outdated": "Outdated",
     "upcoming": "Upcoming",
-    "comleted": "Comleted"
+    "comleted": "Comleted",
+    "activeTask": "Active tasks"
   },
   "tags": {
     "addNew": "Add tag",

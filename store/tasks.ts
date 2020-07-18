@@ -1,5 +1,5 @@
 import { VuexModule, Module, Action, Mutation } from 'vuex-module-decorators'
-import { Task, taskApi } from '~/api/tasks.ts'
+import { Task, taskApi, TaskStatisticsI } from '~/api/tasks.ts'
 import { Snackbars } from '~/store/snackbars.ts'
 import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow.ts'
 
@@ -7,6 +7,7 @@ export const name = 'tasks'
 
 export interface TasksStateI {
   tasks: Task[]
+  taskStatistics: TaskStatisticsI
   loading: boolean
   updating: boolean
 }
@@ -17,6 +18,17 @@ export class Tasks extends VuexModule implements TasksStateI {
    * Список задач
    */
   public tasks: Task[] = []
+
+  /**
+   * Статистика по задачам
+   */
+  public taskStatistics: TaskStatisticsI = {
+    accomplished_count: 0,
+    outdated_count: 0,
+    today_count: 0,
+    tomorrow_count: 0,
+    upcoming_count: 0
+  }
 
   /**
    * Флаг загрузки
@@ -108,6 +120,14 @@ export class Tasks extends VuexModule implements TasksStateI {
   @Mutation
   private SET_UPDATING(updating: boolean) {
     this.updating = updating
+  }
+
+  /**
+   * Установить статистику по заданиям
+   */
+  @Mutation
+  private SET_STATISTICS(statistics: TaskStatisticsI) {
+    this.taskStatistics = statistics
   }
 
   /**
@@ -207,6 +227,21 @@ export class Tasks extends VuexModule implements TasksStateI {
       )
     } finally {
       this.SET_UPDATING(false)
+    }
+  }
+
+  /**
+   * Подгрузить информацию о статистике по заданиям
+   */
+  @Action
+  public async loadStatistics(): Promise<void> {
+    try {
+      const statistics = await taskApi.getStatistics()
+      this.SET_STATISTICS(statistics)
+    } catch (error) {
+      getVuexDecaratorModuleByWindow(Snackbars).ADD_SNACKBARS(
+        error.snackbarErrors
+      )
     }
   }
 }

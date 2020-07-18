@@ -1,5 +1,7 @@
 import axios from '~/plugins/axios.ts'
 import moment from '~/plugins/moment'
+import { getVuexDecaratorModuleByWindow } from '~/utils/getVuexDecaratorModuleByWindow.ts'
+import { Tasks } from '~/store/tasks.ts'
 
 export interface ExtraLink {
   description: string
@@ -27,6 +29,14 @@ export interface Assignment {
   created_at?: string
   updated_at?: string
   extra_links: ExtraLink[]
+}
+
+export interface TaskStatisticsI {
+  outdated_count: number
+  today_count: number
+  tomorrow_count: number
+  upcoming_count: number
+  accomplished_count: number
 }
 
 const restUrl = '/tasks'
@@ -66,6 +76,11 @@ const formatDataFromApi = (data: { [key: string]: any }): Task => {
   }
 }
 
+/** Обновить статистику по заданиям */
+const updateTasksStatistics = () => {
+  getVuexDecaratorModuleByWindow(Tasks).loadStatistics()
+}
+
 export const taskApi = {
   /**
    * Создать задание
@@ -77,6 +92,7 @@ export const taskApi = {
       const response = await axios.post(restUrl, {
         task: formatDataForApi(data)
       })
+      updateTasksStatistics()
 
       return formatDataFromApi(response.data.data)
     } catch (error) {
@@ -97,6 +113,7 @@ export const taskApi = {
       const response = await axios.put(`${restUrl}${id ? '/' + id : ''}`, {
         task: formatDataForApi(data)
       })
+      updateTasksStatistics()
 
       return formatDataFromApi(response.data.data)
     } catch (error) {
@@ -112,6 +129,7 @@ export const taskApi = {
     try {
       console.log('deleteById')
       await axios.delete(`${restUrl}/${id}`)
+      updateTasksStatistics()
     } catch (error) {
       return Promise.reject(error)
     }
@@ -152,6 +170,7 @@ export const taskApi = {
       await axios.put(`${restUrl}/${taskId}/assignment`, {
         assignment
       })
+      updateTasksStatistics()
     } catch (error) {
       return Promise.reject(error)
     }
@@ -168,6 +187,21 @@ export const taskApi = {
       const data: Assignment = response.data.data.attributes
 
       if (data.extra_links === null) data.extra_links = []
+
+      return data
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  },
+
+  /**
+   * Получить статистику по заданиям
+   */
+  async getStatistics(): Promise<TaskStatisticsI> {
+    try {
+      console.log('getTaskStatistics')
+      const response = await axios.get(`${restUrl}/statistics`)
+      const data: TaskStatisticsI = response.data.meta
 
       return data
     } catch (error) {
