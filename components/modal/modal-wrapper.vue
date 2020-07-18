@@ -3,7 +3,7 @@
     <v-overlay :value="visible" z-index="99" />
 
     <transition name="modal">
-      <v-card v-if="visible" class="modal-edit">
+      <v-card v-if="visible" v-click-outside="close" class="modal-edit">
         <v-toolbar class="bg-primary-lighten1">
           <v-btn icon dark :disabled="disableButtons" @click="close">
             <v-icon>close</v-icon>

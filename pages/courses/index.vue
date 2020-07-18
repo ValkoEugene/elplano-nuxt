@@ -10,7 +10,11 @@
   </div>
 
   <div v-else class="course__wrapper">
-    <v-expansion-panels v-model="expanded">
+    <v-alert v-if="!courses.length" type="info" prominent>
+      <span>{{ $t('lesson.empty') }}</span>
+    </v-alert>
+
+    <v-expansion-panels v-else v-model="expanded">
       <v-expansion-panel
         v-for="(course, index) in courses"
         :key="course.id"
@@ -36,55 +40,6 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-
-    <Card v-if="false">
-      <template v-slot:content>
-        <v-data-table
-          :headers="headers"
-          :items="courses"
-          :items-per-page="10"
-          :footer-props="footerProps"
-          :single-expand="true"
-          :expanded.sync="expanded"
-          show-expand
-        >
-          <template #item.title="{ item }">
-            <span class="table-row-title">{{ item.title }}</span>
-          </template>
-
-          <template #item.active="{ item }">
-            <v-chip
-              class="ma-2"
-              :color="item.active ? 'success' : 'warning'"
-              label
-            >
-              {{ $t(`ui.${item.active ? 'yes' : 'no'}`) }}
-            </v-chip>
-          </template>
-
-          <template #expanded-item="{ headers, item }">
-            <td :colspan="headers.length">
-              <course-lecturers
-                :key="item.id"
-                :course-id="item.id"
-                :expanded="expanded"
-              />
-            </td>
-          </template>
-
-          <template v-if="isPresident" #item.actions="{ item }">
-            <v-icon small @click.stop="edit(item)">
-              mdi-pencil
-            </v-icon>
-
-            <course-delete
-              :course-id="item.id"
-              @deleteCourse="(id) => deleteCourse(id)"
-            />
-          </template>
-        </v-data-table>
-      </template>
-    </Card>
 
     <ModalWrapper v-model="visibleForm">
       <template #action>
