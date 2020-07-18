@@ -10,7 +10,11 @@
   </div>
 
   <div v-else class="lecturer__wrapper">
-    <v-expansion-panels v-model="expanded">
+    <v-alert v-if="!lecturers.length" type="info" prominent>
+      <span>{{ $t('lecturers.empty') }}</span>
+    </v-alert>
+
+    <v-expansion-panels v-else v-model="expanded">
       <v-expansion-panel
         v-for="(lecturer, index) in lecturers"
         :key="lecturer.id"
