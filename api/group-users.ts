@@ -15,6 +15,9 @@ export interface Student {
   phone: string | null
   president: boolean
   social_networks: SocialNetwork[]
+  gender: 'male' | 'female'
+  birthday: string
+  avatar: string
   updated_at: string
 }
 

@@ -22,12 +22,16 @@
 
         <v-expansion-panel-content>
           <div class="group__info">
-            <v-img src="/images/writer.png" width="100" max-width="100" />
+            <v-img :src="getAvatar(student)" width="100" max-width="100" />
 
             <div class="group__contact">
               <div>Email: {{ student.email || '-' }}</div>
-              <div>{{ $t('field.about') }}: {{ student.about || '-' }}</div>
               <div>{{ $t('field.phone') }}: {{ student.phone || '-' }}</div>
+              <div>
+                {{ $t('field.birthday') }}:
+                {{ getDateView(student.birthday) || '-' }}
+              </div>
+              <div>{{ $t('field.about') }}: {{ student.about || '-' }}</div>
               <template v-for="social_network in student.social_networks">
                 <div v-if="social_network" :key="social_network.network">
                   {{ social_network.network }}: {{ social_network.url }}
@@ -49,6 +53,7 @@ import {
   defineComponent
 } from '@vue/composition-api'
 import { getGroupUsers, Student } from '~/api/group-users.ts'
+import moment from '~/plugins/moment.js'
 
 const components = {
   Card: () =>
@@ -88,9 +93,21 @@ export default defineComponent({
       }
     }
 
+    /** Получить ссылку на аватар */
+    const getAvatar = (student: Student): String => {
+      if (student.avatar) return student.avatar
+      if (student.gender === 'female') return '/images/avatar-female.png'
+      return '/images/avatar-male.png'
+    }
+
+    /** Получить отформатированную дату */
+    const getDateView = (date: string): string => {
+      return date ? moment(date).format('LL') : ''
+    }
+
     onMounted(() => loadData())
 
-    return { ...toRefs(state) }
+    return { ...toRefs(state), getAvatar, getDateView }
   }
 })
 </script>

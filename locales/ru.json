@@ -77,7 +77,13 @@
     "useDarkTheme": "Использовать темную тему",
     "socialNetworks": "Социальные сети",
     "network": "Сервис",
-    "extraLinks": "Внешние ссылки"
+    "extraLinks": "Внешние ссылки",
+    "gender": "Пол",
+    "genderTypes": {
+      "male": "Мужской",
+      "female": "Женский"
+    },
+    "birthday": "День рождения"
   },
   "ui": {
     "own": "Собственное",
