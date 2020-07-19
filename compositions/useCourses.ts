@@ -16,11 +16,21 @@ interface CoursesState {
   updating: boolean
 }
 
+/** Конфигурация композиции */
+interface ConfigI {
+  /** Флаг что данные необходимо сразу загрузить при мантировании компонента */
+  loadOnMount: boolean
+}
+
 /**
  * Композиция для предметов
  * @param vuexState - хранилище vuex TODO через useStore
+ * @param ConfigI - Конфигурация композиции
  */
-export const useCourses = (vuexState: VuexModules) => {
+export const useCourses = (
+  vuexState: VuexModules,
+  { loadOnMount }: ConfigI = { loadOnMount: true }
+) => {
   /** Состояние */
   const state = reactive<CoursesState>({
     courses: [],
@@ -39,7 +49,9 @@ export const useCourses = (vuexState: VuexModules) => {
       vuexState.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
     }
   }
-  onMounted(() => loadData())
+  onMounted(() => {
+    if (loadOnMount) loadData()
+  })
 
   /** Установить список предметов */
   const setCourses = (courses: CourseIndex[]): void => {
