@@ -89,7 +89,10 @@ export class User extends VuexModule implements UserStateI {
     phone: '',
     president: false,
     social_networks: [],
-    updated_at: ''
+    updated_at: '',
+    avatar: '',
+    birthday: '',
+    gender: 'male'
   }
 
   /**
@@ -126,6 +129,12 @@ export class User extends VuexModule implements UserStateI {
 
   get isConfirmed(): boolean {
     return this.userInfo.confirmed
+  }
+
+  get haveProfileInfo(): boolean {
+    return (
+      Boolean(this.studentInfo.full_name) && Boolean(this.studentInfo.birthday)
+    )
   }
 
   /**
@@ -226,6 +235,7 @@ export class User extends VuexModule implements UserStateI {
     this.SET_REFRESH_TOKEN('')
     this.SET_USER({ ...userTemplate })
     this.SET_LOADING(true)
+    getVuexDecaratorModuleByWindow(Group).setGroupId('')
     resetTokensInCookie()
   }
 
@@ -322,6 +332,10 @@ export class User extends VuexModule implements UserStateI {
       groupId
         ? getVuexDecaratorModuleByWindow(Group).setGroupId(groupId)
         : getRouter().push('/group/ungrouped')
+
+      if (!this.haveProfileInfo) {
+        getRouter().push('/group/ungrouped')
+      }
 
       this.SET_LOADING(false)
     } catch (error) {

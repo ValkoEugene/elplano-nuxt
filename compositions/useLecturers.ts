@@ -16,14 +16,20 @@ interface LecturersState {
   updating: boolean
 }
 
+/** Конфигурация композиции */
+interface ConfigI {
+  /** Флаг что данные необходимо сразу загрузить при мантировании компонента */
+  loadOnMount: boolean
+}
+
 /**
  * Композиция для преподавателей
  * @param vuexState - хранилище vuex TODO через useStore
- * @param loadOnMount - флаг что необходимо подгружать список при маунте
+ * @param ConfigI - Конфигурация композиции
  */
 export const useLecturers = (
   vuexState: VuexModules,
-  loadOnMount: boolean = true
+  { loadOnMount }: ConfigI = { loadOnMount: true }
 ) => {
   /** Состояние */
   const state = reactive<LecturersState>({

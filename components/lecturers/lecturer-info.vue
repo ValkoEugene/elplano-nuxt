@@ -97,7 +97,6 @@ import {
   onMounted
 } from '@vue/composition-api'
 import { LecturerShow, lecturersApi } from '~/api/lecturers.ts'
-import { CourseIndex } from '~/api/courses.ts'
 import { useConfirmDelete } from '~/compositions/useConfirmDelete.ts'
 
 interface StateI {
@@ -110,8 +109,6 @@ interface StateI {
 interface PropsI {
   /** ID преподавателя */
   lecturerId: string
-  /** Список всех предметов */
-  courses: CourseIndex[]
 }
 
 export default defineComponent({
@@ -149,12 +146,6 @@ export default defineComponent({
         state.showenModel = null
         state.loadInfo = true
         state.showenModel = await lecturersApi.show(props.lecturerId)
-        const courses = state.showenModel.course_ids
-          .map((courseId) =>
-            props.courses.find((course) => course.id === courseId)
-          )
-          .filter(Boolean)
-        state.showenModel.courses = courses as CourseIndex[]
       } catch (error) {
         vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
       } finally {

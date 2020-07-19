@@ -167,10 +167,9 @@ export default defineComponent({
     } = useCourses(vuexModules)
 
     /** Подгружаем только для старосты */
-    const { lecturers, loading: loadingLecturers } = useLecturers(
-      vuexModules,
-      isPresident
-    )
+    const { lecturers, loading: loadingLecturers } = useLecturers(vuexModules, {
+      loadOnMount: isPresident
+    })
 
     /** Флаг загрузки */
     const loading = computed(

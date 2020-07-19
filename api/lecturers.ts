@@ -62,23 +62,21 @@ const formatDataFromApi = (data: { [key: string]: any }): LecturerIndex => {
 }
 
 const transformDataAfterSave = (responseData: any): LecturerShow => {
-  const { data } = responseData
+  const { data, included } = responseData
   const lecturer = {
     id: data.id,
     ...data.attributes,
     view: getLecturerView(data.attributes)
   }
-  const courses = data.relationships.courses.data
-  lecturer.course_ids = courses.map((course: { id: string }) => course.id)
-  // TODO как добавят includes
-  // const courses: CourseIndex[] = []
-  // included.forEach((item: any) => {
-  //   if (item.type !== 'course') return
 
-  //   courses.push({ id: item.id, ...item.attributes })
-  // })
-  // lecturer.courses = courses
-  // lecturer.course_ids = courses.map(({ id }) => id)
+  const courses: CourseIndex[] = []
+  included.forEach((item: any) => {
+    if (item.type !== 'course') return
+
+    courses.push({ id: item.id, ...item.attributes })
+  })
+  lecturer.courses = courses
+  lecturer.course_ids = courses.map(({ id }) => id)
   return lecturer
 }
 

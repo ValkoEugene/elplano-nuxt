@@ -34,7 +34,6 @@
             v-if="index === expanded"
             :key="lecturer.id"
             :lecturer-id="lecturer.id"
-            :courses="courses"
             @onEdit="edit(lecturer)"
             @onDelete="(id) => deleteLecturer(id)"
           />
@@ -187,7 +186,10 @@ export default defineComponent({
     } = useLecturers(context.root.$vuexModules)
 
     const { courses, loading: loadingCourses } = useCourses(
-      context.root.$vuexModules
+      context.root.$vuexModules,
+      {
+        loadOnMount: isPresident
+      }
     )
 
     const lectureEmptyModel = {
