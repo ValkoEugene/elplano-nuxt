@@ -5,7 +5,7 @@
         color="error"
         offset-x="20px"
         offset-y="20px"
-        :content="activeTasksCount"
+        :content="`${activeTasksCount}`"
         overlap
       >
         <v-btn icon v-on="on">

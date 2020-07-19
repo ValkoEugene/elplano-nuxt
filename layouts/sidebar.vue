@@ -31,7 +31,7 @@
         v-for="item in items"
         :key="item.title"
         :to="item.url"
-        :disabled="!haveGroup"
+        :disabled="isSidebarDisabled"
         nuxt
       >
         <v-list-item-icon>
@@ -135,6 +135,13 @@ export default class Sidebar extends Vue {
    */
   get student(): Student {
     return this.$vuexModules.User.studentInfo
+  }
+
+  /**
+   * Флаг блокировки бокового меню
+   */
+  get isSidebarDisabled(): boolean {
+    return !this.haveGroup || !this.$vuexModules.User.haveProfileInfo
   }
 
   mounted() {

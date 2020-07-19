@@ -95,8 +95,6 @@ export default class InvitesList extends Vue {
 
       await acceptInvite(token)
       await this.$vuexModules.User.getUserInfo()
-
-      this.$router.push('/')
     } catch (error) {
       this.$vuexModules.Snackbars.ADD_SNACKBARS(error.snackbarErrors)
       this.updating = false
