@@ -52,6 +52,7 @@
                       <v-icon class="pr-2">star_half</v-icon>
                       {{ $t('ratings.add') }}
                     </v-list-item>
+
                     <v-list-item
                       v-if="event.eventable_type === 'student' || isPresidents"
                       @click="addNewTaskInit(event.id, weekDates[dayIndex])"

@@ -14,11 +14,29 @@
           ]"
         >
           <div class="student-fields__main">
+            <v-radio-group
+              v-model="localStudent.gender"
+              :label="$t('field.gender')"
+              :rules="[$rules.required]"
+              class="mt-0 pt-0"
+              row
+            >
+              <v-radio :label="$t('field.genderTypes.male')" value="male" />
+              <v-radio :label="$t('field.genderTypes.female')" value="female" />
+            </v-radio-group>
+
             <v-text-field
               v-model="localStudent.full_name"
               :label="$t('field.fullName')"
+              :rules="[$rules.required]"
               type="text"
               outlined
+            />
+
+            <Date
+              v-model.trim="localStudent.birthday"
+              :label="$t('field.birthday')"
+              :rules="[$rules.required]"
             />
 
             <v-text-field
@@ -36,7 +54,7 @@
               outlined
             />
 
-            <v-text-field
+            <v-textarea
               v-model="localStudent.about"
               :label="$t('field.about')"
               type="text"
@@ -107,6 +125,10 @@ const components = {
   SocialNetworksField: () =>
     import(
       '~/components/UI-core/fields/social-networks.vue' /* webpackChunkName: 'components/UI-core/fields/social-networks' */
+    ),
+  Date: () =>
+    import(
+      '~/components/UI-core/date.vue' /* webpackChunkName: 'components/UI-core/date' */
     )
 }
 

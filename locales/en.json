@@ -77,7 +77,13 @@
     "useDarkTheme": "Use Dark Theme",
     "socialNetworks": "Social networks",
     "network": "Network",
-    "extraLinks": "Extra links"
+    "extraLinks": "Extra links",
+    "gender": "Gender",
+    "genderTypes": {
+      "male": "Male",
+      "female": "Female"
+    },
+    "birthday": "Birthday"
   },
   "ui": {
     "own": "Own",
