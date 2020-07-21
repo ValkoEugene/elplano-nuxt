@@ -38,13 +38,6 @@ export default ({ redirect, req, route, store, app }: Context) => {
     return redirect('/admin')
   }
 
-  console.log(
-    '--------------------------midleware auth',
-    isServer,
-    !UserModule.loading &&
-      (!GroupModule.haveGroup || !UserModule.haveProfileInfo)
-  )
-
   // Проверяем состоит ли пользователь в группе и заполнена ли информация о профиле
   if (
     !isServer &&
@@ -52,7 +45,6 @@ export default ({ redirect, req, route, store, app }: Context) => {
     !UserModule.loading &&
     (!GroupModule.haveGroup || !UserModule.haveProfileInfo)
   ) {
-    console.log('-----------redirect')
     return redirect('/group/ungrouped')
   }
 }

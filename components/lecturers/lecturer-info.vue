@@ -50,17 +50,17 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title>
-                    <v-chip
-                      v-if="course.active"
-                      class="mb-2"
-                      color="info"
-                      label
-                      small
-                    >
-                      {{ $t('ui.card.badges.active') }}
-                    </v-chip>
-
-                    <div>{{ course.title }}</div>
+                    <div>
+                      {{ course.title }}
+                      <v-icon
+                        v-if="course.active"
+                        color="success"
+                        class="active-icon"
+                        small
+                      >
+                        check_circle_outline
+                      </v-icon>
+                    </div>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -123,10 +123,6 @@ export default defineComponent({
     lecturerId: {
       type: String,
       required: true
-    },
-    courses: {
-      type: Array,
-      required: true
     }
   },
   setup(props: PropsI, context) {
@@ -179,6 +175,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.active-icon {
+  display: inline-block;
+  width: 15px;
+}
+
 .lesson__content {
   display: flex;
   justify-content: space-between;

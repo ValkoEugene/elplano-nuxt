@@ -29,17 +29,17 @@
 
             <v-list-item-content>
               <v-list-item-title>
-                <v-chip
-                  v-if="lecturer.active"
-                  small
-                  class="mb-2"
-                  color="info"
-                  label
-                >
-                  {{ $t('ui.card.badges.active') }}
-                </v-chip>
-
-                <div>{{ lecturer.view }}</div>
+                <div>
+                  {{ lecturer.view }}
+                  <v-icon
+                    v-if="lecturer.active"
+                    color="success"
+                    class="active-icon"
+                    small
+                  >
+                    check_circle_outline
+                  </v-icon>
+                </div>
               </v-list-item-title>
 
               <v-list-item-subtitle>
