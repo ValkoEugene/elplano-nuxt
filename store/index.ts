@@ -26,6 +26,7 @@ export interface RootStateI {
 Vue.use(Vuex)
 
 const store = () =>
+  // eslint-disable-next-line import/no-named-as-default-member
   new Vuex.Store({
     state: {},
     actions: {

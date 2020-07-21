@@ -9,15 +9,15 @@
     "or": "ИЛИ",
     "loginTitle": "Войти",
     "loginBtn": "Войти",
-    "sigunTitle": "Создать аккаунт",
-    "sigunBtn": "Создать",
-    "sigunWithBtn": "Создать аккаунт с помощью",
+    "signUpTitle": "Создать аккаунт",
+    "signUpBtn": "Создать",
+    "signUpWithBtn": "Создать аккаунт с помощью",
     "resetPasswordTitle": "Сбросить пароль",
     "resetPasswordBtn": "Сбросить",
     "loginLink": "Войти с паролем",
     "loginWith": "Войти через",
-    "signupText": "Еще нет аккаунта?",
-    "sigunpLink": "Зарегистрироваться",
+    "signUpText": "Еще нет аккаунта?",
+    "signUpLink": "Зарегистрироваться",
     "resetPasswordLink": "Забыли пароль?"
   },
   "sidebar": {
@@ -31,7 +31,8 @@
     "attachments": "Вложения",
     "student": "Профиль",
     "groupSettings": "Настройки группы",
-    "ungrouped": "Настройки аккаунта"
+    "preinstallSettings": "Настройки аккаунта",
+    "acceptInvite": "Принятие приглашения"
   },
   "header": {
     "logout": "Выход",

@@ -11,12 +11,12 @@ const cardScroll = {
       }
     }
 
-    const wrapper = document.querySelector('.v-content__wrap')
+    const wrapper = document.querySelector('.v-main__wrap')
 
     wrapper.addEventListener('scroll', el.cardScrollHandler)
   },
   unbind(el) {
-    const wrapper = document.querySelector('.v-content__wrap')
+    const wrapper = document.querySelector('.v-main__wrap')
     wrapper.removeEventListener('scroll', el.cardScrollHandler)
   }
 }

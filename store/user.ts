@@ -331,10 +331,10 @@ export class User extends VuexModule implements UserStateI {
 
       groupId
         ? getVuexDecaratorModuleByWindow(Group).setGroupId(groupId)
-        : getRouter().push('/group/ungrouped')
+        : getRouter().push('/group/preinstall-settings')
 
       if (!this.haveProfileInfo) {
-        getRouter().push('/group/ungrouped')
+        getRouter().push('/group/preinstall-settings')
       }
 
       this.SET_LOADING(false)

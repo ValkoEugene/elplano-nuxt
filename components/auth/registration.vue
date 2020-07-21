@@ -1,7 +1,7 @@
 <template>
   <Card>
     <template v-slot:content>
-      <h3 class="login-card__title">{{ $t('auth.sigunTitle') }}</h3>
+      <h3 class="login-card__title">{{ $t('auth.signUpTitle') }}</h3>
 
       <v-alert v-if="successMessage" type="success">{{
         successMessage
@@ -60,7 +60,7 @@
           :disabled="unactive"
           class="login__btn"
           @click="createUser"
-          >{{ $t('auth.sigunBtn') }}</v-btn
+          >{{ $t('auth.signUpBtn') }}</v-btn
         >
       </div>
     </template>

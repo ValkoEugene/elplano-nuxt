@@ -1,5 +1,5 @@
 <template>
-  <v-content v-if="isAdmin">
+  <v-main v-if="isAdmin">
     <v-card class="admin__card">
       <v-tabs v-model="tab" fixed-tabs background-color="indigo" dark>
         <v-tab>
@@ -25,7 +25,7 @@
         <Users v-if="tab === 2" />
       </div>
     </v-card>
-  </v-content>
+  </v-main>
 </template>
 
 <script lang="ts">

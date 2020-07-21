@@ -32,7 +32,7 @@ const components = {
 }
 
 export default defineComponent({
-  name: 'Ungrouped',
+  name: 'PreinstallSettings',
   middleware: ['auth'],
   components,
   setup(_, context) {

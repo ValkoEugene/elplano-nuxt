@@ -13,7 +13,7 @@
     <Header class="mobile__header" />
 
     <!-- Sizes your content based upon application components -->
-    <v-content class="mobile__content">
+    <v-main class="mobile__content">
       <!-- Provides the application the proper gutter -->
       <!-- <v-container fluid> -->
       <!-- If using vue-router -->
@@ -29,7 +29,7 @@
 
       <ModalConfirm />
       <!-- </v-container> -->
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
@@ -157,7 +157,7 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
   overflow: hidden;
 }
 
-.v-content__wrap {
+.v-main__wrap {
   background: #000ef30a;
   max-height: calc(100vh - 64px);
   overflow: auto;
@@ -165,7 +165,7 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
 }
 
 @media (max-width: 960px) {
-  .v-content__wrap {
+  .v-main__wrap {
     max-height: calc(100vh - 56px);
   }
 }

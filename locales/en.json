@@ -9,15 +9,15 @@
     "or": "OR",
     "loginTitle": "Login to your account",
     "loginBtn": "Login",
-    "sigunTitle": "Create account",
-    "sigunBtn": "Create",
-    "sigunWithBtn": "Create with",
+    "signUpTitle": "Create account",
+    "signUpBtn": "Create",
+    "signUpWithBtn": "Create with",
     "resetPasswordTitle": "Reset password",
     "resetPasswordBtn": "Reset",
     "loginLink": "Login with password",
     "loginWith": "Login with",
-    "signupText": "Dont have an account yet?",
-    "sigunpLink": "Register now",
+    "signUpText": "Dont have an account yet?",
+    "signUpLink": "Register now",
     "resetPasswordLink": "Forgot your password?"
   },
   "sidebar": {
@@ -31,7 +31,8 @@
     "attachments": "Attachmets",
     "student": "Profile",
     "groupSettings": "Group setting",
-    "ungrouped": "Account setting"
+    "preinstallSettings": "Account setting",
+    "acceptInvite": "Accept Invite"
   },
   "header": {
     "logout": "Logout",

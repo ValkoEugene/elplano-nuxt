@@ -20,6 +20,7 @@ module.exports = {
   // add your custom rules here
   rules: {
     camelcase: 'off',
+    'no-console': 'off',
     'vue/max-attributes-per-line': 'off',
     'import/no-unresolved': 'error',
     'prettier/prettier': ['error']

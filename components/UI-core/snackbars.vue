@@ -10,7 +10,7 @@
         :key="snackbars.text"
         v-model="active"
         :color="snackbar.color"
-        :timeout="0"
+        :timeout="-1"
       >
         {{ snackbar.text }}
         <v-btn text @click="close">Закрыть</v-btn>

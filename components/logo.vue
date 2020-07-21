@@ -12,7 +12,6 @@
       <linearGradient
         data-v-423bf9ae=""
         gradientTransform="rotate(25)"
-        id="ea2fc061-8920-40b0-8378-87c4c6eed1da"
         x1="0%"
         y1="0%"
         x2="100%"
@@ -40,7 +39,6 @@
     </defs>
     <g
       data-v-423bf9ae=""
-      id="bba17380-b0bc-42f8-a4ed-71611ec2d790"
       fill="url(#ea2fc061-8920-40b0-8378-87c4c6eed1da)"
       transform="matrix(5.577908720429519,0,0,5.577908720429519,-6.247263246877026,-0.35296799372652643)"
     >
