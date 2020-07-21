@@ -3,7 +3,7 @@
     <v-skeleton-loader
       v-for="i in 10"
       :key="i"
-      :height="68"
+      :height="48"
       type="list-item"
       class="elevation-2 mb-2"
     />
@@ -22,10 +22,10 @@
       >
         <v-expansion-panel-header>
           <div class="header">
+            <v-icon v-if="course.active" color="success" class="active-icon">
+              check_circle_outline
+            </v-icon>
             <div>{{ course.title }}</div>
-            <v-chip v-if="course.active" class="ma-2" color="info" label>
-              {{ $t(`ui.card.badges.active`) }}
-            </v-chip>
           </div>
         </v-expansion-panel-header>
 
@@ -227,13 +227,11 @@ export default defineComponent({
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: 36px;
 }
 
-.mobile .header {
-  flex-direction: column-reverse;
-  align-items: center;
+.active-icon {
+  display: block;
+  width: 30px;
 }
 
 /** Добавляем отступ чтобы кнопка добавления не захадила на таблицу */

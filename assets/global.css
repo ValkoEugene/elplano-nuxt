@@ -46,6 +46,11 @@
   display: none;
 }
 
+.v-list-item__title,
+.v-list-item__subtitle {
+  white-space: normal !important;
+}
+
 .mobile .v-timeline--dense .v-timeline-item__body {
   max-width: 100%;
 }
