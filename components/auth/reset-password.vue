@@ -41,73 +41,79 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Ref } from 'vue-property-decorator'
+import { defineComponent, computed, ref } from '@vue/composition-api'
 import axios from '~/plugins/axios.ts'
+import { useSnackbars } from '~/compositions/useSnackbars.ts'
 
-@Component({
+interface Form {
+  validate: () => boolean
+}
+
+export default defineComponent({
+  name: 'ResetPassword',
   components: {
     Card: () =>
       import(
         '~/components/UI-core/card.vue' /* webpackChunkName: 'components/UI-core/card' */
       )
+  },
+  setup(_, context) {
+    /** Ссылка на компонент формы из vuetify */
+    const form = ref<Form>(null)
+
+    /** Логин для сброса */
+    const login = ref('')
+
+    /** Сообщение при успешном сбросе */
+    const successMessage = ref('')
+
+    /** Флаг блокировки кнопки */
+    const unactive = ref(false)
+
+    /** Стили с цветами */
+    const colorStyle = computed(() => {
+      const { theme }: { theme: any } = context.root.$vuetify
+
+      return {
+        color: theme.currentTheme.primary.base
+      }
+    })
+
+    const { addErrorSnackbars } = useSnackbars(context)
+
+    /** Сбросить пароль */
+    const resetPassword = async () => {
+      if (!form.value || !form.value.validate()) return
+
+      unactive.value = true
+
+      try {
+        const {
+          data: { meta }
+        } = await axios.post('users/password', { user: { email: login.value } })
+
+        successMessage.value = meta.message
+      } catch (error) {
+        const snackbars = error.response.data.errors.map(
+          ({ detail }: { detail: string }) => ({
+            text: detail,
+            color: 'error'
+          })
+        )
+        addErrorSnackbars(snackbars)
+      } finally {
+        unactive.value = false
+      }
+    }
+
+    return {
+      login,
+      successMessage,
+      unactive,
+      colorStyle,
+      resetPassword,
+      form
+    }
   }
 })
-export default class ResetPassword extends Vue {
-  /**
-   * Ссылка на компонент формы из vuetify
-   */
-  @Ref()
-  readonly form: { validate: () => boolean }
-
-  /**
-   * Логин для сброса
-   */
-  login: string = ''
-
-  /**
-   * Сообщение при успешном сбросе
-   */
-  successMessage: string = ''
-
-  /**
-   * Флаг блокировки кнопки
-   */
-  unactive: boolean = false
-
-  /**
-   * Стили с цветом
-   */
-  get colorStyle(): { color: string } {
-    const { theme }: { theme: any } = this.$vuetify
-    return {
-      color: theme.currentTheme.primary.base
-    }
-  }
-
-  /**
-   * Сбросить пароль
-   */
-  async resetPassword() {
-    if (!this.form.validate()) return
-
-    this.unactive = true
-
-    try {
-      const {
-        data: { meta }
-      } = await axios.post('users/password', { user: { login: this.login } })
-
-      this.successMessage = meta.message
-    } catch (error) {
-      this.$vuexModules.Snackbars.ADD_SNACKBARS(
-        error.response.data.errors.map(({ detail }: { detail: string }) => ({
-          text: detail,
-          color: 'error'
-        }))
-      )
-    } finally {
-      this.unactive = false
-    }
-  }
-}
 </script>

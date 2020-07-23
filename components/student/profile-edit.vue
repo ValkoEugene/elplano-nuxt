@@ -169,7 +169,7 @@ export default defineComponent({
 
     /** Обновить информацию о пользователе */
     const updateStudent = () => {
-      if (form.value && !form.value.validate()) return
+      if (!form.value || !form.value.validate()) return
 
       $vuexModules.User.updateStudent(localStudent.value)
     }

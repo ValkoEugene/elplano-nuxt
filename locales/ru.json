@@ -14,6 +14,7 @@
     "signUpWithBtn": "Создать аккаунт с помощью",
     "resetPasswordTitle": "Сбросить пароль",
     "resetPasswordBtn": "Сбросить",
+    "createNewPassword": "Создать новый пароль",
     "loginLink": "Войти с паролем",
     "loginWith": "Войти через",
     "signUpText": "Еще нет аккаунта?",
@@ -43,7 +44,7 @@
   },
   "actions": {
     "save": "Сохранить",
-    "create": "Добавить",
+    "create": "Создать",
     "addTask": "Добавить задание",
     "addRaiting": "Добавить оценку",
     "edit": "Редактировать",
