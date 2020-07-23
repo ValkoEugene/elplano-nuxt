@@ -140,6 +140,9 @@ export default class DefaultLayout extends Mixins(SyncLogin) {
     window.document.documentElement.classList.add('default-layout')
 
     await this.$vuexModules.User.getUserInfo()
+
+    if (this.$vuexModules.User.isAdmin) return
+
     this.$vuexModules.Tasks.loadStatistics()
   }
 

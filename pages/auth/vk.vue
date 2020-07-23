@@ -8,7 +8,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { IdentityProvider } from '~/api/users-identities.ts'
 
 @Component({
-  layout: 'empty',
+  layout: 'emptyWithLogo',
   components: {
     LoaderFullPage: () =>
       import(

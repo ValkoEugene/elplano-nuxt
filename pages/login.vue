@@ -27,7 +27,7 @@ import { I18n, Locales } from '~/store/i18n.ts'
 import SyncLogin from '~/mixins/SyncLogin.ts'
 
 @Component({
-  layout: 'empty',
+  layout: 'emptyWithLogo',
   components: {
     Logo: () =>
       import('~/components/logo.vue' /* webpackChunkName: 'components/logo' */),

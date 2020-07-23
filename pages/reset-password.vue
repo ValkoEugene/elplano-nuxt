@@ -58,7 +58,7 @@ interface Form {
 }
 
 export default defineComponent({
-  layout: 'empty',
+  layout: 'emptyWithLogo',
   components: {
     Card: () =>
       import(

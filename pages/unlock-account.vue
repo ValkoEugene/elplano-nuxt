@@ -14,7 +14,7 @@ import { SnackbarColor } from '~/store/snackbars.ts'
 import axios from '~/plugins/axios.ts'
 
 @Component({
-  layout: 'empty'
+  layout: 'emptyWithLogo'
 })
 export default class ConfirmAccount extends Vue {
   /**

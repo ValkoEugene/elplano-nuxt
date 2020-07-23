@@ -41,7 +41,7 @@ import { acceptInvite } from '~/api/user-invites.ts'
 import { useAcceptInviteToken } from '~/components/group/useAcceptInviteToken.ts'
 
 export default defineComponent({
-  layout: 'empty',
+  layout: 'emptyWithLogo',
   components: {
     Logo: () =>
       import('~/components/logo.vue' /* webpackChunkName: 'components/logo' */),

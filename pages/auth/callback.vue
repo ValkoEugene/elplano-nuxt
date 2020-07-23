@@ -8,7 +8,7 @@ import { SnackbarColor } from '~/store/snackbars.ts'
 import { IdentityProvider, Identity } from '~/api/users-identities.ts'
 
 @Component({
-  layout: 'empty',
+  layout: 'emptyWithLogo',
   components: {
     LoaderFullPage: () =>
       import(
