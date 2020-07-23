@@ -7,7 +7,7 @@ import { defineComponent, onMounted } from '@vue/composition-api'
 import { useAcceptInviteToken } from '~/components/group/useAcceptInviteToken.ts'
 
 export default defineComponent({
-  layout: 'empty',
+  layout: 'emptyWithLogo',
   components: {
     LoaderFullPage: () =>
       import(

@@ -8,6 +8,12 @@ export interface UserDetail {
   groupId?: string
 }
 
+export interface NewPasswordI {
+  password: string
+  password_confirmation: string
+  reset_password_token: string
+}
+
 const REST_URL = '/user'
 
 /**
@@ -77,6 +83,17 @@ export async function confirmAccount(
   try {
     const params = { confirmation_token }
     await axios.get('/users/confirmation', { params })
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
+
+/**
+ * Создать новый пароль
+ */
+export async function createNewPassword(data: NewPasswordI) {
+  try {
+    await axios.patch('/users/password', { user: data })
   } catch (error) {
     return Promise.reject(error)
   }

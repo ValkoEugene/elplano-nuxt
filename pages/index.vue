@@ -6,7 +6,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  layout: 'empty',
+  layout: 'emptyWithLogo',
   components: {
     LoaderFullPage: () =>
       import(

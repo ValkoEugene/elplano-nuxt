@@ -19,6 +19,7 @@ export default class CoursesList extends Vue {
   public loadingCourses: boolean = true
 
   mounted() {
+    if (this.$vuexModules.User.isAdmin) return
     console.log('mixin CourseList')
     this.loadCourses()
   }

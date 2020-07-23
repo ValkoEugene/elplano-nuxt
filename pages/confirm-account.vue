@@ -15,7 +15,7 @@ import { getRegistrationInfo } from '~/utils/auth'
 import { confirmAccount } from '~/api/user.ts'
 import SyncLogin from '~/mixins/SyncLogin.ts'
 
-@Component({ layout: 'empty' })
+@Component({ layout: 'emptyWithLogo' })
 export default class ConfirmAccount extends Mixins(SyncLogin) {
   /**
    * Токен для подтверждения аккаунта
