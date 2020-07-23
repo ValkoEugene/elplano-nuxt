@@ -18,7 +18,8 @@
     "loginWith": "Login with",
     "signUpText": "Dont have an account yet?",
     "signUpLink": "Register now",
-    "resetPasswordLink": "Forgot your password?"
+    "resetPasswordLink": "Forgot your password?",
+    "invalidToken": "Invalid token. Try again."
   },
   "sidebar": {
     "schedule": "Schedule",
@@ -159,7 +160,12 @@
     "create": "Create group",
     "update": "Update group",
     "infoline1": "To use Elplano you must be a member of a group.",
-    "infoline2": "You can create your own group or join another by invite."
+    "infoline2": "You can create your own group or join another by invite.",
+    "acceptInvite": {
+      "haveGroup": "You already have group.",
+      "notAuthLine1": "Need log in for accept invite.",
+      "notAuthLine2": "If you don't have account, you must register."
+    }
   },
   "students": {
     "president": "President"
