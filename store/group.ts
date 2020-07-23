@@ -86,8 +86,8 @@ export class Group extends VuexModule implements GroupStateI {
   public setGroupId(id: string) {
     const router = getRouter()
 
-    if (!id && router.currentRoute.path !== '/group/ungrouped') {
-      router.push('/group/ungrouped')
+    if (!id && router.currentRoute.path !== '/group/preinstall-settings') {
+      router.push('/group/preinstall-settings')
     }
 
     this.SET_GROUP_ID(id)

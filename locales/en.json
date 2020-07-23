@@ -9,16 +9,17 @@
     "or": "OR",
     "loginTitle": "Login to your account",
     "loginBtn": "Login",
-    "sigunTitle": "Create account",
-    "sigunBtn": "Create",
-    "sigunWithBtn": "Create with",
+    "signUpTitle": "Create account",
+    "signUpBtn": "Create",
+    "signUpWithBtn": "Create with",
     "resetPasswordTitle": "Reset password",
     "resetPasswordBtn": "Reset",
     "loginLink": "Login with password",
     "loginWith": "Login with",
-    "signupText": "Dont have an account yet?",
-    "sigunpLink": "Register now",
-    "resetPasswordLink": "Forgot your password?"
+    "signUpText": "Dont have an account yet?",
+    "signUpLink": "Register now",
+    "resetPasswordLink": "Forgot your password?",
+    "invalidToken": "Invalid token. Try again."
   },
   "sidebar": {
     "schedule": "Schedule",
@@ -31,7 +32,8 @@
     "attachments": "Attachmets",
     "student": "Profile",
     "groupSettings": "Group setting",
-    "ungrouped": "Account setting"
+    "preinstallSettings": "Account setting",
+    "acceptInvite": "Accept Invite"
   },
   "header": {
     "logout": "Logout",
@@ -158,7 +160,12 @@
     "create": "Create group",
     "update": "Update group",
     "infoline1": "To use Elplano you must be a member of a group.",
-    "infoline2": "You can create your own group or join another by invite."
+    "infoline2": "You can create your own group or join another by invite.",
+    "acceptInvite": {
+      "haveGroup": "You already have group.",
+      "notAuthLine1": "Need log in for accept invite.",
+      "notAuthLine2": "If you don't have account, you must register."
+    }
   },
   "students": {
     "president": "President"

@@ -1,6 +1,5 @@
-import { onMounted, onUnmounted } from '@vue/composition-api'
 // eslint-disable-next-line import/named
-import { SetupContext } from '@vue/composition-api'
+import { SetupContext, onMounted, onUnmounted } from '@vue/composition-api'
 
 /**
  * Данные для показа окна подтверждения

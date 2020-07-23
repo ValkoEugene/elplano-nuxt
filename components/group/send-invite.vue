@@ -28,6 +28,7 @@
 <script lang="ts">
 import { Component, Vue, Ref } from 'vue-property-decorator'
 import { sendInvite, inviteI } from '~/api/admin-invites.ts'
+import { SnackbarColor } from '~/store/snackbars.ts'
 
 @Component({
   components: {
@@ -65,7 +66,12 @@ export default class SendInvite extends Vue {
     try {
       this.updating = true
       await sendInvite(this.invite)
-
+      this.$vuexModules.Snackbars.ADD_SNACKBARS([
+        {
+          text: this.$t('invites.sended') as string,
+          color: SnackbarColor.success
+        }
+      ])
       this.invite = { email: '' }
       this.$emit('sendInvite')
     } catch (error) {

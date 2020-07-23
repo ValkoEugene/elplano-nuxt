@@ -62,7 +62,8 @@ export default class Header extends Vue {
     '/attachments': 'attachments',
     '/student': 'student',
     '/group/settings': 'groupSettings',
-    '/group/ungrouped': 'ungrouped'
+    '/group/preinstall-settings': 'preinstallSettings',
+    '/accept-invite': 'acceptInvite'
   }
 
   /**

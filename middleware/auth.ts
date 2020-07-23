@@ -41,10 +41,11 @@ export default ({ redirect, req, route, store, app }: Context) => {
   // Проверяем состоит ли пользователь в группе и заполнена ли информация о профиле
   if (
     !isServer &&
-    route.path !== '/group/ungrouped' &&
+    route.path !== '/group/preinstall-settings' &&
+    route.path !== '/accept-invite' &&
     !UserModule.loading &&
     (!GroupModule.haveGroup || !UserModule.haveProfileInfo)
   ) {
-    return redirect('/group/ungrouped')
+    return redirect('/group/preinstall-settings')
   }
 }

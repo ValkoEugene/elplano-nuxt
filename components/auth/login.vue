@@ -39,7 +39,7 @@
             class="actions__link"
             @click="$emit('setComponent', 'Registration')"
           >
-            {{ $t('auth.sigunpLink') }}
+            {{ $t('auth.signUpLink') }}
           </button>
           <v-btn
             color="primary"

@@ -78,7 +78,7 @@ export default class LoginPage extends Mixins(SyncLogin) {
    */
   get socialNetworksTitleI18n(): string {
     return this.currentComponent === 'Registration'
-      ? 'sigunWithBtn'
+      ? 'signUpWithBtn'
       : 'loginWith'
   }
 
