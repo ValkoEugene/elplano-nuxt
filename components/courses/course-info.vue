@@ -95,7 +95,7 @@ interface PropsI {
 }
 
 export default defineComponent({
-  name: 'CurseLecturers',
+  name: 'CourseLecturers',
   components: {
     Card: () =>
       import(

@@ -32,6 +32,7 @@
         <v-expansion-panel-content>
           <lecturer-info
             v-if="index === expanded"
+            ref="lecturerInfo"
             :key="lecturer.id"
             :lecturer-id="lecturer.id"
             @onEdit="edit(lecturer)"
@@ -173,6 +174,12 @@ export default defineComponent({
     /** Ссылка на компонент с формой */
     const form = ref<Form>(null)
 
+    /**
+     * TODO указать в тиа компонент LecturerInfo ts не позволяет
+     * Ссылка на компонент с информацией о преподавателе
+     */
+    const lecturerInfo = ref<any>(null)
+
     /** Флаг что пользователь является старостой */
     const isPresident = vuexModules.User.isPresident
 
@@ -235,7 +242,6 @@ export default defineComponent({
     const edit = async (lecturer: LecturerIndex) => {
       try {
         state.loadLecturerInfo = true
-        state.expanded = undefined
         state.editModel = await lecturersApi.show(lecturer.id!)
         state.visible = true
       } catch (error) {
@@ -253,6 +259,15 @@ export default defineComponent({
         ? await update(state.editModel)
         : await create(state.editModel)
 
+      // Обновляем данные в компоненте с подробной информацией
+      if (
+        lecturerInfo.value &&
+        lecturerInfo.value[0] &&
+        typeof lecturerInfo.value[0].show === 'function'
+      ) {
+        lecturerInfo.value[0].show()
+      }
+
       state.visible = false
     }
 
@@ -269,6 +284,7 @@ export default defineComponent({
       update,
       deleteLecturer,
       form,
+      lecturerInfo,
       save,
       addNew
     }

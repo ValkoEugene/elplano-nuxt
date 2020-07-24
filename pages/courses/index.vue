@@ -32,6 +32,7 @@
         <v-expansion-panel-content>
           <course-info
             v-if="index === expanded"
+            ref="courseInfo"
             :key="course.id"
             :course-id="course.id"
             @onEdit="edit(course)"
@@ -137,6 +138,12 @@ export default defineComponent({
     /** Ссылка на компонент с формой */
     const form = ref<Form>(null)
 
+    /**
+     * TODO указать в тиа компонент CourseInfo ts не позволяет
+     * Ссылка на компонент с информацией о предмете
+     */
+    const courseInfo = ref<any>(null)
+
     /** Флаг что пользователь является старостой */
     const isPresident = vuexModules.User.isPresident
 
@@ -183,6 +190,15 @@ export default defineComponent({
       const isNew = state.editModel.id
       isNew ? await update(state.editModel) : await create(state.editModel)
 
+      // Обновляем данные в компоненте с подробной информацией
+      if (
+        courseInfo.value &&
+        courseInfo.value[0] &&
+        typeof courseInfo.value[0].show === 'function'
+      ) {
+        courseInfo.value[0].show()
+      }
+
       state.visibleForm = false
     }
 
@@ -196,7 +212,6 @@ export default defineComponent({
     const edit = async (course: CourseIndex) => {
       try {
         state.loadCourseInfo = true
-        state.expanded = undefined
         state.editModel = await courseApi.show(course.id!)
         state.visibleForm = true
       } catch (error) {
@@ -209,6 +224,7 @@ export default defineComponent({
     return {
       ...toRefs(state),
       form,
+      courseInfo,
       courses,
       loading,
       updating,
