@@ -5,6 +5,7 @@
         <v-form ref="form" :lazy-validation="true">
           <v-text-field
             v-model.trim="user.login"
+            placeholder=" "
             :label="$t('field.loginField')"
             type="text"
             :rules="[$rules.required]"
@@ -23,6 +24,7 @@
 
           <v-text-field
             v-model.trim="user.password"
+            placeholder=" "
             :label="$t('field.passwordField')"
             type="password"
             :rules="[$rules.required, $rules.getMinLength(6)]"
