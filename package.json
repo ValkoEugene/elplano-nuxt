@@ -29,7 +29,7 @@
     "js-cookie": "^2.2.1",
     "lodash.clonedeep": "^4.5.0",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.27",
+    "moment-timezone": "^0.5.35",
     "nuxt": "2.13.3",
     "nuxt-material-design-icons": "^1.0.4",
     "shrink-ray-current": "^4.1.2",
